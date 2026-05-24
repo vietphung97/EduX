@@ -1,0 +1,1436 @@
+
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import Header from './components/Header';
+import QuestionCard from './components/QuestionCard';
+import ResultAnalytics from './components/ResultAnalytics';
+import ProfilePage from './components/ProfilePage';
+import HistoryPage from './components/HistoryPage';
+import LoginScreen from './components/LoginScreen';
+import MultiplayerLobby from './components/MultiplayerLobby';
+import MultiplayerGame from './components/MultiplayerGame';
+import StatsPage from './components/StatsPage';
+import RewardsPage from './components/RewardsPage';
+import AvatarDisplay from './components/AvatarDisplay';
+import CertificatePage from './components/CertificatePage';
+import {
+  Difficulty,
+  UserLevel,
+  UserProfile,
+  Question,
+  GameResult,
+  RoomMember,
+  UserAnswer,
+  GameHistory,
+  EdusoUserData,
+  MultiplayerGameState,
+  MultiplayerResult
+} from './types';
+import { DEFAULT_GRADES, DEFAULT_TOPICS_BY_GRADE, LEVEL_CONFIG, WEEKLY_FRAMES, getCurrentProgramWeek } from './constants';
+import { TopicsByGrade, fetchQuestionsFromSheet } from './services/sheets';
+import { fetchK9Questions, getK9Topics } from './services/k9Questions';
+import { fetchK7Questions } from './services/k7Questions';
+import { fetchK8Questions } from './services/k8Questions';
+import {
+  getLeaderboard,
+  getLeaderboardByGrade,
+  getWeeklyLeaderboard,
+  getUserProfile,
+  upsertUserProfile,
+  saveGameHistory as saveGameHistoryToSupabase,
+  getGameHistory as getGameHistoryFromSupabase,
+  migrateAllUsersGradeXp,
+  getUserRank
+} from './services/supabase';
+
+// Export migration function to window for one-time console run
+(window as any).migrateGradeXp = migrateAllUsersGradeXp;
+import { calculateDetailedXp, playSound, getLevelFromXp, generateRoomCode, DIFFICULTY_MULTIPLIERS } from './utils/gameLogic';
+import { checkNewUnlocks } from './utils/frameLogic';
+import { generateQuestions, getExpertAnalysis } from './services/gemini';
+import { sendGameResultToEduso, createEndGameParams } from './utils/edusoApi';
+import { startGame as startMultiplayerGame } from './utils/multiplayerSync';
+import { getPlayerId, clearActiveRoom, checkRejoinableRoom, updateActiveRoomPhase } from './utils/playerSession';
+
+const App: React.FC = () => {
+  // Navigation & User
+  const [view, setView] = useState<'login' | 'home' | 'solo-config' | 'lobby' | 'game' | 'multiplayer-game' | 'results' | 'leaderboard' | 'profile' | 'history' | 'stats' | 'rewards' | 'certificate'>('login');
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [edusoUser, setEdusoUser] = useState<EdusoUserData | null>(null);
+  const gameStartTime = useRef<Date | null>(null);
+
+  const [topicsByGrade, setTopicsByGrade] = useState<TopicsByGrade>(DEFAULT_TOPICS_BY_GRADE);
+  const [grades, setGrades] = useState<number[]>(DEFAULT_GRADES);
+  const [isLoadingTopics, setIsLoadingTopics] = useState(true);
+
+  // Solo Config - load grade từ localStorage nếu có
+  const [selectedGrade, setSelectedGrade] = useState<number>(() => {
+    const saved = localStorage.getItem('edux_selected_grade');
+    const parsed = saved ? parseInt(saved, 10) : NaN;
+    // Nếu grade đã lưu không nằm trong danh sách được bật → dùng grade đầu tiên
+    return DEFAULT_GRADES.includes(parsed) ? parsed : DEFAULT_GRADES[0];
+  });
+  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
+  const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>(Difficulty.EASY);
+
+  // Group State
+  const [roomCode, setRoomCode] = useState('');
+  const [isHost, setIsHost] = useState(false);
+  const [members, setMembers] = useState<RoomMember[]>([]);
+
+  // Multiplayer State
+  const [multiplayerState, setMultiplayerState] = useState<MultiplayerGameState | null>(null);
+  const [multiplayerQuestions, setMultiplayerQuestions] = useState<Question[]>([]);
+
+  // Game State
+  const [currentQuestions, setCurrentQuestions] = useState<Question[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [sessionAnswers, setSessionAnswers] = useState<UserAnswer[]>([]);
+  const [timeLeft, setTimeLeft] = useState(30); // per-question timer (30s)
+  const totalTimeSpent = React.useRef(0); // accumulated seconds across all questions
+  const QUESTION_TIME_LIMIT = 30;
+  const [gameScore, setGameScore] = useState(0);
+  const [currentStreak, setCurrentStreak] = useState(0);
+  const [maxStreak, setMaxStreak] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentFunExplanation, setCurrentFunExplanation] = useState<string | null>(null);
+
+  // Analytics State
+  const [gameResults, setGameResults] = useState<GameResult | null>(null);
+  const [expertAdvice, setExpertAdvice] = useState<import('./services/gemini').AdvisorAnalysis | null>(null);
+
+  // History State
+  const [gameHistory, setGameHistory] = useState<GameHistory[]>([]);
+
+  // Leaderboard State
+  const [leaderboardData, setLeaderboardData] = useState<UserProfile[]>([]);
+  const [weeklyLeaderboardData, setWeeklyLeaderboardData] = useState<UserProfile[]>([]);
+  const [isLoadingLeaderboard, setIsLoadingLeaderboard] = useState(false);
+  const [leaderboardGradeFilter, setLeaderboardGradeFilter] = useState<number | 'all'>('all');
+  const [leaderboardTab, setLeaderboardTab] = useState<'alltime' | 'weekly'>('alltime');
+  const [myRank, setMyRank] = useState<number>(-1);
+
+  // Frame unlock popup state
+  const [newlyUnlockedItems, setNewlyUnlockedItems] = useState<string[]>([]);
+  const [showFrameUnlock, setShowFrameUnlock] = useState(false);
+
+  // Floating XP animation
+  const [floatingXp, setFloatingXp] = useState<{ id: number; value: number } | null>(null);
+  const floatingXpCounter = React.useRef(0);
+
+  // Fetch leaderboard khi vào view leaderboard hoặc đổi filter/tab
+  useEffect(() => {
+    if (view === 'leaderboard' && user) {
+      const fetchLeaderboard = async () => {
+        setIsLoadingLeaderboard(true);
+        const data = leaderboardGradeFilter === 'all'
+          ? await getLeaderboard(20)
+          : await getLeaderboardByGrade(leaderboardGradeFilter, 20);
+        setLeaderboardData(data);
+
+        const weeklyData = await getWeeklyLeaderboard(20);
+        setWeeklyLeaderboardData(weeklyData);
+
+        // Fetch actual rank for current user
+        const gradeFilter = leaderboardGradeFilter === 'all' ? undefined : leaderboardGradeFilter;
+        const rank = await getUserRank(user.id, gradeFilter);
+        setMyRank(rank);
+
+        setIsLoadingLeaderboard(false);
+      };
+      fetchLeaderboard();
+    }
+  }, [view, leaderboardGradeFilter, user]);
+
+  // Lưu game state vào localStorage khi đang chơi
+  useEffect(() => {
+    if (view === 'game' && currentQuestions.length > 0) {
+      const gameState = {
+        currentQuestions,
+        currentIndex,
+        selectedAnswer,
+        sessionAnswers,
+        timeLeft,
+        gameScore,
+        currentStreak,
+        maxStreak,
+        selectedGrade,
+        selectedTopics,
+        selectedDifficulty,
+        currentFunExplanation
+      };
+      localStorage.setItem('arena_x_game_state', JSON.stringify(gameState));
+    }
+  }, [view, currentQuestions, currentIndex, selectedAnswer, sessionAnswers, timeLeft, gameScore, currentStreak, maxStreak]);
+
+  // Load user, history và khôi phục game state khi app khởi động
+  useEffect(() => {
+    const initializeApp = async () => {
+      // Load user từ localStorage trước (offline-first)
+      const savedUser = localStorage.getItem('arena_x_user');
+      let parsedUser = null;
+      if (savedUser) {
+        parsedUser = JSON.parse(savedUser);
+        setUser(parsedUser);
+
+        // Sync với Supabase - merge data từ server nếu có
+        try {
+          const serverProfile = await getUserProfile(parsedUser.id);
+          if (serverProfile) {
+            // Server có data - merge với local (server wins cho XP, games, etc.)
+            const mergedUser = {
+              ...parsedUser,
+              xp: Math.max(parsedUser.xp, serverProfile.xp),
+              totalGames: Math.max(parsedUser.totalGames, serverProfile.totalGames),
+              bestStreak: Math.max(parsedUser.bestStreak, serverProfile.bestStreak),
+              weeklyXp: Math.max(parsedUser.weeklyXp, serverProfile.weeklyXp),
+              level: serverProfile.xp > parsedUser.xp ? serverProfile.level : parsedUser.level,
+              topicStats: { ...(serverProfile.topicStats || {}), ...(parsedUser.topicStats || {}) },
+              // gradeXp: merge bằng cách lấy max từng grade để không bỏ sót XP từ server
+              gradeXp: (() => {
+                const local = parsedUser.gradeXp || {};
+                const server = serverProfile.gradeXp || {};
+                const allGrades = new Set([...Object.keys(local), ...Object.keys(server)].map(Number));
+                const merged: Record<number, number> = {};
+                allGrades.forEach(g => {
+                  merged[g] = Math.max(local[g] || 0, server[g] || 0);
+                });
+                return merged;
+              })(),
+            };
+            setUser(mergedUser);
+            localStorage.setItem('arena_x_user', JSON.stringify(mergedUser));
+            console.log('Merged user profile from Supabase');
+          }
+        } catch (e) {
+          console.error('Error syncing with Supabase:', e);
+        }
+      }
+
+      // Load history từ localStorage trước (offline-first)
+      const savedHistory = localStorage.getItem('arena_x_history');
+      let localHistory: GameHistory[] = [];
+      if (savedHistory) {
+        try {
+          localHistory = JSON.parse(savedHistory);
+          setGameHistory(localHistory);
+        } catch (e) {
+          console.error('Error loading history:', e);
+        }
+      }
+
+      // Sync history từ Supabase nếu có user
+      if (parsedUser) {
+        try {
+          const serverHistory = await getGameHistoryFromSupabase(parsedUser.id, 50);
+          if (serverHistory.length > 0) {
+            // Merge: kết hợp local và server, loại bỏ duplicates theo id
+            const existingIds = new Set(localHistory.map(h => h.id));
+            const newFromServer = serverHistory.filter(h => !existingIds.has(h.id));
+            if (newFromServer.length > 0) {
+              const mergedHistory = [...localHistory, ...newFromServer]
+                .sort((a, b) => new Date(b.playedAt).getTime() - new Date(a.playedAt).getTime())
+                .slice(0, 50);
+              setGameHistory(mergedHistory);
+              localStorage.setItem('arena_x_history', JSON.stringify(mergedHistory));
+              console.log('Merged history from Supabase:', newFromServer.length, 'new entries');
+            }
+          }
+        } catch (e) {
+          console.error('Error syncing history with Supabase:', e);
+        }
+      }
+
+      // Kiểm tra multiplayer game đang chơi dở (ưu tiên cao hơn solo)
+      const rejoinInfo = await checkRejoinableRoom();
+      if (rejoinInfo.canRejoin && rejoinInfo.roomState && parsedUser) {
+        const { roomCode: activeRoomCode, isHost: wasHost, gamePhase, roomState } = rejoinInfo;
+
+        if (gamePhase === 'playing' || gamePhase === 'countdown') {
+          // Đang trong game multiplayer - khôi phục
+          console.log('Restoring multiplayer game:', activeRoomCode, gamePhase);
+          setRoomCode(activeRoomCode!);
+          setIsHost(wasHost!);
+          setMultiplayerState(roomState);
+          setMultiplayerQuestions(roomState.questions || []);
+          setView('multiplayer-game');
+          return;
+        } else if (gamePhase === 'waiting') {
+          // Đang trong lobby - khôi phục về lobby
+          console.log('Restoring to lobby:', activeRoomCode);
+          setRoomCode(activeRoomCode!);
+          setIsHost(wasHost!);
+          setView('lobby');
+          return;
+        }
+      }
+
+      // Kiểm tra có solo game đang chơi dở không
+      const savedGameState = localStorage.getItem('arena_x_game_state');
+      if (savedGameState) {
+        try {
+          const gameState = JSON.parse(savedGameState);
+          if (gameState.currentQuestions && gameState.currentQuestions.length > 0) {
+            setCurrentQuestions(gameState.currentQuestions);
+            setCurrentIndex(gameState.currentIndex || 0);
+            setSelectedAnswer(gameState.selectedAnswer || null);
+            setSessionAnswers(gameState.sessionAnswers || []);
+            setTimeLeft(QUESTION_TIME_LIMIT); // always start fresh timer on restore
+            setGameScore(gameState.gameScore || 0);
+            setCurrentStreak(gameState.currentStreak || 0);
+            setMaxStreak(gameState.maxStreak || 0);
+            const restoredGrade = gameState.selectedGrade || 3;
+            setSelectedGrade(restoredGrade);
+            localStorage.setItem('edux_selected_grade', String(restoredGrade));
+            setSelectedTopics(gameState.selectedTopics || []);
+            setSelectedDifficulty(gameState.selectedDifficulty || Difficulty.EASY);
+            setCurrentFunExplanation(gameState.currentFunExplanation || null);
+            setView('game');
+            console.log('Restored solo game state from localStorage');
+            return;
+          }
+        } catch (e) {
+          console.error('Error restoring game state:', e);
+          localStorage.removeItem('arena_x_game_state');
+        }
+      }
+
+      // Nếu không có game đang chơi, kiểm tra user để quyết định view
+      if (savedUser) {
+        setView('login');
+      }
+    };
+
+    initializeApp();
+  }, []);
+
+  // Load topics khi app load — grade 9 luôn từ JSON local
+  useEffect(() => {
+    const loadTopics = async () => {
+      setIsLoadingTopics(true);
+      const k9Topics = await getK9Topics();
+      setTopicsByGrade(prev => ({ ...prev, 9: k9Topics }));
+      setIsLoadingTopics(false);
+    };
+    loadTopics();
+  }, []);
+
+  // Per-question Timer — resets when question changes, auto-skips on 0
+  useEffect(() => {
+    if (view !== 'game') return;
+    setTimeLeft(QUESTION_TIME_LIMIT); // reset on each new question
+  }, [currentIndex, view]);
+
+  useEffect(() => {
+    let timer: number;
+    if (view === 'game' && !selectedAnswer && timeLeft > 0) {
+      timer = window.setInterval(() => {
+        setTimeLeft(prev => {
+          if (prev <= 1) {
+            // Time's up for this question — count as wrong, advance
+            totalTimeSpent.current += QUESTION_TIME_LIMIT;
+            const q = currentQuestions[currentIndex];
+            if (q) {
+              setSelectedAnswer('__timeout__');
+              setSessionAnswers(sa => [...sa, { questionId: q.id, selectedOption: '__timeout__', isCorrect: false }]);
+              setCurrentStreak(0);
+              setCurrentFunExplanation(q.funExplanation);
+              // Auto-advance after a short delay
+              setTimeout(() => {
+                if (currentIndex < currentQuestions.length - 1) {
+                  setCurrentIndex(ci => ci + 1);
+                  setSelectedAnswer(null);
+                  setCurrentFunExplanation(null);
+                } else {
+                  handleGameOver();
+                }
+              }, 1500);
+            }
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [view, timeLeft, selectedAnswer, currentIndex]);
+
+  const handleLoginComplete = async (userProfile: UserProfile, edusoData?: EdusoUserData) => {
+    // Lưu ngay vào state + localStorage để UI không bị trống
+    setUser(userProfile);
+    localStorage.setItem('arena_x_user', JSON.stringify(userProfile));
+    if (edusoData) {
+      setEdusoUser(edusoData);
+    }
+    setView('home');
+
+    // Sync với Supabase để khôi phục XP trên thiết bị mới / sau khi clear cache
+    // Chạy sau khi đã navigate về home để không block UI
+    try {
+      const serverProfile = await getUserProfile(userProfile.id);
+      if (serverProfile && serverProfile.xp > 0) {
+        const mergedUser: UserProfile = {
+          ...userProfile,
+          xp: Math.max(userProfile.xp, serverProfile.xp),
+          totalGames: Math.max(userProfile.totalGames, serverProfile.totalGames),
+          bestStreak: Math.max(userProfile.bestStreak, serverProfile.bestStreak),
+          weeklyXp: Math.max(userProfile.weeklyXp, serverProfile.weeklyXp),
+          level: serverProfile.xp > userProfile.xp ? serverProfile.level : userProfile.level,
+          topicStats: { ...(serverProfile.topicStats || {}), ...(userProfile.topicStats || {}) },
+          gradeXp: { ...(serverProfile.gradeXp || {}), ...(userProfile.gradeXp || {}) },
+        };
+        // Chỉ cập nhật nếu có sự khác biệt thực sự (tránh re-render thừa)
+        if (mergedUser.xp !== userProfile.xp || mergedUser.totalGames !== userProfile.totalGames) {
+          setUser(mergedUser);
+          localStorage.setItem('arena_x_user', JSON.stringify(mergedUser));
+          console.log(`Restored XP from Supabase: ${userProfile.xp} → ${mergedUser.xp}`);
+        }
+      }
+    } catch (e) {
+      // Không block login nếu Supabase lỗi
+      console.error('Error syncing profile on login:', e);
+    }
+  };
+
+  const handleUpdateAvatar = (newAvatar: string) => {
+    if (!user) return;
+    const updatedUser = { ...user, avatar: newAvatar };
+    setUser(updatedUser);
+    localStorage.setItem('arena_x_user', JSON.stringify(updatedUser));
+  };
+
+  const handleEquipFrame = (frameId: string | undefined) => {
+    if (!user) return;
+    const updatedUser = { ...user, equippedFrame: frameId };
+    setUser(updatedUser);
+    localStorage.setItem('arena_x_user', JSON.stringify(updatedUser));
+    upsertUserProfile(updatedUser).catch(console.error);
+  };
+
+  const handlePracticeTopic = (topic: string) => {
+    setSelectedTopics([topic]);
+    setView('solo-config');
+  };
+
+  const startSoloGame = async () => {
+    setIsLoading(true);
+    const topicsToUse = selectedTopics.length > 0 ? selectedTopics : [topicsByGrade[selectedGrade]?.[0] || 'General English'];
+
+    let questions: Question[] = [];
+
+    // K7/K8/K9: ưu tiên dùng bộ câu hỏi local, không cần mạng
+    if (selectedGrade === 7) {
+      questions = await fetchK7Questions(topicsToUse, selectedDifficulty, 15);
+    } else if (selectedGrade === 8) {
+      questions = await fetchK8Questions(topicsToUse, selectedDifficulty, 15);
+    } else if (selectedGrade === 9) {
+      questions = await fetchK9Questions(topicsToUse, selectedDifficulty, 15);
+    }
+
+    // Fallback sang Google Sheet nếu chưa đủ câu
+    if (questions.length < 5) {
+      const sheetQuestions = await fetchQuestionsFromSheet(selectedGrade, topicsToUse, selectedDifficulty, 15);
+      if (sheetQuestions.length > questions.length) questions = sheetQuestions;
+    }
+
+    // Fallback cuối cùng sang Gemini AI
+    if (questions.length < 5) {
+      console.log('Không đủ câu hỏi từ Sheet, sử dụng Gemini AI...');
+      questions = await generateQuestions(selectedGrade, topicsToUse, selectedDifficulty);
+    }
+
+    if (questions.length > 0) {
+      setCurrentQuestions(questions);
+      setCurrentIndex(0);
+      setTimeLeft(QUESTION_TIME_LIMIT);
+      totalTimeSpent.current = 0;
+      setGameScore(0);
+      setCurrentStreak(0);
+      setMaxStreak(0);
+      setSelectedAnswer(null);
+      setCurrentFunExplanation(null);
+      setSessionAnswers([]);
+      gameStartTime.current = new Date(); // Save game start time for Eduso API
+      setView('game');
+    } else {
+      alert("Lỗi tải câu hỏi. Vui lòng thử lại!");
+    }
+    setIsLoading(false);
+  };
+
+  const handleAnswer = (answer: string) => {
+    if (selectedAnswer || !currentQuestions[currentIndex]) return;
+
+    setSelectedAnswer(answer);
+    const q = currentQuestions[currentIndex];
+    // Multi-answer: answer is '|||'-joined sorted selected options
+    const isCorrect = q.correctAnswers && q.correctAnswers.length > 1
+      ? (() => {
+          const chosen = answer.split('|||');
+          return chosen.length === q.correctAnswers!.length &&
+            chosen.every(a => q.correctAnswers!.includes(a));
+        })()
+      : answer === q.correctAnswer;
+    playSound(isCorrect);
+
+    const userAnswer: UserAnswer = {
+      questionId: q.id,
+      selectedOption: answer,
+      isCorrect
+    };
+    setSessionAnswers(prev => [...prev, userAnswer]);
+
+    if (isCorrect) {
+      // Điểm số thô: dùng XP/câu theo độ khó để hiển thị floating XP
+      const xpPerQ = selectedDifficulty === Difficulty.HARD ? 15
+        : selectedDifficulty === Difficulty.MEDIUM ? 12 : 10;
+      setGameScore(prev => prev + 10);
+      // Floating XP animation
+      floatingXpCounter.current += 1;
+      setFloatingXp({ id: floatingXpCounter.current, value: xpPerQ });
+      setTimeout(() => setFloatingXp(null), 1200);
+
+      setCurrentStreak(prev => {
+        const next = prev + 1;
+        if (next > maxStreak) setMaxStreak(next);
+        return next;
+      });
+    } else {
+      setCurrentStreak(0);
+    }
+    setCurrentFunExplanation(q.funExplanation);
+  };
+
+  const nextQuestion = () => {
+    // Accumulate time spent on this question
+    totalTimeSpent.current += QUESTION_TIME_LIMIT - timeLeft;
+    if (currentIndex < currentQuestions.length - 1) {
+      setCurrentIndex(prev => prev + 1);
+      setSelectedAnswer(null);
+      setCurrentFunExplanation(null);
+    } else {
+      handleGameOver();
+    }
+  };
+
+  const handleGameOver = async () => {
+    // Xóa game state khi kết thúc game
+    localStorage.removeItem('arena_x_game_state');
+
+    const correctCount = gameScore / 10;
+    const xpData = calculateDetailedXp(correctCount, maxStreak, selectedDifficulty);
+
+    // Lưu vào history
+    const historyEntry: GameHistory = {
+      id: `game-${Date.now()}`,
+      playedAt: new Date().toISOString(),
+      grade: selectedGrade,
+      topics: selectedTopics.length > 0 ? selectedTopics : ['General'],
+      difficulty: selectedDifficulty,
+      correctCount,
+      totalQuestions: currentQuestions.length,
+      xpEarned: xpData.totalXp,
+      maxStreak,
+      timeSpent: totalTimeSpent.current,
+      score: gameScore
+    };
+
+    const updatedHistory = [historyEntry, ...gameHistory].slice(0, 50); // Giữ tối đa 50 trận
+    setGameHistory(updatedHistory);
+    localStorage.setItem('arena_x_history', JSON.stringify(updatedHistory));
+
+    // Note: Game history will be saved to Supabase after profile is updated (below)
+    
+    const catBreak: Record<string, { correct: number; total: number }> = {};
+    const typeBreak: Record<string, { correct: number; total: number }> = {};
+    const diffBreak: Record<string, { correct: number; total: number }> = {};
+
+    currentQuestions.forEach((q, idx) => {
+      const ans = sessionAnswers.find(a => a.questionId === q.id);
+      const isCorrect = ans?.isCorrect || false;
+      [catBreak, typeBreak, diffBreak].forEach((br, i) => {
+        const key = i === 0 ? q.category : i === 1 ? q.type : q.difficulty;
+        if (!br[key]) br[key] = { correct: 0, total: 0 };
+        br[key].total++;
+        if (isCorrect) br[key].correct++;
+      });
+    });
+
+    const result: GameResult = {
+      score: gameScore,
+      correctCount,
+      totalQuestions: currentQuestions.length,
+      timeSpent: totalTimeSpent.current,
+      maxStreak,
+      xpEarned: xpData.totalXp,
+      xpBreakdown: xpData,
+      categoryBreakdown: catBreak,
+      typeBreakdown: typeBreak,
+      difficultyBreakdown: diffBreak,
+      sessionDetails: {
+        questions: currentQuestions,
+        answers: sessionAnswers
+      }
+    };
+
+    setGameResults(result);
+    setView('results');
+    
+    if (user) {
+      const newXp = user.xp + xpData.totalXp;
+      
+      const updatedTopicStats = { ...(user.topicStats || {}) };
+      Object.entries(catBreak).forEach(([topic, stats]) => {
+        if (!updatedTopicStats[topic]) {
+          updatedTopicStats[topic] = { correct: 0, total: 0 };
+        }
+        updatedTopicStats[topic].correct += stats.correct;
+        updatedTopicStats[topic].total += stats.total;
+      });
+
+      // Cập nhật gradeXp cho khối vừa chơi
+      const updatedGradeXp = { ...(user.gradeXp || {}) };
+      updatedGradeXp[selectedGrade] = (updatedGradeXp[selectedGrade] || 0) + xpData.totalXp;
+
+      const newWeeklyXp = user.weeklyXp + xpData.totalXp;
+
+      // Check frame unlock milestones
+      const programWeek = getCurrentProgramWeek();
+      const currentUnlocked = user.unlockedFrames || [];
+      const newUnlocks = checkNewUnlocks(newWeeklyXp, currentUnlocked, programWeek);
+      const updatedUnlockedFrames = newUnlocks.length > 0
+        ? [...currentUnlocked, ...newUnlocks]
+        : currentUnlocked;
+
+      const updatedUser: UserProfile = {
+        ...user,
+        xp: newXp,
+        weeklyXp: newWeeklyXp,
+        level: getLevelFromXp(newXp).level,
+        totalGames: user.totalGames + 1,
+        bestStreak: Math.max(user.bestStreak, maxStreak),
+        topicStats: updatedTopicStats,
+        grade: selectedGrade,
+        gradeXp: updatedGradeXp,
+        unlockedFrames: updatedUnlockedFrames,
+      };
+      setUser(updatedUser);
+      localStorage.setItem('arena_x_user', JSON.stringify(updatedUser));
+
+      // Hiển thị popup unlock frame nếu có items mới
+      if (newUnlocks.length > 0) {
+        setNewlyUnlockedItems(newUnlocks);
+        setShowFrameUnlock(true);
+      }
+
+      // Sync user profile to Supabase FIRST, then save game history
+      upsertUserProfile(updatedUser)
+        .then(() => {
+          return saveGameHistoryToSupabase(user.id, { ...historyEntry, mode: 'solo' });
+        })
+        .catch(err => {
+          console.error('Error syncing to Supabase:', err);
+        });
+
+      // Send game result to Eduso API (if user is logged in with Eduso)
+      if (edusoUser && gameStartTime.current) {
+        const endGameParams = createEndGameParams(
+          edusoUser.userId,
+          user.name,
+          gameStartTime.current,
+          xpData.totalXp,
+          'EDUX_ARENA'
+        );
+        sendGameResultToEduso(endGameParams).catch(err => {
+          console.error('Error sending game result to Eduso:', err);
+        });
+      }
+
+      const analysis = await getExpertAnalysis(result, selectedGrade);
+      setExpertAdvice(analysis);
+    }
+  };
+
+  // Multiplayer handlers
+  const handleStartMultiplayerGame = async (code: string, state: MultiplayerGameState) => {
+    setRoomCode(code);
+    setMultiplayerState(state);
+    setIsHost(state.hostId === getPlayerId());
+
+    // Update session phase to playing/countdown
+    updateActiveRoomPhase(state.gamePhase as any);
+
+    // Fetch questions for the game
+    const topics = state.roomSettings.topics;
+    const grade = state.roomSettings.grade;
+    const difficulty = state.roomSettings.difficulty;
+
+    let questions: Question[] = [];
+    if (grade === 7) {
+      questions = await fetchK7Questions(topics, difficulty, 15);
+    } else if (grade === 8) {
+      questions = await fetchK8Questions(topics, difficulty, 15);
+    } else if (grade === 9) {
+      // K9: luôn lấy từ file local, không dùng Google Sheets
+      questions = await fetchK9Questions(topics, difficulty, 15);
+    } else {
+      questions = await fetchQuestionsFromSheet(grade, topics, difficulty, 15);
+      if (questions.length < 5) {
+        questions = await generateQuestions(grade, topics, difficulty);
+      }
+    }
+
+    if (questions.length > 0) {
+      setMultiplayerQuestions(questions);
+
+      // If host, start the game with questions
+      if (state.hostId === getPlayerId()) {
+        await startMultiplayerGame(code, getPlayerId(), questions);
+      }
+
+      setView('multiplayer-game');
+    }
+  };
+
+  const handleMultiplayerGameEnd = (results: MultiplayerResult[], myResult: MultiplayerResult) => {
+    // Save to history
+    const historyEntry: GameHistory = {
+      id: `mp-${Date.now()}`,
+      playedAt: new Date().toISOString(),
+      grade: multiplayerState?.roomSettings.grade || selectedGrade,
+      topics: multiplayerState?.roomSettings.topics || ['General'],
+      difficulty: multiplayerState?.roomSettings.difficulty || Difficulty.MEDIUM,
+      correctCount: myResult.correctCount,
+      totalQuestions: myResult.totalQuestions,
+      xpEarned: myResult.xpEarned,
+      maxStreak: myResult.maxStreak,
+      timeSpent: Math.floor(myResult.timeSpent / 1000),
+      score: myResult.score,
+      mode: 'multiplayer',
+      roomCode: roomCode
+    };
+
+    const updatedHistory = [historyEntry, ...gameHistory].slice(0, 50);
+    setGameHistory(updatedHistory);
+    localStorage.setItem('arena_x_history', JSON.stringify(updatedHistory));
+
+    // Update user XP and sync to Supabase
+    if (user) {
+      const newXp = user.xp + myResult.xpEarned;
+      const gameGrade = multiplayerState?.roomSettings.grade || selectedGrade;
+
+      // Cập nhật gradeXp cho khối vừa chơi
+      const updatedGradeXp = { ...(user.gradeXp || {}) };
+      updatedGradeXp[gameGrade] = (updatedGradeXp[gameGrade] || 0) + myResult.xpEarned;
+
+      const newWeeklyXpMp = user.weeklyXp + myResult.xpEarned;
+      const programWeekMp = getCurrentProgramWeek();
+      const currentUnlockedMp = user.unlockedFrames || [];
+      const newUnlocksMp = checkNewUnlocks(newWeeklyXpMp, currentUnlockedMp, programWeekMp);
+      const updatedUnlockedFramesMp = newUnlocksMp.length > 0
+        ? [...currentUnlockedMp, ...newUnlocksMp]
+        : currentUnlockedMp;
+
+      const updatedUser: UserProfile = {
+        ...user,
+        xp: newXp,
+        weeklyXp: newWeeklyXpMp,
+        level: getLevelFromXp(newXp).level,
+        totalGames: user.totalGames + 1,
+        bestStreak: Math.max(user.bestStreak, myResult.maxStreak),
+        grade: gameGrade,
+        gradeXp: updatedGradeXp,
+        unlockedFrames: updatedUnlockedFramesMp,
+      };
+      setUser(updatedUser);
+      localStorage.setItem('arena_x_user', JSON.stringify(updatedUser));
+
+      if (newUnlocksMp.length > 0) {
+        setNewlyUnlockedItems(newUnlocksMp);
+        setShowFrameUnlock(true);
+      }
+
+      // Sync user profile to Supabase FIRST, then save game history
+      // This ensures the foreign key constraint is satisfied (profile must exist before game_history)
+      upsertUserProfile(updatedUser)
+        .then(() => {
+          // Now save game history after profile exists
+          return saveGameHistoryToSupabase(user.id, historyEntry);
+        })
+        .catch(err => {
+          console.error('Error syncing multiplayer data to Supabase:', err);
+        });
+    }
+  };
+
+  const handleLeaveMultiplayer = () => {
+    clearActiveRoom();
+    setRoomCode('');
+    setMultiplayerState(null);
+    setMultiplayerQuestions([]);
+    setView('home');
+  };
+
+  // Show login screen if no user or view is login
+  if (!user || view === 'login') {
+    return (
+      <LoginScreen
+        onLoginComplete={handleLoginComplete}
+        existingUser={user}
+      />
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#0f172a] text-white selection:bg-red-500/30">
+      <Header user={user} onNavigate={setView} />
+      
+      <main className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
+        {view === 'home' && (
+          <div className="max-w-4xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-700">
+             <div className="text-center space-y-6">
+                <div className="inline-block px-4 py-1.5 bg-red-600/10 border border-red-600/50 rounded-full text-red-500 text-xs font-black uppercase tracking-widest">
+                  Đấu trường X
+                </div>
+                <h2 className="text-6xl md:text-8xl font-black tracking-tighter italic uppercase text-white leading-none">
+                  TÌM X <br/> <span className="text-red-600">TÌM BẢN LĨNH</span>
+                </h2>
+                <p className="text-slate-400 text-xl font-medium max-w-2xl mx-auto">
+                  Vượt qua áp lực thời gian, chinh phục bảng xếp hạng và trở thành Huyền thoại Tiếng Anh X.
+                </p>
+             </div>
+
+             {/* Weekly Roadmap Progress Bar */}
+             {(() => {
+               const programWeek = getCurrentProgramWeek();
+               if (!programWeek) return null;
+               const weekFrame = WEEKLY_FRAMES.find(f => f.week === programWeek);
+               if (!weekFrame) return null;
+               const unlockedFrames = user.unlockedFrames || [];
+               const milestones = weekFrame.items.map(item => ({
+                 xp: item.xpRequired,
+                 emoji: item.emoji,
+                 unlocked: unlockedFrames.includes(item.id),
+               }));
+               const maxMilestone = milestones[milestones.length - 1].xp;
+               const progressPct = Math.min(100, (user.weeklyXp / maxMilestone) * 100);
+               return (
+                 <div
+                   className="bg-slate-900 border border-slate-800 rounded-[28px] p-6 cursor-pointer hover:border-purple-700/40 transition-all"
+                   onClick={() => setView('rewards')}
+                 >
+                   <div className="flex justify-between items-center mb-3">
+                     <div className="flex items-center gap-2">
+                       <span className="text-xl">{weekFrame.emoji}</span>
+                       <div>
+                         <p className="text-xs font-black uppercase tracking-widest text-white">
+                           Tuần {programWeek}: {weekFrame.name}
+                         </p>
+                         <p className="text-[10px] text-slate-500 font-bold uppercase">XP TUẦN NÀY · {user.weeklyXp.toLocaleString()} / {maxMilestone.toLocaleString()}</p>
+                       </div>
+                     </div>
+                     <span className="text-[10px] font-black text-purple-400 uppercase tracking-widest">XEM PHẦN THƯỞNG →</span>
+                   </div>
+                   <div className="relative h-4 bg-slate-800 rounded-full overflow-visible">
+                     {/* Milestone markers */}
+                     {milestones.map((m, idx) => {
+                       const pct = (m.xp / maxMilestone) * 100;
+                       return (
+                         <div key={idx} className="absolute top-1/2 -translate-y-1/2 flex flex-col items-center" style={{ left: `${pct}%`, transform: 'translate(-50%, -50%)' }}>
+                           <div
+                             className="w-5 h-5 rounded-full border-2 flex items-center justify-center text-[9px] z-10"
+                             style={{
+                               background: m.unlocked ? weekFrame.color : '#1e293b',
+                               borderColor: m.unlocked ? weekFrame.color : '#334155',
+                               boxShadow: m.unlocked ? `0 0 8px ${weekFrame.glowColor}` : undefined,
+                             }}
+                           >
+                             {m.unlocked ? '✓' : m.emoji}
+                           </div>
+                         </div>
+                       );
+                     })}
+                     {/* Progress fill */}
+                     <div
+                       className="h-full rounded-full transition-all duration-700"
+                       style={{
+                         width: `${progressPct}%`,
+                         background: weekFrame.color,
+                         boxShadow: `0 0 8px ${weekFrame.glowColor}`,
+                       }}
+                     />
+                   </div>
+                   <div className="flex justify-between mt-4">
+                     {milestones.map((m, idx) => (
+                       <span key={idx} className="text-[10px] font-bold" style={{ color: m.unlocked ? weekFrame.color : '#475569' }}>
+                         {m.xp.toLocaleString()}
+                       </span>
+                     ))}
+                   </div>
+                 </div>
+               );
+             })()}
+
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <button
+                  onClick={() => setView('solo-config')}
+                  className="relative group overflow-hidden bg-slate-900 border border-slate-800 p-10 rounded-[40px] hover:border-red-600 transition-all text-left shadow-2xl"
+                >
+                  <div className="absolute top-0 right-0 p-8 opacity-5 text-9xl group-hover:scale-110 transition-transform">🎯</div>
+                  <h3 className="text-3xl font-black mb-2 group-hover:text-red-500 transition-colors uppercase">Đấu hạng</h3>
+                  <p className="text-slate-400 mb-8 font-medium italic">Thi đấu cá nhân, vượt qua 15 câu hỏi trong 5 phút để leo rank</p>
+                  <div className="flex items-center gap-2 text-red-500 font-bold uppercase tracking-widest text-sm">
+                    BẮT ĐẦU NGAY <span className="group-hover:translate-x-2 transition-transform">→</span>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => setView('lobby')}
+                  className="relative group overflow-hidden bg-slate-900 border border-slate-800 p-10 rounded-[40px] hover:border-blue-500 transition-all text-left shadow-2xl"
+                >
+                  <div className="absolute top-0 right-0 p-8 opacity-5 text-9xl group-hover:scale-110 transition-transform">👥</div>
+                  <h3 className="text-3xl font-black mb-2 group-hover:text-blue-500 transition-colors uppercase">Thách đấu</h3>
+                  <p className="text-slate-400 mb-8 font-medium italic">Thách đấu bạn bè, tích lũy XP, trở thành Huyền thoại</p>
+                  <div className="flex items-center gap-2 text-blue-500 font-bold uppercase tracking-widest text-sm">
+                    THÁCH ĐẤU NGAY <span className="group-hover:translate-x-2 transition-transform">→</span>
+                  </div>
+                </button>
+             </div>
+
+             {/* Quick Actions */}
+             <div className="flex flex-wrap justify-center gap-3">
+                <button
+                  onClick={() => setView('history')}
+                  className="px-5 py-2.5 bg-slate-900 border border-slate-800 rounded-2xl hover:border-slate-600 transition-all flex items-center gap-2"
+                >
+                  <span className="text-lg">📜</span>
+                  <span className="font-bold text-slate-400 text-sm">Lịch sử đấu</span>
+                  {gameHistory.length > 0 && (
+                    <span className="px-2 py-0.5 bg-red-600/20 text-red-500 text-xs font-black rounded-full">
+                      {gameHistory.length}
+                    </span>
+                  )}
+                </button>
+                <button
+                  onClick={() => setView('leaderboard')}
+                  className="px-5 py-2.5 bg-slate-900 border border-slate-800 rounded-2xl hover:border-slate-600 transition-all flex items-center gap-2"
+                >
+                  <span className="text-lg">🏆</span>
+                  <span className="font-bold text-slate-400 text-sm">Bảng xếp hạng</span>
+                </button>
+                <button
+                  onClick={() => setView('rewards')}
+                  className="px-5 py-2.5 bg-slate-900 border border-purple-800/40 rounded-2xl hover:border-purple-600 transition-all flex items-center gap-2"
+                >
+                  <span className="text-lg">🏅</span>
+                  <span className="font-bold text-purple-400 text-sm">Phần thưởng</span>
+                  {(user.unlockedFrames?.length || 0) > 0 && (
+                    <span className="px-2 py-0.5 bg-purple-600/20 text-purple-400 text-xs font-black rounded-full">
+                      {user.unlockedFrames!.length}
+                    </span>
+                  )}
+                </button>
+                <button
+                  onClick={() => setView('stats')}
+                  className="px-5 py-2.5 bg-slate-900 border border-slate-800 rounded-2xl hover:border-slate-600 transition-all flex items-center gap-2"
+                >
+                  <span className="text-lg">📊</span>
+                  <span className="font-bold text-slate-400 text-sm">Thống kê</span>
+                </button>
+             </div>
+          </div>
+        )}
+
+        {view === 'solo-config' && (
+          <div className="max-w-2xl mx-auto bg-slate-900 border border-slate-800 p-10 rounded-[40px] space-y-8 shadow-2xl">
+            <h2 className="text-3xl font-black">CẤU HÌNH TRẬN ĐẤU</h2>
+            
+            <div className="space-y-6">
+              <div>
+                <label className="block text-xs font-black uppercase text-slate-500 mb-4 tracking-widest">Chọn Khối Lớp</label>
+                <div className="grid grid-cols-4 gap-2">
+                  {grades.map(g => (
+                    <button
+                      key={g}
+                      onClick={() => { setSelectedGrade(g); setSelectedTopics([]); localStorage.setItem('edux_selected_grade', String(g)); }}
+                      className={`py-3 rounded-2xl font-bold transition-all ${selectedGrade === g ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
+                    >
+                      Lớp {g}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-black uppercase text-slate-500 mb-4 tracking-widest">
+                  Chọn Chủ Đề (Global Success)
+                  {isLoadingTopics && <span className="ml-2 text-slate-600">đang tải...</span>}
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {(topicsByGrade[selectedGrade] || []).map(topic => (
+                    <button
+                      key={topic}
+                      onClick={() => setSelectedTopics(prev => prev.includes(topic) ? prev.filter(t => t !== topic) : [...prev, topic])}
+                      className={`px-4 py-2 rounded-xl text-sm font-bold border transition-all ${selectedTopics.includes(topic) ? 'border-red-600 bg-red-600/10 text-red-500' : 'border-slate-700 bg-slate-800 text-slate-400 hover:border-slate-500'}`}
+                    >
+                      {topic}
+                    </button>
+                  ))}
+                  {(!topicsByGrade[selectedGrade] || topicsByGrade[selectedGrade].length === 0) && !isLoadingTopics && (
+                    <p className="text-slate-500 italic">Không có chủ đề cho lớp này</p>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <div className="flex justify-between items-center mb-4">
+                  <label className="block text-xs font-black uppercase text-slate-500 tracking-widest">Độ khó</label>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {Object.values(Difficulty).filter(d => d !== Difficulty.EXPERT).map(d => (
+                    <button
+                      key={d}
+                      onClick={() => setSelectedDifficulty(d)}
+                      className={`py-3 rounded-2xl font-bold transition-all flex flex-col items-center justify-center gap-1 ${selectedDifficulty === d ? 'bg-slate-700 border-2 border-red-600 text-white shadow-lg shadow-red-600/10' : 'bg-slate-800 border border-slate-700 text-slate-400 hover:bg-slate-700'}`}
+                    >
+                      <span className="text-xs">{d}</span>
+                      <span className={`text-[9px] font-black tracking-widest uppercase ${selectedDifficulty === d ? 'text-red-400' : 'text-slate-500'}`}>×{DIFFICULTY_MULTIPLIERS[d]}XP</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-6 border-t border-slate-800 flex gap-4">
+               <button onClick={() => setView('home')} className="flex-1 py-4 bg-slate-800 text-slate-300 font-black rounded-2xl">QUAY LẠI</button>
+               <button 
+                onClick={startSoloGame}
+                disabled={isLoading}
+                className="flex-[2] py-4 bg-red-600 text-white font-black rounded-2xl shadow-xl shadow-red-600/20 active:scale-95 transition-all flex items-center justify-center gap-2"
+               >
+                 {isLoading ? (
+                   <>
+                    <div className="w-5 h-5 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    ĐANG TẠO ĐỀ...
+                   </>
+                 ) : 'BẮT ĐẦU CHIẾN'}
+               </button>
+            </div>
+          </div>
+        )}
+
+        {view === 'game' && (
+          <div className="max-w-4xl mx-auto space-y-3 sm:space-y-6 relative">
+            {/* Floating XP animation */}
+            {floatingXp && (
+              <div
+                key={floatingXp.id}
+                className="absolute right-8 top-14 z-50 pointer-events-none float-up"
+              >
+                <span className="text-2xl font-black text-yellow-400 drop-shadow-lg">+{floatingXp.value} XP</span>
+              </div>
+            )}
+            {/* Game info bar - compact on mobile */}
+            <div className="flex items-center gap-2 sm:gap-4 bg-slate-900/50 p-3 sm:p-6 rounded-2xl sm:rounded-[30px] border border-slate-800 backdrop-blur-md">
+              <div className="flex-1 space-y-1 sm:space-y-2 min-w-0">
+                <div className="flex justify-between text-[10px] sm:text-xs font-black uppercase text-slate-500 tracking-tighter">
+                  <div className="flex items-center gap-1 sm:gap-2">
+                    <span className="hidden sm:inline">Tiến độ Đấu Trường</span>
+                    <span className="sm:hidden">Tiến độ</span>
+                    <span className="px-1.5 sm:px-2 py-0.5 bg-red-600/10 border border-red-600/20 rounded text-[8px] sm:text-[9px] text-red-500 font-black">
+                      ×{DIFFICULTY_MULTIPLIERS[selectedDifficulty]}
+                    </span>
+                  </div>
+                  <span className={timeLeft <= 5 ? 'text-red-500 animate-pulse' : ''}>{timeLeft}s</span>
+                </div>
+                <div className="h-2 sm:h-3 bg-slate-950 rounded-full overflow-hidden border border-slate-800">
+                  <div
+                    className={`h-full transition-all duration-1000 ${timeLeft <= 5 ? 'bg-red-500' : timeLeft <= 10 ? 'bg-orange-400' : 'bg-red-600'}`}
+                    style={{ width: `${(timeLeft / QUESTION_TIME_LIMIT) * 100}%` }}
+                  />
+                </div>
+              </div>
+              <div className="text-center px-2 sm:px-4 border-l border-slate-800">
+                 <p className="text-[8px] sm:text-[10px] font-black uppercase text-slate-500">Điểm</p>
+                 <p className="text-lg sm:text-2xl font-black text-white">{gameScore}</p>
+              </div>
+              <div className="text-center px-2 sm:px-4 border-l border-slate-800 relative group cursor-help">
+                 <p className="text-[8px] sm:text-[10px] font-black uppercase text-slate-500">Chuỗi</p>
+                 <p className="text-lg sm:text-2xl font-black text-yellow-500">{currentStreak}🔥</p>
+                 {/* Streak tooltip */}
+                 <div className="absolute bottom-full right-0 mb-2 w-48 bg-slate-800 border border-slate-700 rounded-xl p-3 text-left opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
+                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Chuỗi hiện tại</p>
+                   <p className="text-white font-bold text-sm">🔥 {currentStreak} liên tiếp</p>
+                   <p className="text-slate-500 text-[10px] mt-1">Mỗi chuỗi = +5 XP thưởng cuối trận</p>
+                   <p className="text-yellow-500 text-[10px] mt-0.5">🏆 Cao nhất: {maxStreak}</p>
+                 </div>
+              </div>
+            </div>
+
+            <QuestionCard
+              key={`solo-question-${currentIndex}`}
+              question={currentQuestions[currentIndex]}
+              currentIndex={currentIndex}
+              total={currentQuestions.length}
+              selectedAnswer={selectedAnswer}
+              onSelect={handleAnswer}
+            />
+
+            {selectedAnswer && (
+              <div className="bg-slate-900/90 border-2 border-slate-800 p-3 sm:p-10 rounded-2xl sm:rounded-[40px] animate-in slide-in-from-bottom-8 flex flex-col items-center text-center gap-2 sm:gap-6 shadow-2xl backdrop-blur-xl">
+                <div className={`text-base sm:text-2xl font-black italic uppercase tracking-tighter ${
+                  (() => {
+                    if (selectedAnswer === '__timeout__') return false;
+                    const q = currentQuestions[currentIndex];
+                    if (q.correctAnswers && q.correctAnswers.length > 1) {
+                      const chosen = selectedAnswer.split('|||');
+                      return chosen.length === q.correctAnswers.length && chosen.every(a => q.correctAnswers!.includes(a));
+                    }
+                    return selectedAnswer === q.correctAnswer;
+                  })() ? 'text-green-500' : 'text-red-500'
+                }`}>
+                  {selectedAnswer === '__timeout__' ? '⏱ HẾT GIỜ!' : (() => {
+                    const q = currentQuestions[currentIndex];
+                    const correct = q.correctAnswers && q.correctAnswers.length > 1
+                      ? (() => { const c = selectedAnswer.split('|||'); return c.length === q.correctAnswers!.length && c.every(a => q.correctAnswers!.includes(a)); })()
+                      : selectedAnswer === q.correctAnswer;
+                    return correct ? '✨ TUYỆT VỜI! ✨' : '💔 TIẾC QUÁ...';
+                  })()}
+                </div>
+                <div className="bg-slate-950/50 p-2.5 sm:p-6 rounded-xl sm:rounded-[24px] border border-slate-800/50 w-full max-w-2xl overflow-hidden">
+                  <p className="text-slate-200 font-semibold italic text-xs sm:text-lg leading-relaxed break-words">
+                    "{currentFunExplanation}"
+                  </p>
+                </div>
+                <button
+                  onClick={nextQuestion}
+                  className="px-6 sm:px-14 py-2.5 sm:py-5 bg-red-600 text-white font-black rounded-xl sm:rounded-[20px] shadow-2xl shadow-red-600/40 active:scale-95 transition-all uppercase tracking-widest text-xs sm:text-sm"
+                >
+                  CÂU TIẾP THEO →
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {view === 'results' && gameResults && (
+          <div className="space-y-4">
+            {/* Rank Banner — Top of results */}
+            {myRank > 0 && (
+              <div className={`max-w-6xl mx-auto px-2 sm:px-4 animate-in slide-in-from-top-4 duration-500`}>
+                <div className={`flex items-center gap-4 p-4 rounded-2xl border ${
+                  myRank === 1 ? 'bg-yellow-500/10 border-yellow-500/30' :
+                  myRank <= 3 ? 'bg-amber-600/10 border-amber-600/30' :
+                  myRank <= 10 ? 'bg-blue-600/10 border-blue-600/30' :
+                  'bg-slate-800/50 border-slate-700'
+                }`}>
+                  <span className="text-3xl">{myRank === 1 ? '👑' : myRank <= 3 ? '🏆' : myRank <= 10 ? '⭐' : '🎯'}</span>
+                  <div>
+                    <p className="font-black text-white text-sm">
+                      Thứ hạng tuần này: <span className={myRank <= 3 ? 'text-yellow-400' : 'text-white'}>#{myRank}</span>
+                    </p>
+                    <p className="text-xs text-slate-400">
+                      {myRank === 1 ? '🥇 BẠN ĐỨNG ĐẦU BẢNG XẾP HẠNG TUẦN NÀY!' :
+                       myRank <= 3 ? '🥈🥉 Top 3 bảng xếp hạng tuần — Xuất sắc!' :
+                       myRank <= 10 ? 'Top 10 bảng xếp hạng tuần — Tiếp tục cố lên!' :
+                       'Tiếp tục thi đấu để leo hạng!'}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setView('leaderboard')}
+                    className="ml-auto text-xs font-black text-slate-400 hover:text-white transition-colors whitespace-nowrap"
+                  >
+                    XEM BXH →
+                  </button>
+                </div>
+              </div>
+            )}
+            <ResultAnalytics
+              result={gameResults}
+              analysis={expertAdvice}
+              onClose={() => setView('home')}
+              onPlayAgain={() => startSoloGame()}
+              onChooseTopic={() => setView('solo-config')}
+            />
+          </div>
+        )}
+
+        {view === 'profile' && user && (
+          <ProfilePage
+            user={user}
+            onUpdateAvatar={handleUpdateAvatar}
+            onBack={() => setView('home')}
+            onPracticeTopic={handlePracticeTopic}
+            onViewRewards={() => setView('rewards')}
+            onViewCertificate={() => setView('certificate')}
+          />
+        )}
+
+        {view === 'rewards' && user && (
+          <RewardsPage
+            user={user}
+            onEquipFrame={handleEquipFrame}
+            onBack={() => setView('profile')}
+          />
+        )}
+
+        {view === 'history' && (
+          <HistoryPage
+            history={gameHistory}
+            onBack={() => setView('home')}
+          />
+        )}
+
+        {view === 'lobby' && user && (
+          <MultiplayerLobby
+            user={user}
+            topicsByGrade={topicsByGrade}
+            grades={[9]}
+            onStartGame={handleStartMultiplayerGame}
+            onBack={() => setView('home')}
+          />
+        )}
+
+        {view === 'multiplayer-game' && user && multiplayerState && (
+          <MultiplayerGame
+            user={user}
+            roomCode={roomCode}
+            initialState={multiplayerState}
+            questions={multiplayerQuestions}
+            isHost={isHost}
+            onGameEnd={handleMultiplayerGameEnd}
+            onLeave={handleLeaveMultiplayer}
+          />
+        )}
+
+        {view === 'leaderboard' && (
+          <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6 animate-in fade-in duration-500">
+             <div className="text-center">
+               <h2 className="text-2xl sm:text-4xl font-black italic tracking-tighter">BẢNG VÀNG HỆ THỐNG</h2>
+             </div>
+
+             {/* All-time / Weekly tabs */}
+             <div className="flex gap-2 justify-center">
+               <button
+                 onClick={() => setLeaderboardTab('alltime')}
+                 className={`px-5 py-2 rounded-full font-black text-xs uppercase tracking-widest transition-all ${leaderboardTab === 'alltime' ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
+               >
+                 🏆 Toàn thời gian
+               </button>
+               <button
+                 onClick={() => setLeaderboardTab('weekly')}
+                 className={`px-5 py-2 rounded-full font-black text-xs uppercase tracking-widest transition-all ${leaderboardTab === 'weekly' ? 'bg-amber-500 text-black' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
+               >
+                 ⚡ Tuần này
+               </button>
+             </div>
+
+             {/* Grade Filter — only for all-time */}
+             {leaderboardTab === 'alltime' && (
+               <div className="overflow-x-auto pb-2 -mx-2 px-2">
+                 <div className="flex gap-1.5 sm:gap-2 justify-start sm:justify-center min-w-max sm:min-w-0 sm:flex-wrap">
+                   <button
+                     onClick={() => setLeaderboardGradeFilter('all')}
+                     className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-bold text-xs sm:text-sm transition-all whitespace-nowrap ${leaderboardGradeFilter === 'all' ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
+                   >
+                     Toàn bộ
+                   </button>
+                   {grades.map(grade => (
+                     <button
+                       key={grade}
+                       onClick={() => setLeaderboardGradeFilter(grade)}
+                       className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-bold text-xs sm:text-sm transition-all whitespace-nowrap ${leaderboardGradeFilter === grade ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
+                     >
+                       Khối {grade}
+                     </button>
+                   ))}
+                 </div>
+               </div>
+             )}
+
+             {/* Render leaderboard list (shared logic) */}
+             {(() => {
+               const isWeekly = leaderboardTab === 'weekly';
+               const rawData = isWeekly ? weeklyLeaderboardData : leaderboardData;
+               const isGradeFilter = !isWeekly && leaderboardGradeFilter !== 'all';
+
+               const getDisplayXp = (p: UserProfile) => {
+                 if (isWeekly) return p.weeklyXp || 0;
+                 if (isGradeFilter && p.gradeXp) return p.gradeXp[leaderboardGradeFilter as number] || 0;
+                 return p.xp;
+               };
+
+               const userInList = rawData.some(p => p.id === user.id);
+               const userHasXp = !isGradeFilter || (user.gradeXp && user.gradeXp[leaderboardGradeFilter as number] > 0);
+               let combinedData: UserProfile[] = userInList
+                 ? rawData
+                 : (userHasXp ? [...rawData, user] : rawData);
+
+               combinedData = combinedData.sort((a, b) => getDisplayXp(b) - getDisplayXp(a));
+               if (isGradeFilter) combinedData = combinedData.filter(p => getDisplayXp(p) > 0);
+               if (isWeekly) combinedData = combinedData.filter(p => (p.weeklyXp || 0) > 0);
+
+               const top3 = combinedData.slice(0, 3);
+               const rest = combinedData.slice(3);
+
+               return (
+                 <div className="space-y-4">
+                   {isLoadingLeaderboard ? (
+                     <div className="flex items-center justify-center py-16">
+                       <div className="w-8 h-8 border-4 border-red-600/30 border-t-red-600 rounded-full animate-spin" />
+                       <span className="ml-4 text-slate-400 font-bold">Đang tải...</span>
+                     </div>
+                   ) : combinedData.length === 0 ? (
+                     <div className="text-center py-16">
+                       <p className="text-slate-500 font-bold">Chưa có dữ liệu xếp hạng</p>
+                     </div>
+                   ) : (
+                     <>
+                       {/* Top 3 Podium */}
+                       {top3.length >= 1 && (
+                         <div className="flex items-end justify-center gap-3 sm:gap-6 pt-4 pb-2">
+                           {/* 2nd place */}
+                           {top3[1] && (
+                             <div className="flex flex-col items-center gap-2 mb-2">
+                               <AvatarDisplay avatar={top3[1].avatar} name={top3[1].name} equippedFrame={top3[1].equippedFrame} unlockedFrames={top3[1].unlockedFrames} size="md" />
+                               <p className="text-xs font-black text-white truncate max-w-[72px] text-center">{top3[1].name}</p>
+                               <div className="bg-slate-700 rounded-t-xl w-20 sm:w-24 flex flex-col items-center py-3" style={{ height: '80px' }}>
+                                 <span className="text-2xl">🥈</span>
+                                 <span className="text-xs font-black text-slate-300">{getDisplayXp(top3[1]).toLocaleString()}</span>
+                               </div>
+                             </div>
+                           )}
+                           {/* 1st place */}
+                           <div className="flex flex-col items-center gap-2">
+                             <div className="text-2xl animate-bounce">👑</div>
+                             <AvatarDisplay avatar={top3[0].avatar} name={top3[0].name} equippedFrame={top3[0].equippedFrame} unlockedFrames={top3[0].unlockedFrames} size="lg" />
+                             <p className="text-sm font-black text-white truncate max-w-[88px] text-center">{top3[0].name}</p>
+                             <div className="bg-yellow-500 rounded-t-xl w-24 sm:w-28 flex flex-col items-center py-3" style={{ height: '100px' }}>
+                               <span className="text-3xl">🥇</span>
+                               <span className="text-xs font-black text-black">{getDisplayXp(top3[0]).toLocaleString()}</span>
+                             </div>
+                           </div>
+                           {/* 3rd place */}
+                           {top3[2] && (
+                             <div className="flex flex-col items-center gap-2 mb-4">
+                               <AvatarDisplay avatar={top3[2].avatar} name={top3[2].name} equippedFrame={top3[2].equippedFrame} unlockedFrames={top3[2].unlockedFrames} size="md" />
+                               <p className="text-xs font-black text-white truncate max-w-[72px] text-center">{top3[2].name}</p>
+                               <div className="bg-amber-700 rounded-t-xl w-20 sm:w-24 flex flex-col items-center py-3" style={{ height: '64px' }}>
+                                 <span className="text-2xl">🥉</span>
+                                 <span className="text-xs font-black text-amber-100">{getDisplayXp(top3[2]).toLocaleString()}</span>
+                               </div>
+                             </div>
+                           )}
+                         </div>
+                       )}
+
+                       {/* Rank list from 4th onwards */}
+                       {rest.length > 0 && (
+                         <div className="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-[32px] overflow-hidden shadow-2xl">
+                           {rest.map((p, i) => {
+                             const isMe = p.id === user.id;
+                             const levelConfig = LEVEL_CONFIG.find(c => c.level === p.level);
+                             const displayXp = getDisplayXp(p);
+                             const displayRank = isMe && myRank > 0 ? myRank : i + 4;
+                             return (
+                               <div key={p.id} className={`flex items-center gap-2 sm:gap-4 p-3 sm:p-4 border-b border-slate-800 last:border-0 ${isMe ? 'bg-red-600/5' : ''}`}>
+                                 <div className="w-7 h-7 rounded-full bg-slate-800 text-slate-500 flex items-center justify-center font-black text-xs flex-shrink-0">{displayRank}</div>
+                                 <div className="flex-1 flex items-center gap-2 sm:gap-3 min-w-0">
+                                   <AvatarDisplay avatar={p.avatar} name={p.name} equippedFrame={p.equippedFrame} unlockedFrames={p.unlockedFrames} size="sm" />
+                                   <div className="min-w-0">
+                                     <p className="font-black text-sm truncate">{p.name}{isMe ? ' (Tôi)' : ''}</p>
+                                     <p className="text-[9px] font-black uppercase text-red-500">{p.level}</p>
+                                   </div>
+                                 </div>
+                                 {!isGradeFilter && !isWeekly && (
+                                   <div className="text-center w-10 hidden sm:block flex-shrink-0">
+                                     <p className="font-black text-slate-300">{p.grade}</p>
+                                     <p className="text-[8px] font-black text-slate-500 uppercase">KHỐI</p>
+                                   </div>
+                                 )}
+                                 <div className="text-right flex-shrink-0">
+                                   <p className="font-mono text-sm font-black text-white">{displayXp.toLocaleString()}</p>
+                                   <p className="text-[8px] font-black text-slate-500 uppercase">{isWeekly ? 'XP TUẦN' : 'XP'}</p>
+                                 </div>
+                               </div>
+                             );
+                           })}
+                         </div>
+                       )}
+
+                       {/* My rank banner if not in top 20 */}
+                       {myRank > 20 && (
+                         <div className="bg-red-600/10 border border-red-600/20 rounded-2xl p-4 text-center">
+                           <p className="text-sm font-black text-red-400">Thứ hạng của bạn: #{myRank}</p>
+                         </div>
+                       )}
+                     </>
+                   )}
+                 </div>
+               );
+             })()}
+
+             <button onClick={() => setView('home')} className="w-full py-3 sm:py-5 bg-slate-800 text-white font-black rounded-xl sm:rounded-2xl hover:bg-slate-700 transition-colors text-sm sm:text-base">QUAY LẠI</button>
+          </div>
+        )}
+
+        {view === 'stats' && (
+          <StatsPage onBack={() => setView('home')} />
+        )}
+
+        {view === 'certificate' && user && (
+          <CertificatePage
+            user={user}
+            onBack={() => setView('profile')}
+          />
+        )}
+      </main>
+
+      {/* Frame Unlock Popup */}
+      {showFrameUnlock && newlyUnlockedItems.length > 0 && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <div className="bg-slate-900 border-2 border-purple-500 rounded-[32px] p-8 max-w-sm w-full shadow-2xl text-center animate-in zoom-in-95 duration-300"
+            style={{ boxShadow: '0 0 40px rgba(168,85,247,0.4)' }}>
+            <div className="text-5xl mb-4 animate-bounce">🎉</div>
+            <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-2">MỞ KHÓA THÀNH CÔNG!</h3>
+            <p className="text-slate-400 text-sm mb-6">Bạn đã nhận được phần thưởng mới:</p>
+            <div className="space-y-3 mb-6">
+              {newlyUnlockedItems.map(itemId => {
+                const frame = WEEKLY_FRAMES.find(f => f.items.some(i => i.id === itemId));
+                const item = frame?.items.find(i => i.id === itemId);
+                if (!item || !frame) return null;
+                return (
+                  <div key={itemId} className="flex items-center gap-3 bg-slate-800 rounded-2xl p-3">
+                    <span className="text-2xl">{item.emoji}</span>
+                    <div className="text-left">
+                      <p className="font-black text-white text-sm">{item.name}</p>
+                      <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: frame.color }}>
+                        Tuần {frame.week}: {frame.name}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => { setShowFrameUnlock(false); setView('rewards'); }}
+                className="flex-1 py-3 bg-purple-600 hover:bg-purple-500 text-white font-black rounded-2xl text-sm uppercase tracking-widest transition-all"
+              >
+                XEM KHO
+              </button>
+              <button
+                onClick={() => setShowFrameUnlock(false)}
+                className="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-black rounded-2xl text-sm uppercase tracking-widest transition-all"
+              >
+                ĐÓNG
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default App;

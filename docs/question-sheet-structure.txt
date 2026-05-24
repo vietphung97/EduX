@@ -1,0 +1,187 @@
+# Cấu trúc Google Sheet Câu Hỏi
+
+## Thông tin Sheet
+
+- **Sheet ID**: `1nW-c4Y6mR3dp--E6bVSmByZRFYuP7d5dOzwtyUIAQpU`
+- **Link**: https://docs.google.com/spreadsheets/d/1nW-c4Y6mR3dp--E6bVSmByZRFYuP7d5dOzwtyUIAQpU/edit
+
+---
+
+## Cấu trúc cột
+
+| Cột | Tên cột | Kiểu dữ liệu | Bắt buộc | Mô tả | Ví dụ |
+|-----|---------|--------------|----------|-------|-------|
+| A | **id** | string | ✅ | ID duy nhất (UUID) | `q_6_easy_001` |
+| B | **type** | string | ✅ | Loại câu hỏi | `quiz` |
+| C | **question** | string | ✅ | Nội dung câu hỏi | `What is the capital of Vietnam?` |
+| D | **option1** | string | ✅ | Đáp án 1 | `Hanoi` |
+| E | **option2** | string | ✅ | Đáp án 2 | `Ho Chi Minh City` |
+| F | **option3** | string | ✅ | Đáp án 3 | `Da Nang` |
+| G | **option4** | string | ✅ | Đáp án 4 | `Hue` |
+| H | **correctAnswer** | string | ✅ | Đáp án đúng (phải khớp 1 trong 4 options) | `Hanoi` |
+| I | **funExplanation** | string | ✅ | Giải thích vui (Arena mode) | `Hà Nội là thủ đô ngàn năm văn hiến đó nha!` |
+| J | **seriousExplanation** | string | ✅ | Giải thích nghiêm túc (Study mode) | `Hanoi has been the capital of Vietnam since 1010.` |
+| K | **category** | string | ✅ | Chủ đề/Topic | `My New School` |
+| L | **grade** | number | ✅ | Khối lớp (6-12) | `6` |
+| M | **difficulty** | string | ✅ | Độ khó | `Dễ` |
+| N | **imageUrl** | string | ❌ | URL hình ảnh (để trống nếu không có) | `https://i.imgur.com/abc.jpg` |
+
+---
+
+## Giá trị hợp lệ
+
+### type (Loại câu hỏi)
+
+| Giá trị | Mô tả |
+|---------|-------|
+| `complete` | Điền vào chỗ trống |
+| `word-form` | Chia dạng từ |
+| `odd-one` | Chọn từ khác biệt |
+| `image-quiz` | Câu hỏi có hình ảnh |
+| `quiz` | Trắc nghiệm thông thường |
+| `error-finding` | Tìm lỗi sai |
+| `reorder` | Sắp xếp lại câu |
+| `puzzle` | Câu đố |
+
+### difficulty (Độ khó)
+
+| Giá trị | XP Multiplier |
+|---------|---------------|
+| `Dễ` | ×1.0 |
+| `Trung bình` | ×1.2 |
+| `Khó` | ×1.5 |
+| `Chuyên gia` | ×2.0 |
+
+### grade (Khối lớp)
+
+Giá trị hợp lệ: `6`, `7`, `8`, `9`, `10`, `11`, `12`
+
+### category (Chủ đề theo khối)
+
+| Khối | Chủ đề |
+|------|--------|
+| 6 | My New School, My Home, My Friends, Natural Wonders |
+| 7 | Hobbies, Healthy Living, Music and Arts |
+| 8 | Leisure Time, Life in the Countryside, Lifestyles |
+| 9 | Local Community, City Life, Teen Stress |
+| 10 | Family Life, Environment, Gender Equality |
+| 11 | Generation Gap, Cities of the Future, Global Warming |
+| 12 | Life Stories, Green Living, Cultural Identity |
+
+---
+
+## Ví dụ dữ liệu mẫu
+
+### Câu hỏi thường (không có ảnh)
+
+| Cột | Giá trị |
+|-----|---------|
+| id | `q001` |
+| type | `quiz` |
+| question | `She ___ to school every day.` |
+| option1 | `go` |
+| option2 | `goes` |
+| option3 | `going` |
+| option4 | `gone` |
+| correctAnswer | `goes` |
+| funExplanation | `"She" là ngôi thứ 3 số ít, nên động từ phải thêm "s" nhé bạn ơi!` |
+| seriousExplanation | `Với chủ ngữ ngôi thứ 3 số ít (he/she/it), động từ thường phải thêm "-s" hoặc "-es" ở thì hiện tại đơn.` |
+| category | `My New School` |
+| grade | `6` |
+| difficulty | `Dễ` |
+| imageUrl | *(để trống)* |
+
+### Câu hỏi có hình ảnh
+
+| Cột | Giá trị |
+|-----|---------|
+| id | `q002` |
+| type | `image-quiz` |
+| question | `What is this animal?` |
+| option1 | `Dog` |
+| option2 | `Cat` |
+| option3 | `Bird` |
+| option4 | `Fish` |
+| correctAnswer | `Cat` |
+| funExplanation | `Mèo cute quá đi!` |
+| seriousExplanation | `The image shows a cat, a common domestic pet.` |
+| category | `Natural Wonders` |
+| grade | `6` |
+| difficulty | `Dễ` |
+| imageUrl | `https://i.imgur.com/cat.jpg` |
+
+### Câu hỏi điền vào chỗ trống
+
+| Cột | Giá trị |
+|-----|---------|
+| id | `q003` |
+| type | `complete` |
+| question | `If I ___ (be) you, I would study harder.` |
+| option1 | `am` |
+| option2 | `was` |
+| option3 | `were` |
+| option4 | `is` |
+| correctAnswer | `were` |
+| funExplanation | `Câu điều kiện loại 2 dùng "were" cho tất cả các ngôi, kể cả "I" nhé!` |
+| seriousExplanation | `In Type 2 conditionals, "were" is used for all subjects in the if-clause.` |
+| category | `Lifestyles` |
+| grade | `8` |
+| difficulty | `Trung bình` |
+| imageUrl | *(để trống)* |
+
+### Câu hỏi tìm lỗi sai
+
+| Cột | Giá trị |
+|-----|---------|
+| id | `q004` |
+| type | `error-finding` |
+| question | `She don't like coffee.` |
+| option1 | `She` |
+| option2 | `don't` |
+| option3 | `like` |
+| option4 | `coffee` |
+| correctAnswer | `don't` |
+| funExplanation | `"She" đi với "doesn't" chứ không phải "don't" nha!` |
+| seriousExplanation | `"Don't" is incorrect; with third person singular subjects, use "doesn't".` |
+| category | `Healthy Living` |
+| grade | `7` |
+| difficulty | `Dễ` |
+| imageUrl | *(để trống)* |
+
+---
+
+## Lưu ý quan trọng
+
+### 1. imageUrl
+- Để trống nếu câu hỏi không có hình
+- Nếu `type = "image-quiz"` thì **nên có** imageUrl
+- Dùng link ảnh public:
+  - Imgur: `https://i.imgur.com/xxx.jpg`
+  - Google Drive (public): `https://drive.google.com/uc?id=FILE_ID`
+  - Các hosting ảnh khác có link trực tiếp
+
+### 2. correctAnswer
+- Phải **khớp chính xác** với 1 trong 4 options (option1-4)
+- **Phân biệt hoa thường** (case-sensitive)
+- Ví dụ: nếu option1 là `Hanoi` thì correctAnswer phải là `Hanoi`, không phải `hanoi`
+
+### 3. category
+- Nên khớp với danh sách topics trong sheet Topics để filter hoạt động đúng
+- Xem danh sách topics theo khối ở bảng trên
+
+### 4. Quy tắc đặt id
+- Nên đặt theo format: `q_{grade}_{difficulty}_{số thứ tự}`
+- Ví dụ: `q_6_easy_001`, `q_10_hard_015`
+- Hoặc dùng UUID: `550e8400-e29b-41d4-a716-446655440000`
+
+### 5. Sheet Settings
+- Sheet phải được **share public** (Anyone with the link can view)
+- Để app có thể đọc qua public CSV export
+
+---
+
+## Header Row (Copy vào dòng 1 của Sheet)
+
+```
+id	type	question	option1	option2	option3	option4	correctAnswer	funExplanation	seriousExplanation	category	grade	difficulty	imageUrl
+```

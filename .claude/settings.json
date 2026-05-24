@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c ':*)",
+      "Bash(node -e \"const d = JSON.parse\\(require\\('fs'\\).readFileSync\\('e:/Work/PY/EduX/public/data/k9_questions.json','utf8'\\)\\); console.log\\('Total:', d.length\\); const missing = d.filter\\(q => !q.funExplanation || !q.seriousExplanation\\); console.log\\('Missing explanations:', missing.length\\);\")",
+      "Bash(node scripts/enrich-questions.mjs --mode k9 --limit 3)",
+      "Bash(gh auth *)",
+      "Bash(where git *)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
+    ]
+  }
+}

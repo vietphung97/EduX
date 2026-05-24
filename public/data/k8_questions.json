@@ -1,0 +1,272 @@
+[
+  {
+    "id": "k8_001",
+    "type": "vocabulary",
+    "question": "What does 'inevitable' mean?",
+    "options": [
+      "Unlikely",
+      "Cannot be avoided",
+      "Very expensive",
+      "Extremely fast"
+    ],
+    "correctAnswer": "Cannot be avoided",
+    "funExplanation": "Inevitable = không thể tránh khỏi! Như bài kiểm tra đầu năm - inevitable!",
+    "seriousExplanation": "'Inevitable' có nghĩa là điều chắc chắn xảy ra, không thể tránh khỏi.",
+    "category": "Vocabulary",
+    "grade": 8,
+    "difficulty": "Khó",
+    "instruction": ""
+  },
+  {
+    "id": "k8_002",
+    "type": "grammar",
+    "question": "By the time she arrived, he ___ already ___ dinner.",
+    "options": [
+      "has / eaten",
+      "had / eaten",
+      "was / eating",
+      "will / eat"
+    ],
+    "correctAnswer": "had / eaten",
+    "funExplanation": "Quá khứ hoàn thành = had + V3! Ăn xong TRƯỚC KHI cô ấy đến!",
+    "seriousExplanation": "Thì quá khứ hoàn thành (had + V3) diễn tả hành động xảy ra trước một hành động khác trong quá khứ.",
+    "category": "Grammar",
+    "grade": 8,
+    "difficulty": "Khó",
+    "instruction": ""
+  },
+  {
+    "id": "k8_003",
+    "type": "vocabulary",
+    "question": "Choose the synonym of 'significant':",
+    "options": [
+      "Small",
+      "Important",
+      "Fast",
+      "Dangerous"
+    ],
+    "correctAnswer": "Important",
+    "funExplanation": "Significant = quan trọng! Điểm 10 là a significant achievement!",
+    "seriousExplanation": "'Significant' và 'important' đều có nghĩa là quan trọng, đáng kể.",
+    "category": "Vocabulary",
+    "grade": 8,
+    "difficulty": "Trung bình",
+    "instruction": "Chọn từ đồng nghĩa với:"
+  },
+  {
+    "id": "k8_004",
+    "type": "grammar",
+    "question": "She suggested ___ to the cinema.",
+    "options": [
+      "to go",
+      "going",
+      "go",
+      "goes"
+    ],
+    "correctAnswer": "going",
+    "funExplanation": "Suggest + V-ing! Không phải 'to go' nhé - suggest không thích 'to'!",
+    "seriousExplanation": "Sau 'suggest', dùng V-ing (gerund): suggest + doing something.",
+    "category": "Grammar",
+    "grade": 8,
+    "difficulty": "Trung bình",
+    "instruction": ""
+  },
+  {
+    "id": "k8_005",
+    "type": "vocabulary",
+    "question": "What is the meaning of 'sophisticated'?",
+    "options": [
+      "Simple",
+      "Complex and refined",
+      "Cheap",
+      "Noisy"
+    ],
+    "correctAnswer": "Complex and refined",
+    "funExplanation": "Sophisticated = tinh tế, phức tạp! Một người sophisticated hiểu biết nhiều về văn hóa, nghệ thuật!",
+    "seriousExplanation": "'Sophisticated' có nghĩa là tinh vi, phức tạp, tinh tế - thường chỉ người hiểu biết sâu rộng.",
+    "category": "Vocabulary",
+    "grade": 8,
+    "difficulty": "Khó",
+    "instruction": ""
+  },
+  {
+    "id": "k8_006",
+    "type": "grammar",
+    "question": "I wish I ___ speak French fluently.",
+    "options": [
+      "can",
+      "could",
+      "will",
+      "would"
+    ],
+    "correctAnswer": "could",
+    "funExplanation": "I wish + could/would! Vì đây là điều không có thật ở hiện tại!",
+    "seriousExplanation": "Câu ước (wish): I wish + S + could + V (ước điều không thể/khó có ở hiện tại).",
+    "category": "Grammar",
+    "grade": 8,
+    "difficulty": "Khó",
+    "instruction": ""
+  },
+  {
+    "id": "k8_007",
+    "type": "vocabulary",
+    "question": "Find the antonym of 'transparent':",
+    "options": [
+      "Clear",
+      "Opaque",
+      "Bright",
+      "Thin"
+    ],
+    "correctAnswer": "Opaque",
+    "funExplanation": "Transparent = trong suốt, Opaque = mờ đục - ngược nhau như kính và tường gạch!",
+    "seriousExplanation": "'Transparent' (trong suốt, rõ ràng) và 'opaque' (mờ đục, không trong) là cặp từ trái nghĩa.",
+    "category": "Vocabulary",
+    "grade": 8,
+    "difficulty": "Khó",
+    "instruction": "Chọn từ trái nghĩa với:"
+  },
+  {
+    "id": "k8_008",
+    "type": "grammar",
+    "question": "The report ___ be submitted by Friday.",
+    "options": [
+      "must",
+      "should",
+      "might",
+      "would"
+    ],
+    "correctAnswer": "must",
+    "funExplanation": "'Must' diễn tả nghĩa vụ bắt buộc! Nộp báo cáo là PHẢI làm, không phải tùy ý!",
+    "seriousExplanation": "'Must' diễn tả nghĩa vụ bắt buộc (obligation). 'Should' chỉ khuyên bảo, 'might' chỉ khả năng.",
+    "category": "Grammar",
+    "grade": 8,
+    "difficulty": "Trung bình",
+    "instruction": ""
+  },
+  {
+    "id": "k8_009",
+    "type": "vocabulary",
+    "question": "What does 'procrastinate' mean?",
+    "options": [
+      "Work hard",
+      "Delay doing things",
+      "Organize carefully",
+      "Move quickly"
+    ],
+    "correctAnswer": "Delay doing things",
+    "funExplanation": "Procrastinate = trì hoãn! Ai hay procrastinate thì hay nói 'để mai làm'!",
+    "seriousExplanation": "'Procrastinate' có nghĩa là trì hoãn, hoãn lại việc phải làm sang sau.",
+    "category": "Vocabulary",
+    "grade": 8,
+    "difficulty": "Khó",
+    "instruction": ""
+  },
+  {
+    "id": "k8_010",
+    "type": "grammar",
+    "question": "Not only ___ he late, but he also forgot his homework.",
+    "options": [
+      "was",
+      "is",
+      "were",
+      "had"
+    ],
+    "correctAnswer": "was",
+    "funExplanation": "Not only... but also đảo ngữ với V trước S! Not only WAS he...",
+    "seriousExplanation": "Cấu trúc đảo ngữ với 'Not only...but also': Not only + aux V + S + V.",
+    "category": "Grammar",
+    "grade": 8,
+    "difficulty": "Khó",
+    "instruction": ""
+  },
+  {
+    "id": "k8_011",
+    "type": "vocabulary",
+    "question": "Choose the correct meaning of 'empathy':",
+    "options": [
+      "Feeling angry",
+      "Understanding others' feelings",
+      "Being selfish",
+      "Feeling confused"
+    ],
+    "correctAnswer": "Understanding others' feelings",
+    "funExplanation": "Empathy = đồng cảm! Cảm nhận được cảm xúc của người khác - một kỹ năng rất quý giá!",
+    "seriousExplanation": "'Empathy' là khả năng hiểu và chia sẻ cảm xúc của người khác - sự đồng cảm.",
+    "category": "Vocabulary",
+    "grade": 8,
+    "difficulty": "Trung bình",
+    "instruction": ""
+  },
+  {
+    "id": "k8_012",
+    "type": "grammar",
+    "question": "The book, ___ was written in 1950, is still popular.",
+    "options": [
+      "who",
+      "which",
+      "that",
+      "whose"
+    ],
+    "correctAnswer": "which",
+    "funExplanation": "Mệnh đề quan hệ không xác định với 'which' - không dùng 'that' trong loại này!",
+    "seriousExplanation": "Mệnh đề quan hệ không xác định (non-defining): dùng 'which' cho vật, không dùng 'that'.",
+    "category": "Grammar",
+    "grade": 8,
+    "difficulty": "Khó",
+    "instruction": ""
+  },
+  {
+    "id": "k8_013",
+    "type": "vocabulary",
+    "question": "What does 'ambiguous' mean?",
+    "options": [
+      "Clear and obvious",
+      "Having more than one meaning",
+      "Very simple",
+      "Extremely important"
+    ],
+    "correctAnswer": "Having more than one meaning",
+    "funExplanation": "Ambiguous = mơ hồ, hai nghĩa! Khi ai đó nói điều ambiguous, bạn không chắc họ muốn gì!",
+    "seriousExplanation": "'Ambiguous' có nghĩa là mơ hồ, không rõ ràng, có thể hiểu theo nhiều cách.",
+    "category": "Vocabulary",
+    "grade": 8,
+    "difficulty": "Khó",
+    "instruction": ""
+  },
+  {
+    "id": "k8_014",
+    "type": "grammar",
+    "question": "She ___ for the company for five years before she quit.",
+    "options": [
+      "worked",
+      "has worked",
+      "had worked",
+      "was working"
+    ],
+    "correctAnswer": "had worked",
+    "funExplanation": "Làm việc 5 năm TRƯỚC KHI nghỉ - đó là quá khứ hoàn thành!",
+    "seriousExplanation": "Quá khứ hoàn thành (had + V3) diễn tả hành động hoàn thành trước một thời điểm trong quá khứ.",
+    "category": "Grammar",
+    "grade": 8,
+    "difficulty": "Khó",
+    "instruction": ""
+  },
+  {
+    "id": "k8_015",
+    "type": "vocabulary",
+    "question": "Find the word that means 'to make better':",
+    "options": [
+      "Worsen",
+      "Improve",
+      "Ignore",
+      "Destroy"
+    ],
+    "correctAnswer": "Improve",
+    "funExplanation": "Improve = cải thiện! Mỗi ngày học tiếng Anh là bạn đang improve your English!",
+    "seriousExplanation": "'Improve' có nghĩa là cải thiện, làm tốt hơn. Danh từ: improvement.",
+    "category": "Vocabulary",
+    "grade": 8,
+    "difficulty": "Dễ",
+    "instruction": ""
+  }
+]

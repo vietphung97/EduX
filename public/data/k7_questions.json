@@ -1,0 +1,272 @@
+[
+  {
+    "id": "k7_001",
+    "type": "vocabulary",
+    "question": "What is the meaning of 'enormous'?",
+    "options": [
+      "Very small",
+      "Very large",
+      "Very fast",
+      "Very slow"
+    ],
+    "correctAnswer": "Very large",
+    "funExplanation": "Enormous = khổng lồ! Con voi là enormous, còn con kiến thì tiny!",
+    "seriousExplanation": "'Enormous' là tính từ có nghĩa 'rất lớn, khổng lồ'. Ví dụ: The enormous elephant walked slowly.",
+    "category": "Vocabulary",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": ""
+  },
+  {
+    "id": "k7_002",
+    "type": "grammar",
+    "question": "She ___ to school every day.",
+    "options": [
+      "go",
+      "goes",
+      "going",
+      "gone"
+    ],
+    "correctAnswer": "goes",
+    "funExplanation": "She/He/It luôn đi kèm 's' ở cuối động từ ở hiện tại đơn!",
+    "seriousExplanation": "Chủ ngữ ngôi 3 số ít (she/he/it) + V-s/es ở thì hiện tại đơn.",
+    "category": "Grammar",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": ""
+  },
+  {
+    "id": "k7_003",
+    "type": "vocabulary",
+    "question": "Choose the word that means 'afraid':",
+    "options": [
+      "Brave",
+      "Scared",
+      "Happy",
+      "Tired"
+    ],
+    "correctAnswer": "Scared",
+    "funExplanation": "Scared = hoảng sợ! Khi thấy ma thì bạn là scared!",
+    "seriousExplanation": "'Scared' và 'afraid' đều có nghĩa là 'sợ hãi'. Đây là hai từ đồng nghĩa.",
+    "category": "Vocabulary",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": ""
+  },
+  {
+    "id": "k7_004",
+    "type": "grammar",
+    "question": "They ___ watching TV when I called.",
+    "options": [
+      "was",
+      "were",
+      "are",
+      "is"
+    ],
+    "correctAnswer": "were",
+    "funExplanation": "They/We/You dùng 'were' còn He/She/It dùng 'was' ở quá khứ tiếp diễn!",
+    "seriousExplanation": "Thì quá khứ tiếp diễn: was/were + V-ing. Chủ ngữ số nhiều (they) dùng 'were'.",
+    "category": "Grammar",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": ""
+  },
+  {
+    "id": "k7_005",
+    "type": "vocabulary",
+    "question": "What does 'ancient' mean?",
+    "options": [
+      "New",
+      "Modern",
+      "Very old",
+      "Expensive"
+    ],
+    "correctAnswer": "Very old",
+    "funExplanation": "Ancient = rất cổ xưa! Khủng long là ancient creatures!",
+    "seriousExplanation": "'Ancient' có nghĩa là 'rất cổ, từ thời xa xưa'. Ví dụ: ancient temples, ancient Egypt.",
+    "category": "Vocabulary",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": ""
+  },
+  {
+    "id": "k7_006",
+    "type": "grammar",
+    "question": "___ you ever been to Paris?",
+    "options": [
+      "Did",
+      "Have",
+      "Has",
+      "Do"
+    ],
+    "correctAnswer": "Have",
+    "funExplanation": "'Have you ever' là câu hỏi quen thuộc của thì hiện tại hoàn thành!",
+    "seriousExplanation": "Hiện tại hoàn thành với 'ever': Have + S + ever + V3/ed? Dùng 'have' với I/you/we/they.",
+    "category": "Grammar",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": ""
+  },
+  {
+    "id": "k7_007",
+    "type": "vocabulary",
+    "question": "Find the synonym of 'beautiful':",
+    "options": [
+      "Ugly",
+      "Pretty",
+      "Boring",
+      "Old"
+    ],
+    "correctAnswer": "Pretty",
+    "funExplanation": "Beautiful = Pretty = xinh đẹp! Cả hai đều khen nhan sắc!",
+    "seriousExplanation": "'Beautiful' và 'pretty' đều có nghĩa 'xinh đẹp'. Pretty thường dùng cho người, vật nhỏ xinh.",
+    "category": "Vocabulary",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Chọn từ đồng nghĩa với:"
+  },
+  {
+    "id": "k7_008",
+    "type": "grammar",
+    "question": "This is the book ___ I bought yesterday.",
+    "options": [
+      "who",
+      "whom",
+      "which",
+      "whose"
+    ],
+    "correctAnswer": "which",
+    "funExplanation": "'which' dùng cho vật, 'who' dùng cho người - đơn giản vậy thôi!",
+    "seriousExplanation": "Mệnh đề quan hệ: 'which' dùng cho đồ vật/sự việc, 'who' dùng cho người.",
+    "category": "Grammar",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": ""
+  },
+  {
+    "id": "k7_009",
+    "type": "vocabulary",
+    "question": "What is the opposite of 'noisy'?",
+    "options": [
+      "Loud",
+      "Quiet",
+      "Dark",
+      "Bright"
+    ],
+    "correctAnswer": "Quiet",
+    "funExplanation": "Noisy là ồn ào, Quiet là yên tĩnh - ngược nhau hoàn toàn như ngày và đêm!",
+    "seriousExplanation": "'Noisy' (ồn ào) và 'quiet' (yên tĩnh) là cặp từ trái nghĩa.",
+    "category": "Vocabulary",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Chọn từ trái nghĩa với:"
+  },
+  {
+    "id": "k7_010",
+    "type": "grammar",
+    "question": "If it ___ tomorrow, we will stay home.",
+    "options": [
+      "rain",
+      "rains",
+      "rained",
+      "will rain"
+    ],
+    "correctAnswer": "rains",
+    "funExplanation": "Câu điều kiện loại 1: If + hiện tại đơn, sẽ + động từ nguyên thể!",
+    "seriousExplanation": "Câu điều kiện loại 1 (có thể xảy ra): If + V (hiện tại đơn), will + V nguyên thể.",
+    "category": "Grammar",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": ""
+  },
+  {
+    "id": "k7_011",
+    "type": "vocabulary",
+    "question": "Choose the correct meaning of 'generous':",
+    "options": [
+      "Mean",
+      "Selfish",
+      "Kind and giving",
+      "Angry"
+    ],
+    "correctAnswer": "Kind and giving",
+    "funExplanation": "Generous = hào phóng, rộng rãi! Người generous luôn chia sẻ với mọi người!",
+    "seriousExplanation": "'Generous' có nghĩa là rộng rãi, hào phóng - sẵn sàng cho đi thời gian và tiền bạc.",
+    "category": "Vocabulary",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": ""
+  },
+  {
+    "id": "k7_012",
+    "type": "grammar",
+    "question": "The movie ___ by millions of people last year.",
+    "options": [
+      "watched",
+      "was watched",
+      "watches",
+      "is watching"
+    ],
+    "correctAnswer": "was watched",
+    "funExplanation": "Câu bị động quá khứ đơn: was/were + V3! Movie không tự xem mình, nó được xem!",
+    "seriousExplanation": "Câu bị động thì quá khứ đơn: was/were + past participle (V3).",
+    "category": "Grammar",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": ""
+  },
+  {
+    "id": "k7_013",
+    "type": "vocabulary",
+    "question": "What does 'exhausted' mean?",
+    "options": [
+      "Excited",
+      "Very tired",
+      "Hungry",
+      "Confused"
+    ],
+    "correctAnswer": "Very tired",
+    "funExplanation": "Exhausted = kiệt sức! Sau khi chạy marathon, bạn sẽ cảm thấy exhausted!",
+    "seriousExplanation": "'Exhausted' nghĩa là cực kỳ mệt mỏi, kiệt sức hoàn toàn.",
+    "category": "Vocabulary",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": ""
+  },
+  {
+    "id": "k7_014",
+    "type": "grammar",
+    "question": "He asked me ___ I liked the food.",
+    "options": [
+      "that",
+      "if",
+      "what",
+      "which"
+    ],
+    "correctAnswer": "if",
+    "funExplanation": "Câu hỏi gián tiếp Yes/No dùng 'if' hoặc 'whether'!",
+    "seriousExplanation": "Câu hỏi gián tiếp từ câu hỏi Yes/No: S + asked + if/whether + S + V.",
+    "category": "Grammar",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": ""
+  },
+  {
+    "id": "k7_015",
+    "type": "vocabulary",
+    "question": "Find the word that does NOT belong:",
+    "options": [
+      "Happy",
+      "Joyful",
+      "Cheerful",
+      "Miserable"
+    ],
+    "correctAnswer": "Miserable",
+    "funExplanation": "Happy, Joyful, Cheerful đều vui vẻ, còn Miserable thì khổ sở - đứa lẻ loi!",
+    "seriousExplanation": "Happy, joyful, cheerful đều có nghĩa tích cực (vui vẻ). Miserable có nghĩa tiêu cực (khổ sở, bất hạnh).",
+    "category": "Vocabulary",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": ""
+  }
+]

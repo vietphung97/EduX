@@ -1,0 +1,7 @@
+{
+  "name": "Đấu trường X",
+  "description": "An interactive English learning arena for Vietnamese students (Grades 6-12) featuring solo and group modes, XP progression, and AI-powered performance analysis.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

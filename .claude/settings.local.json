@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir /b \"e:\\\\Work\\\\PY\\\\EduX\")",
+      "Bash(cat:*)",
+      "Bash(dir:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx vite --port 5555)",
+      "Bash(curl -s \"https://dusqryzgijtezwdovkxz.supabase.co/rest/v1/edux_game_history?select=mode,grade,correct_count,total_questions,xp_earned&played_at=gte.2026-05-01T00:00:00Z&limit=5\" -H \"apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1c3FyeXpnaWp0ZXp3ZG92a3h6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMwODM0ODcsImV4cCI6MjA3ODY1OTQ4N30.r6Q-k_hRd4ZoPU3ZIIVNEdzy8oY9IQFdxl5v5zCAhws\" -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1c3FyeXpnaWp0ZXp3ZG92a3h6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMwODM0ODcsImV4cCI6MjA3ODY1OTQ4N30.r6Q-k_hRd4ZoPU3ZIIVNEdzy8oY9IQFdxl5v5zCAhws\")",
+      "Bash(curl -s \"https://dusqryzgijtezwdovkxz.supabase.co/rest/v1/edux_profiles?select=id&limit=1\" -H \"apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1c3FyeXpnaWp0ZXp3ZG92a3h6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMwODM0ODcsImV4cCI6MjA3ODY1OTQ4N30.r6Q-k_hRd4ZoPU3ZIIVNEdzy8oY9IQFdxl5v5zCAhws\" -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1c3FyeXpnaWp0ZXp3ZG92a3h6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMwODM0ODcsImV4cCI6MjA3ODY1OTQ4N30.r6Q-k_hRd4ZoPU3ZIIVNEdzy8oY9IQFdxl5v5zCAhws\" -H \"Prefer: count=exact\" -I)"
+    ]
+  }
+}
