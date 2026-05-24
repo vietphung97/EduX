@@ -30,3 +30,6 @@ nul
 .env
 .env.local
 .env.*.local
+
+# Temp files
+response.json

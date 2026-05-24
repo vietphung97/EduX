@@ -39,7 +39,8 @@ import {
   saveGameHistory as saveGameHistoryToSupabase,
   getGameHistory as getGameHistoryFromSupabase,
   migrateAllUsersGradeXp,
-  getUserRank
+  getUserRank,
+  getWeeklyUserRank
 } from './services/supabase';
 
 // Export migration function to window for one-time console run
@@ -110,6 +111,11 @@ const App: React.FC = () => {
   const [leaderboardTab, setLeaderboardTab] = useState<'alltime' | 'weekly'>('alltime');
   const [myRank, setMyRank] = useState<number>(-1);
 
+  // Weekly rank banner + popup state
+  const [myWeeklyRank, setMyWeeklyRank] = useState<number>(-1);
+  const [weeklyTop5, setWeeklyTop5] = useState<UserProfile[]>([]);
+  const [showRankPopup, setShowRankPopup] = useState(false);
+
   // Frame unlock popup state
   const [newlyUnlockedItems, setNewlyUnlockedItems] = useState<string[]>([]);
   const [showFrameUnlock, setShowFrameUnlock] = useState(false);
@@ -117,6 +123,21 @@ const App: React.FC = () => {
   // Floating XP animation
   const [floatingXp, setFloatingXp] = useState<{ id: number; value: number } | null>(null);
   const floatingXpCounter = React.useRef(0);
+
+  // Fetch weekly rank khi vào home
+  useEffect(() => {
+    if (view === 'home' && user) {
+      const fetchWeeklyRank = async () => {
+        const [rank, top5] = await Promise.all([
+          getWeeklyUserRank(user.id),
+          getWeeklyLeaderboard(5),
+        ]);
+        setMyWeeklyRank(rank);
+        setWeeklyTop5(top5);
+      };
+      fetchWeeklyRank();
+    }
+  }, [view, user]);
 
   // Fetch leaderboard khi vào view leaderboard hoặc đổi filter/tab
   useEffect(() => {
@@ -405,6 +426,19 @@ const App: React.FC = () => {
     setUser(updatedUser);
     localStorage.setItem('arena_x_user', JSON.stringify(updatedUser));
     upsertUserProfile(updatedUser).catch(console.error);
+  };
+
+  const handleSpinResult = (prize: import('./components/LuckySpin').SpinPrize, newSpinsUsed: number) => {
+    if (!user) return;
+    const currentWeek = getCurrentProgramWeek();
+    // Update local state — BE/XP integration sẽ làm sau
+    const updatedUser: UserProfile = {
+      ...user,
+      spinsUsed: newSpinsUsed,
+      lastSpinWeek: currentWeek ?? user.lastSpinWeek,
+    };
+    setUser(updatedUser);
+    localStorage.setItem('arena_x_user', JSON.stringify(updatedUser));
   };
 
   const handlePracticeTopic = (topic: string) => {
@@ -871,6 +905,38 @@ const App: React.FC = () => {
                );
              })()}
 
+             {/* ── Top Banner thứ hạng tuần ── */}
+             {myWeeklyRank > 0 && (
+               <button
+                 onClick={() => setShowRankPopup(true)}
+                 className={`w-full flex items-center gap-4 p-4 rounded-2xl border transition-all hover:scale-[1.01] text-left animate-in fade-in duration-500 ${
+                   myWeeklyRank === 1 ? 'bg-yellow-500/10 border-yellow-500/40 hover:border-yellow-400' :
+                   myWeeklyRank <= 3 ? 'bg-amber-600/10 border-amber-600/40 hover:border-amber-400' :
+                   myWeeklyRank <= 10 ? 'bg-blue-600/10 border-blue-600/40 hover:border-blue-400' :
+                   'bg-slate-800/60 border-slate-700 hover:border-slate-500'
+                 }`}
+               >
+                 <span className="text-3xl shrink-0">
+                   {myWeeklyRank === 1 ? '👑' : myWeeklyRank <= 3 ? '🏆' : myWeeklyRank <= 10 ? '⭐' : '🎯'}
+                 </span>
+                 <div className="flex-1 min-w-0">
+                   <p className="font-black text-white text-sm">
+                     Thứ hạng tuần này:{' '}
+                     <span className={myWeeklyRank <= 3 ? 'text-yellow-400' : myWeeklyRank <= 10 ? 'text-blue-400' : 'text-white'}>
+                       #{myWeeklyRank}
+                     </span>
+                   </p>
+                   <p className="text-xs text-slate-400 truncate">
+                     {myWeeklyRank === 1 ? '🥇 Bạn đang dẫn đầu BXH tuần!' :
+                      myWeeklyRank <= 3 ? '🥈🥉 Top 3 tuần — Xuất sắc!' :
+                      myWeeklyRank <= 10 ? 'Top 10 — Tiếp tục cố lên!' :
+                      `${user.weeklyXp.toLocaleString()} XP tuần này · Bấm để xem BXH`}
+                   </p>
+                 </div>
+                 <span className="text-xs font-black text-slate-500 shrink-0">XEM →</span>
+               </button>
+             )}
+
              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <button
                   onClick={() => setView('solo-config')}
@@ -1170,6 +1236,7 @@ const App: React.FC = () => {
           <RewardsPage
             user={user}
             onEquipFrame={handleEquipFrame}
+            onSpinResult={handleSpinResult}
             onBack={() => setView('profile')}
           />
         )}
@@ -1423,7 +1490,106 @@ const App: React.FC = () => {
                 onClick={() => setShowFrameUnlock(false)}
                 className="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-black rounded-2xl text-sm uppercase tracking-widest transition-all"
               >
-                ĐÓNG
+                Đóng
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Rank Popup */}
+      {showRankPopup && (
+        <div
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-300"
+          onClick={() => setShowRankPopup(false)}
+        >
+          <div
+            className="bg-slate-900 border border-slate-700 rounded-[32px] p-6 max-w-sm w-full shadow-2xl animate-in zoom-in-95 duration-300"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="text-center mb-5">
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">BXH TUẦN NÀY</p>
+              <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-2xl ${
+                myWeeklyRank === 1 ? 'bg-yellow-500/20 border border-yellow-500/40' :
+                myWeeklyRank <= 3 ? 'bg-amber-600/20 border border-amber-600/40' :
+                myWeeklyRank <= 10 ? 'bg-blue-600/20 border border-blue-600/40' :
+                'bg-slate-800 border border-slate-700'
+              }`}>
+                <span className="text-2xl">
+                  {myWeeklyRank === 1 ? '👑' : myWeeklyRank <= 3 ? '🏆' : myWeeklyRank <= 10 ? '⭐' : '🎯'}
+                </span>
+                <div>
+                  <p className="font-black text-white text-lg leading-none">#{myWeeklyRank}</p>
+                  <p className="text-[10px] text-slate-400 font-bold">
+                    {user.weeklyXp.toLocaleString()} XP tuần
+                  </p>
+                </div>
+              </div>
+            </div>
+            {weeklyTop5.length > 0 && (
+              <div className="space-y-2 mb-5">
+                {weeklyTop5.map((p, i) => {
+                  const isMe = p.id === user.id;
+                  const rank = i + 1;
+                  return (
+                    <div
+                      key={p.id}
+                      className={`flex items-center gap-3 px-3 py-2 rounded-xl ${
+                        isMe ? 'bg-red-600/10 border border-red-600/30' : 'bg-slate-800/60'
+                      }`}
+                    >
+                      <span className="text-lg w-7 text-center shrink-0">
+                        {rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`}
+                      </span>
+                      <AvatarDisplay
+                        avatar={p.avatar}
+                        name={p.name}
+                        equippedFrame={p.equippedFrame}
+                        unlockedFrames={p.unlockedFrames}
+                        size="sm"
+                      />
+                      <p className="flex-1 font-black text-sm text-white truncate">
+                        {p.name}{isMe ? ' (Tôi)' : ''}
+                      </p>
+                      <p className="font-mono text-sm font-black text-slate-300 shrink-0">
+                        {p.weeklyXp.toLocaleString()}
+                      </p>
+                    </div>
+                  );
+                })}
+                {myWeeklyRank > 5 && (
+                  <>
+                    <div className="text-center text-slate-700 text-xs font-bold py-1">· · ·</div>
+                    <div className="flex items-center gap-3 px-3 py-2 rounded-xl bg-red-600/10 border border-red-600/30">
+                      <span className="text-sm font-black text-red-400 w-7 text-center shrink-0">#{myWeeklyRank}</span>
+                      <AvatarDisplay
+                        avatar={user.avatar}
+                        name={user.name}
+                        equippedFrame={user.equippedFrame}
+                        unlockedFrames={user.unlockedFrames}
+                        size="sm"
+                      />
+                      <p className="flex-1 font-black text-sm text-white truncate">{user.name} (Tôi)</p>
+                      <p className="font-mono text-sm font-black text-slate-300 shrink-0">
+                        {user.weeklyXp.toLocaleString()}
+                      </p>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+            <div className="flex gap-3">
+              <button
+                onClick={() => { setShowRankPopup(false); setView('leaderboard'); }}
+                className="flex-1 py-3 bg-red-600 hover:bg-red-500 text-white font-black rounded-2xl text-xs uppercase tracking-widest transition-all"
+              >
+                XEM BXH ĐẦY ĐỦ
+              </button>
+              <button
+                onClick={() => setShowRankPopup(false)}
+                className="px-5 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-black rounded-2xl text-xs uppercase tracking-widest transition-all"
+              >
+                Đóng
               </button>
             </div>
           </div>

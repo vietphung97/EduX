@@ -343,6 +343,25 @@ export async function getUserRank(userId: string, gradeFilter?: number): Promise
   }
 }
 
+// Get user's weekly rank
+export async function getWeeklyUserRank(userId: string): Promise<number> {
+  const { data: userData, error: userError } = await supabase
+    .from('edux_profiles')
+    .select('weekly_xp')
+    .eq('id', userId)
+    .single();
+
+  if (userError || !userData) return -1;
+
+  const { count, error } = await supabase
+    .from('edux_profiles')
+    .select('id', { count: 'exact', head: true })
+    .gt('weekly_xp', userData.weekly_xp);
+
+  if (error) return -1;
+  return (count || 0) + 1;
+}
+
 // ============ QUESTIONS (Optional - if you want to store questions in Supabase) ============
 
 export async function fetchQuestionsFromSupabase(

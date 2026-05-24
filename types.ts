@@ -33,26 +33,26 @@ export enum UserLevel {
   LEGEND = 'Huyền thoại'
 }
 
-export type QuestionType = 
-  | 'complete' 
-  | 'word-form' 
-  | 'odd-one' 
-  | 'image-quiz' 
-  | 'quiz' 
-  | 'error-finding' 
-  | 'reorder' 
+export type QuestionType =
+  | 'complete'
+  | 'word-form'
+  | 'odd-one'
+  | 'image-quiz'
+  | 'quiz'
+  | 'error-finding'
+  | 'reorder'
   | 'puzzle';
 
 export interface Question {
   id: string;
   type: QuestionType;
   question: string;
-  instruction?: string; // Đề bài/hướng dẫn riêng (vd: "Chọn từ đồng nghĩa với:")
+  instruction?: string;
   options: string[];
   correctAnswer: string;
-  correctAnswers?: string[]; // For multi-select questions (2+ correct answers)
-  funExplanation: string; // Used in Arena mode (funny/witty)
-  seriousExplanation: string; // Used in Study Review (educational/serious)
+  correctAnswers?: string[];
+  funExplanation: string;
+  seriousExplanation: string;
   imageUrl?: string;
   category: string;
   grade: number;
@@ -91,19 +91,19 @@ export interface GameResult {
 }
 
 export interface FrameItem {
-  id: string;          // e.g., 'w1_a'
-  name: string;        // e.g., 'Huy hiệu Khởi Đầu'
-  emoji: string;       // e.g., '🌱'
-  xpRequired: number;  // Weekly XP để mở khóa
+  id: string;
+  name: string;
+  emoji: string;
+  xpRequired: number;
 }
 
 export interface WeeklyFrame {
-  id: string;         // e.g., 'week_1'
-  week: number;       // 1-8
-  name: string;       // e.g., 'KHỞI ĐẦU'
-  emoji: string;      // e.g., '🌱'
-  color: string;      // hex màu viền
-  glowColor: string;  // rgba cho glow
+  id: string;
+  week: number;
+  name: string;
+  emoji: string;
+  color: string;
+  glowColor: string;
   items: [FrameItem, FrameItem, FrameItem];
 }
 
@@ -112,15 +112,17 @@ export interface UserProfile {
   name: string;
   avatar: string;
   grade: number;
-  xp: number; // Tổng XP (global)
+  xp: number;
   level: UserLevel;
   totalGames: number;
   bestStreak: number;
   weeklyXp: number;
   topicStats?: Record<string, { correct: number; total: number }>;
-  gradeXp?: Record<number, number>; // XP theo từng khối: { 3: 100, 6: 200, ... }
-  unlockedFrames?: string[];  // Array of unlocked item IDs (e.g., ['w1_a', 'w1_b', 'w2_a'])
-  equippedFrame?: string;     // Frame ID đang trang bị (e.g., 'week_1')
+  gradeXp?: Record<number, number>;
+  unlockedFrames?: string[];
+  equippedFrame?: string;
+  spinsUsed?: number;
+  lastSpinWeek?: number;
 }
 
 export interface RoomMember {
@@ -134,7 +136,7 @@ export interface RoomMember {
 
 export interface GameHistory {
   id: string;
-  playedAt: string; // ISO date string
+  playedAt: string;
   grade: number;
   topics: string[];
   difficulty: Difficulty;
@@ -178,7 +180,7 @@ export interface MultiplayerGameState {
     topics: string[];
     difficulty: Difficulty;
     maxPlayers: number;
-    timeLimit: number; // seconds
+    timeLimit: number;
   };
   startedAt?: number;
   endedAt?: number;
