@@ -37,6 +37,12 @@ const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
   const playerId = getPlayerId();
   const [showResults, setShowResults] = useState(false);
   const [finalResults, setFinalResults] = useState<MultiplayerResult[]>([]);
+  const [floatingStreak, setFloatingStreak] = useState<{ id: number; streak: number } | null>(null);
+  const [floatingXp, setFloatingXp] = useState<{ id: number } | null>(null);
+  const [streakPopKey, setStreakPopKey] = useState(0);
+  const floatingStreakCounter = React.useRef(0);
+  const floatingXpCounter = React.useRef(0);
+  const prevStreakRef = React.useRef(0);
 
   const {
     gameState,
@@ -67,6 +73,21 @@ const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
       }
     }
   });
+
+  // Detect streak changes and trigger animations
+  useEffect(() => {
+    const streak = myPlayer?.streak || 0;
+    if (streak > prevStreakRef.current) {
+      floatingStreakCounter.current += 1;
+      setFloatingStreak({ id: floatingStreakCounter.current, streak });
+      setTimeout(() => setFloatingStreak(null), 1000);
+      setStreakPopKey(k => k + 1);
+      floatingXpCounter.current += 1;
+      setFloatingXp({ id: floatingXpCounter.current });
+      setTimeout(() => setFloatingXp(null), 1200);
+    }
+    prevStreakRef.current = streak;
+  }, [myPlayer?.streak]);
 
   // Auto-start game after countdown
   useEffect(() => {
@@ -159,7 +180,16 @@ const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
 
   // Main game view
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6 relative">
+      {/* Floating XP + Streak animation (combined) */}
+      {floatingXp && (
+        <div key={floatingXp.id} className="absolute right-4 top-16 z-50 pointer-events-none float-up flex flex-col items-end gap-0.5">
+          <span className="text-2xl font-black text-yellow-400 drop-shadow-lg">+XP</span>
+          {floatingStreak && floatingStreak.streak >= 2 && (
+            <span className="text-sm font-black text-orange-400 drop-shadow-lg">🔥 STREAK x{floatingStreak.streak}!</span>
+          )}
+        </div>
+      )}
       {/* Game Header */}
       <div className="flex items-center gap-4 bg-slate-900/50 p-4 rounded-[30px] border border-slate-800 backdrop-blur-md">
         {/* Timer & Progress */}
@@ -190,9 +220,15 @@ const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
         </div>
 
         {/* Streak */}
-        <div className="text-center px-4 border-l border-slate-800">
-          <p className="text-[10px] font-black uppercase text-slate-500">Chuỗi</p>
-          <p className="text-2xl font-black text-yellow-500">{myPlayer?.streak || 0}🔥</p>
+        <div className="text-center px-4 border-l border-slate-800 relative group cursor-help">
+          <p className="text-[10px] font-black uppercase text-slate-500">Streak</p>
+          <p key={streakPopKey} className={`text-2xl font-black text-yellow-500${streakPopKey > 0 ? ' streak-pop' : ''}`}>
+            {myPlayer?.streak || 0}🔥
+          </p>
+          <div className="absolute bottom-full right-0 mb-2 w-56 bg-slate-800 border border-slate-700 rounded-xl p-3 text-left opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
+            <p className="text-white font-bold text-xs">Trả lời đúng liên tiếp để nhận XP thưởng.</p>
+            <p className="text-yellow-400 font-black text-xs mt-1">STREAK {myPlayer?.streak || 0} = {myPlayer?.streak || 0}*5XP = {(myPlayer?.streak || 0) * 5}XP</p>
+          </div>
         </div>
       </div>
 

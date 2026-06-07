@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Image Relay</title></head>
+<body>
+<div id="log" style="font-family:monospace;font-size:12px;padding:10px;"></div>
+<script>
+const log = (msg) => { document.getElementById('log').innerHTML += msg + '<br>'; };
+log('Relay ready. Waiting for image blobs...');
+
+window.addEventListener('message', async (e) => {
+  if (!e.data || e.data.type !== 'save-crop') return;
+  const { name, blob } = e.data;
+  try {
+    const resp = await fetch(`/api/save-image?name=${name}`, {
+      method: 'POST', body: blob,
+      headers: { 'Content-Type': 'image/png' }
+    });
+    const txt = await resp.text();
+    log(`✅ ${name}: ${txt}`);
+    e.source?.postMessage({ type: 'saved', name }, '*');
+  } catch(err) {
+    log(`❌ ${name}: ${err.message}`);
+    e.source?.postMessage({ type: 'error', name, error: err.message }, '*');
+  }
+});
+
+window.addEventListener('message', (e) => {
+  if (e.data?.type === 'done') { log('🎉 All crops saved!'); }
+});
+</script>
+</body>
+</html>

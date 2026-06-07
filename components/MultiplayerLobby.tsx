@@ -27,7 +27,7 @@ import {
 } from '../utils/playerSession';
 import { leaveRoom as leaveRoomFromServer } from '../utils/multiplayerSync';
 import { TopicsByGrade } from '../services/sheets';
-import { DIFFICULTY_MULTIPLIERS } from '../utils/gameLogic';
+import { DIFFICULTY_MULTIPLIERS, XP_PER_QUESTION } from '../utils/gameLogic';
 import AvatarDisplay from './AvatarDisplay';
 
 interface MultiplayerLobbyProps {
@@ -358,7 +358,7 @@ const MultiplayerLobby: React.FC<MultiplayerLobbyProps> = ({
                   <span className={`text-[9px] font-black ${
                     selectedDifficulty === d ? 'text-blue-400' : 'text-slate-500'
                   }`}>
-                    ×{DIFFICULTY_MULTIPLIERS[d]}XP
+                    {XP_PER_QUESTION[d]}XP/câu
                   </span>
                 </button>
               ))}

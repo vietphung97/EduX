@@ -1,17 +1,19 @@
 
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef, lazy, Suspense } from 'react';
 import Header from './components/Header';
-import QuestionCard from './components/QuestionCard';
-import ResultAnalytics from './components/ResultAnalytics';
-import ProfilePage from './components/ProfilePage';
-import HistoryPage from './components/HistoryPage';
 import LoginScreen from './components/LoginScreen';
-import MultiplayerLobby from './components/MultiplayerLobby';
-import MultiplayerGame from './components/MultiplayerGame';
-import StatsPage from './components/StatsPage';
-import RewardsPage from './components/RewardsPage';
 import AvatarDisplay from './components/AvatarDisplay';
-import CertificatePage from './components/CertificatePage';
+
+const QuestionCard = lazy(() => import('./components/QuestionCard'));
+const ResultAnalytics = lazy(() => import('./components/ResultAnalytics'));
+const ProfilePage = lazy(() => import('./components/ProfilePage'));
+const HistoryPage = lazy(() => import('./components/HistoryPage'));
+const MultiplayerLobby = lazy(() => import('./components/MultiplayerLobby'));
+const MultiplayerGame = lazy(() => import('./components/MultiplayerGame'));
+const StatsPage = lazy(() => import('./components/StatsPage'));
+const RewardsPage = lazy(() => import('./components/RewardsPage'));
+const CertificatePage = lazy(() => import('./components/CertificatePage'));
+const RoadmapPage = lazy(() => import('./components/RoadmapPage'));
 import {
   Difficulty,
   UserLevel,
@@ -45,7 +47,7 @@ import {
 
 // Export migration function to window for one-time console run
 (window as any).migrateGradeXp = migrateAllUsersGradeXp;
-import { calculateDetailedXp, playSound, getLevelFromXp, generateRoomCode, DIFFICULTY_MULTIPLIERS } from './utils/gameLogic';
+import { calculateDetailedXp, playSound, getLevelFromXp, generateRoomCode, DIFFICULTY_MULTIPLIERS, XP_PER_QUESTION } from './utils/gameLogic';
 import { checkNewUnlocks } from './utils/frameLogic';
 import { generateQuestions, getExpertAnalysis } from './services/gemini';
 import { sendGameResultToEduso, createEndGameParams } from './utils/edusoApi';
@@ -54,7 +56,7 @@ import { getPlayerId, clearActiveRoom, checkRejoinableRoom, updateActiveRoomPhas
 
 const App: React.FC = () => {
   // Navigation & User
-  const [view, setView] = useState<'login' | 'home' | 'solo-config' | 'lobby' | 'game' | 'multiplayer-game' | 'results' | 'leaderboard' | 'profile' | 'history' | 'stats' | 'rewards' | 'certificate'>('login');
+  const [view, setView] = useState<'login' | 'home' | 'solo-config' | 'lobby' | 'game' | 'multiplayer-game' | 'results' | 'leaderboard' | 'profile' | 'history' | 'stats' | 'rewards' | 'certificate' | 'roadmap'>('login');
   const [user, setUser] = useState<UserProfile | null>(null);
   const [edusoUser, setEdusoUser] = useState<EdusoUserData | null>(null);
   const gameStartTime = useRef<Date | null>(null);
@@ -123,6 +125,11 @@ const App: React.FC = () => {
   // Floating XP animation
   const [floatingXp, setFloatingXp] = useState<{ id: number; value: number } | null>(null);
   const floatingXpCounter = React.useRef(0);
+  const [floatingStreak, setFloatingStreak] = useState<{ id: number; streak: number } | null>(null);
+  const floatingStreakCounter = React.useRef(0);
+  const [streakPopKey, setStreakPopKey] = useState(0);
+  const autoAdvanceTimer = React.useRef<number | null>(null);
+  const nextQuestionRef = React.useRef<() => void>(() => {});
 
   // Fetch weekly rank khi vào home
   useEffect(() => {
@@ -527,15 +534,26 @@ const App: React.FC = () => {
       setCurrentStreak(prev => {
         const next = prev + 1;
         if (next > maxStreak) setMaxStreak(next);
+        floatingStreakCounter.current += 1;
+        setFloatingStreak({ id: floatingStreakCounter.current, streak: next });
+        setTimeout(() => setFloatingStreak(null), 1000);
+        setStreakPopKey(k => k + 1);
         return next;
       });
     } else {
       setCurrentStreak(0);
     }
     setCurrentFunExplanation(q.funExplanation);
+    autoAdvanceTimer.current = window.setTimeout(() => {
+      nextQuestionRef.current();
+    }, 1500);
   };
 
   const nextQuestion = () => {
+    if (autoAdvanceTimer.current) {
+      clearTimeout(autoAdvanceTimer.current);
+      autoAdvanceTimer.current = null;
+    }
     // Accumulate time spent on this question
     totalTimeSpent.current += QUESTION_TIME_LIMIT - timeLeft;
     if (currentIndex < currentQuestions.length - 1) {
@@ -546,8 +564,13 @@ const App: React.FC = () => {
       handleGameOver();
     }
   };
+  nextQuestionRef.current = nextQuestion;
 
   const handleGameOver = async () => {
+    if (autoAdvanceTimer.current) {
+      clearTimeout(autoAdvanceTimer.current);
+      autoAdvanceTimer.current = null;
+    }
     // Xóa game state khi kết thúc game
     localStorage.removeItem('arena_x_game_state');
 
@@ -817,9 +840,10 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#0f172a] text-white selection:bg-red-500/30">
-      <Header user={user} onNavigate={setView} />
+      <Header user={user} currentView={view} onNavigate={setView} />
       
       <main className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
+        <Suspense fallback={<div className="flex items-center justify-center py-24"><div className="w-8 h-8 border-4 border-red-600/30 border-t-red-600 rounded-full animate-spin" /></div>}>
         {view === 'home' && (
           <div className="max-w-4xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-700">
              <div className="text-center space-y-6">
@@ -1060,7 +1084,7 @@ const App: React.FC = () => {
                       className={`py-3 rounded-2xl font-bold transition-all flex flex-col items-center justify-center gap-1 ${selectedDifficulty === d ? 'bg-slate-700 border-2 border-red-600 text-white shadow-lg shadow-red-600/10' : 'bg-slate-800 border border-slate-700 text-slate-400 hover:bg-slate-700'}`}
                     >
                       <span className="text-xs">{d}</span>
-                      <span className={`text-[9px] font-black tracking-widest uppercase ${selectedDifficulty === d ? 'text-red-400' : 'text-slate-500'}`}>×{DIFFICULTY_MULTIPLIERS[d]}XP</span>
+                      <span className={`text-[9px] font-black tracking-widest uppercase ${selectedDifficulty === d ? 'text-red-400' : 'text-slate-500'}`}>{XP_PER_QUESTION[d]}XP/câu</span>
                     </button>
                   ))}
                 </div>
@@ -1087,13 +1111,16 @@ const App: React.FC = () => {
 
         {view === 'game' && (
           <div className="max-w-4xl mx-auto space-y-3 sm:space-y-6 relative">
-            {/* Floating XP animation */}
+            {/* Floating XP + Streak animation (combined) */}
             {floatingXp && (
               <div
                 key={floatingXp.id}
-                className="absolute right-8 top-14 z-50 pointer-events-none float-up"
+                className="absolute right-4 top-16 z-50 pointer-events-none float-up flex flex-col items-end gap-0.5"
               >
                 <span className="text-2xl font-black text-yellow-400 drop-shadow-lg">+{floatingXp.value} XP</span>
+                {floatingStreak && floatingStreak.streak >= 2 && (
+                  <span className="text-sm font-black text-orange-400 drop-shadow-lg">🔥 STREAK x{floatingStreak.streak}!</span>
+                )}
               </div>
             )}
             {/* Game info bar - compact on mobile */}
@@ -1104,7 +1131,7 @@ const App: React.FC = () => {
                     <span className="hidden sm:inline">Tiến độ Đấu Trường</span>
                     <span className="sm:hidden">Tiến độ</span>
                     <span className="px-1.5 sm:px-2 py-0.5 bg-red-600/10 border border-red-600/20 rounded text-[8px] sm:text-[9px] text-red-500 font-black">
-                      ×{DIFFICULTY_MULTIPLIERS[selectedDifficulty]}
+                      {XP_PER_QUESTION[selectedDifficulty]}XP/câu
                     </span>
                   </div>
                   <span className={timeLeft <= 5 ? 'text-red-500 animate-pulse' : ''}>{timeLeft}s</span>
@@ -1121,14 +1148,12 @@ const App: React.FC = () => {
                  <p className="text-lg sm:text-2xl font-black text-white">{gameScore}</p>
               </div>
               <div className="text-center px-2 sm:px-4 border-l border-slate-800 relative group cursor-help">
-                 <p className="text-[8px] sm:text-[10px] font-black uppercase text-slate-500">Chuỗi</p>
+                 <p className="text-[8px] sm:text-[10px] font-black uppercase text-slate-500">Streak</p>
                  <p className="text-lg sm:text-2xl font-black text-yellow-500">{currentStreak}🔥</p>
                  {/* Streak tooltip */}
-                 <div className="absolute bottom-full right-0 mb-2 w-48 bg-slate-800 border border-slate-700 rounded-xl p-3 text-left opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
-                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Chuỗi hiện tại</p>
-                   <p className="text-white font-bold text-sm">🔥 {currentStreak} liên tiếp</p>
-                   <p className="text-slate-500 text-[10px] mt-1">Mỗi chuỗi = +5 XP thưởng cuối trận</p>
-                   <p className="text-yellow-500 text-[10px] mt-0.5">🏆 Cao nhất: {maxStreak}</p>
+                 <div className="absolute bottom-full right-0 mb-2 w-56 bg-slate-800 border border-slate-700 rounded-xl p-3 text-left opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
+                   <p className="text-white font-bold text-xs">Trả lời đúng liên tiếp để nhận XP thưởng.</p>
+                   <p className="text-yellow-400 font-black text-xs mt-1">STREAK {currentStreak} = {currentStreak}*5XP = {currentStreak * 5}XP</p>
                  </div>
               </div>
             </div>
@@ -1170,9 +1195,9 @@ const App: React.FC = () => {
                 </div>
                 <button
                   onClick={nextQuestion}
-                  className="px-6 sm:px-14 py-2.5 sm:py-5 bg-red-600 text-white font-black rounded-xl sm:rounded-[20px] shadow-2xl shadow-red-600/40 active:scale-95 transition-all uppercase tracking-widest text-xs sm:text-sm"
+                  className="px-6 sm:px-14 py-2.5 sm:py-5 bg-red-600/80 text-white font-black rounded-xl sm:rounded-[20px] shadow-2xl shadow-red-600/40 active:scale-95 transition-all uppercase tracking-widest text-xs sm:text-sm opacity-70 hover:opacity-100"
                 >
-                  CÂU TIẾP THEO →
+                  NHẤN ĐỂ QUA NGAY →
                 </button>
               </div>
             )}
@@ -1451,6 +1476,15 @@ const App: React.FC = () => {
             onBack={() => setView('profile')}
           />
         )}
+
+        {view === 'roadmap' && user && (
+          <RoadmapPage
+            user={user}
+            onBack={() => setView('home')}
+            onGoRewards={() => setView('rewards')}
+          />
+        )}
+        </Suspense>
       </main>
 
       {/* Frame Unlock Popup */}
@@ -1587,7 +1621,7 @@ const App: React.FC = () => {
               </button>
               <button
                 onClick={() => setShowRankPopup(false)}
-                className="px-5 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-black rounded-2xl text-xs uppercase tracking-widest transition-all"
+                className="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-black rounded-xl text-xs uppercase tracking-widest transition-all border border-slate-700"
               >
                 Đóng
               </button>

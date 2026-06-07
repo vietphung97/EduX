@@ -6,10 +6,11 @@ import AvatarDisplay from './AvatarDisplay';
 
 interface HeaderProps {
   user: UserProfile;
-  onNavigate: (view: 'home' | 'leaderboard' | 'profile' | 'rewards') => void;
+  currentView: string;
+  onNavigate: (view: 'home' | 'leaderboard' | 'profile' | 'rewards' | 'roadmap') => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ user, onNavigate }) => {
+const Header: React.FC<HeaderProps> = ({ user, currentView, onNavigate }) => {
   const levelData = getLevelFromXp(user.xp);
 
   return (
@@ -27,8 +28,10 @@ const Header: React.FC<HeaderProps> = ({ user, onNavigate }) => {
         </div>
 
         <nav className="hidden md:flex items-center gap-6 text-sm font-semibold uppercase tracking-wider text-slate-400">
-          <button onClick={() => onNavigate('home')} className="hover:text-red-500 transition-colors">Trang chủ</button>
-          <button onClick={() => onNavigate('leaderboard')} className="hover:text-red-500 transition-colors">Xếp hạng</button>
+          <button onClick={() => onNavigate('home')} className={`hover:text-red-500 transition-colors ${currentView === 'home' ? 'text-red-400 font-black' : ''}`}>Trang chủ</button>
+          <button onClick={() => onNavigate('roadmap')} className={`hover:text-red-500 transition-colors ${currentView === 'roadmap' ? 'text-red-400 font-black' : ''}`}>Lộ trình</button>
+          <button onClick={() => onNavigate('rewards')} className={`hover:text-red-500 transition-colors ${currentView === 'rewards' ? 'text-red-400 font-black' : ''}`}>Quà tặng</button>
+          <button onClick={() => onNavigate('leaderboard')} className={`hover:text-red-500 transition-colors ${currentView === 'leaderboard' ? 'text-red-400 font-black' : ''}`}>Xếp hạng</button>
         </nav>
 
         <div

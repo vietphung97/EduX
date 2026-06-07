@@ -79,20 +79,16 @@ const ResultAnalytics: React.FC<ResultAnalyticsProps> = ({ result, analysis, onC
 
           <div className="flex-1 flex flex-col justify-center space-y-2 sm:space-y-3">
              <div className="flex justify-between items-center py-1.5 sm:py-2 border-b border-slate-800/50">
-                <span className="text-[10px] sm:text-xs font-bold text-slate-400">XP cơ bản</span>
-                <span className="text-xs sm:text-sm font-black text-white">{xpBreakdown.baseXp}</span>
+                <span className="text-[10px] sm:text-xs font-bold text-slate-400">Câu đúng × XP/câu</span>
+                <span className="text-xs sm:text-sm font-black text-white">+{xpBreakdown.correctXp}</span>
              </div>
              <div className="flex justify-between items-center py-1.5 sm:py-2 border-b border-slate-800/50">
-                <span className="text-[10px] sm:text-xs font-bold text-slate-400">Hệ số cấp độ</span>
-                <span className="text-xs sm:text-sm font-black text-red-500">×{xpBreakdown.multiplier}</span>
-             </div>
-             <div className="flex justify-between items-center py-1.5 sm:py-2 border-b border-slate-800/50">
-                <span className="text-[10px] sm:text-xs font-bold text-slate-400">XP sau nhân hệ số</span>
-                <span className="text-xs sm:text-sm font-black text-white">{xpBreakdown.multipliedXp}</span>
+                <span className="text-[10px] sm:text-xs font-bold text-slate-400">Streak cao nhất × 5XP</span>
+                <span className="text-xs sm:text-sm font-black text-orange-400">+{xpBreakdown.streakBonus}</span>
              </div>
              {xpBreakdown.rankBonus > 0 && (
                <div className="flex justify-between items-center py-1.5 sm:py-2 border-b border-slate-800/50">
-                  <span className="text-[10px] sm:text-xs font-bold text-slate-400">Thưởng thứ hạng</span>
+                  <span className="text-[10px] sm:text-xs font-bold text-slate-400">Thưởng xếp hạng #1</span>
                   <span className="text-xs sm:text-sm font-black text-green-500">+{xpBreakdown.rankBonus}</span>
                </div>
              )}

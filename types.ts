@@ -66,11 +66,14 @@ export interface UserAnswer {
 }
 
 export interface XpBreakdown {
+  correctXp: number;
+  streakBonus: number;
+  rankBonus: number;
+  totalXp: number;
+  // legacy fields kept for backward compat
   baseXp: number;
   multiplier: number;
   multipliedXp: number;
-  rankBonus: number;
-  totalXp: number;
 }
 
 export interface GameResult {

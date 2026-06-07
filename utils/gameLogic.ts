@@ -10,7 +10,7 @@ export const DIFFICULTY_MULTIPLIERS: Record<string, number> = {
 };
 
 // XP cố định mỗi câu đúng theo độ khó (theo spec chương trình hè)
-const XP_PER_QUESTION: Record<string, number> = {
+export const XP_PER_QUESTION: Record<string, number> = {
   [Difficulty.EASY]: 10,
   [Difficulty.MEDIUM]: 12,
   [Difficulty.HARD]: 15,
@@ -26,17 +26,19 @@ const XP_PER_QUESTION: Record<string, number> = {
 export const calculateDetailedXp = (correct: number, maxStreak: number, difficulty: Difficulty, rankBonus: number = 0): XpBreakdown => {
   const xpPerQ = XP_PER_QUESTION[difficulty] || 10;
   const multiplier = DIFFICULTY_MULTIPLIERS[difficulty] || 1.0;
-  const baseXp = correct * xpPerQ;       // XP từ câu hỏi (đã theo độ khó)
-  const streakBonus = maxStreak * 5;     // Streak bonus (phẳng, không nhân)
-  const multipliedXp = baseXp;           // Không nhân thêm vì đã dùng XP/câu đúng
-  const totalXp = baseXp + streakBonus + rankBonus;
+  const correctXp = correct * xpPerQ;
+  const streakBonus = maxStreak * 5;
+  const totalXp = correctXp + streakBonus + rankBonus;
 
   return {
-    baseXp: baseXp + streakBonus,
+    correctXp,
+    streakBonus,
+    rankBonus,
+    totalXp,
+    // legacy
+    baseXp: correctXp + streakBonus,
     multiplier,
     multipliedXp: totalXp,
-    rankBonus,
-    totalXp
   };
 };
 

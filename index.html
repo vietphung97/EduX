@@ -21,6 +21,23 @@
         .float-up {
             animation: floatUp 1.2s ease-out forwards;
         }
+        @keyframes floatUpStreak {
+            0%   { opacity: 1; transform: translateY(0) scale(1); }
+            40%  { opacity: 1; transform: translateY(-30px) scale(1.2); }
+            100% { opacity: 0; transform: translateY(-60px) scale(0.9); }
+        }
+        .float-up-streak {
+            animation: floatUpStreak 1.0s ease-out forwards;
+        }
+        @keyframes streakPop {
+            0%   { transform: scale(1); }
+            40%  { transform: scale(1.4); }
+            70%  { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+        .streak-pop {
+            animation: streakPop 0.4s ease-out forwards;
+        }
     </style>
 <script type="importmap">
 {

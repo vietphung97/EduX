@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Crop Mockup Images</title>
+<style>
+  body { background:#111; color:#eee; font-family:monospace; padding:20px; }
+  #log { margin-top:16px; font-size:13px; line-height:1.8; }
+  button { background:#e11d48; color:#fff; border:none; padding:12px 24px; font-size:16px; border-radius:8px; cursor:pointer; margin-bottom:16px; }
+  button:hover { background:#be123c; }
+  .ok { color:#4ade80; }
+  .err { color:#f87171; }
+  img { max-width:200px; margin:4px; border:1px solid #333; }
+  #preview { margin-top:16px; display:flex; flex-wrap:wrap; gap:8px; }
+</style>
+</head>
+<body>
+<h2>🖼️ Crop ảnh mockup Lộ trình</h2>
+<p>Page này sẽ tự động crop 12 phần từ ảnh mockup và lưu vào <code>public/roadmap/</code></p>
+
+<button onclick="startCrop()">▶️ Bắt đầu Crop & Lưu</button>
+<div id="log"></div>
+<div id="preview"></div>
+
+<script>
+const IMG_URL = 'https://drive.google.com/u/0/drive-viewer/AKGpihZ4HSAWj1bL85W-iogzJEIuJ7hp9ZUsExmlwORtfPjlfiZGZ-3DZBg-CxvzA1IlwtxobMoez0oTu31ZKoKGfT9_inXiRjqy28s=s1600-rw-v1?auditContext=forDisplay';
+
+const CROPS = [
+  { name: 'hero.png',    x: 480, y: 50,  w: 595, h: 285 },
+  { name: 'step1.png',   x: 48,  y: 420, w: 120, h: 130 },
+  { name: 'step2.png',   x: 290, y: 395, w: 165, h: 155 },
+  { name: 'step3.png',   x: 825, y: 425, w: 115, h: 125 },
+  { name: 'week1.png',   x: 30,  y: 815, w: 124, h: 220 },
+  { name: 'week2.png',   x: 163, y: 815, w: 124, h: 220 },
+  { name: 'week3.png',   x: 296, y: 815, w: 124, h: 220 },
+  { name: 'week4.png',   x: 429, y: 815, w: 124, h: 220 },
+  { name: 'week5.png',   x: 562, y: 815, w: 124, h: 220 },
+  { name: 'week6.png',   x: 695, y: 815, w: 124, h: 220 },
+  { name: 'week7.png',   x: 828, y: 815, w: 124, h: 220 },
+  { name: 'week8.png',   x: 961, y: 815, w: 124, h: 220 },
+];
+
+const log = (msg, cls='') => {
+  const el = document.getElementById('log');
+  el.innerHTML += `<div class="${cls}">${msg}</div>`;
+};
+
+async function startCrop() {
+  document.querySelector('button').disabled = true;
+  log('⏳ Đang tải ảnh mockup...');
+
+  // Load image với crossOrigin
+  const img = new Image();
+  img.crossOrigin = 'use-credentials';
+
+  await new Promise((resolve, reject) => {
+    img.onload = () => { log(`✅ Ảnh loaded: ${img.naturalWidth}x${img.naturalHeight}`, 'ok'); resolve(); };
+    img.onerror = () => {
+      // Thử lại không có crossOrigin
+      log('⚠️ CORS thất bại, thử không credentials...');
+      const img2 = new Image();
+      img2.onload = () => { Object.assign(img, { src: img2.src, naturalWidth: img2.naturalWidth, naturalHeight: img2.naturalHeight }); img._el = img2; log(`✅ Ảnh loaded (no-cors): ${img2.naturalWidth}x${img2.naturalHeight}`, 'ok'); resolve(); };
+      img2.onerror = () => reject(new Error('Không tải được ảnh - hãy copy URL mới từ Drive'));
+      img2.src = IMG_URL;
+    };
+    img.src = IMG_URL;
+  }).catch(e => { log('❌ ' + e.message, 'err'); throw e; });
+
+  const srcImg = img._el || img;
+
+  log('🔪 Bắt đầu crop...');
+  let success = 0;
+  for (const c of CROPS) {
+    const canvas = document.createElement('canvas');
+    canvas.width = c.w; canvas.height = c.h;
+    try {
+      canvas.getContext('2d').drawImage(srcImg, c.x, c.y, c.w, c.h, 0, 0, c.w, c.h);
+    } catch(e) {
+      log(`❌ ${c.name}: Canvas tainted (CORS) - ${e.message}`, 'err');
+      continue;
+    }
+
+    // Preview
+    const previewCanvas = document.createElement('canvas');
+    previewCanvas.width = Math.min(c.w, 80); previewCanvas.height = Math.round(c.h * 80/c.w);
+    previewCanvas.getContext('2d').drawImage(canvas, 0, 0, previewCanvas.width, previewCanvas.height);
+    previewCanvas.title = c.name;
+    previewCanvas.style.cssText = 'border:1px solid #333;border-radius:4px';
+    document.getElementById('preview').appendChild(previewCanvas);
+
+    const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+    try {
+      const resp = await fetch(`/api/save-image?name=${c.name}`, { method: 'POST', body: blob });
+      const txt = await resp.text();
+      log(`✅ ${c.name} → ${txt}`, 'ok');
+      success++;
+    } catch(e) {
+      log(`❌ ${c.name}: ${e.message}`, 'err');
+    }
+  }
+
+  log(`<br>🎉 Xong: ${success}/${CROPS.length} ảnh đã lưu vào <b>public/roadmap/</b>`);
+  if (success === CROPS.length) {
+    log('✅ Tất cả ảnh sẵn sàng! Bây giờ cập nhật RoadmapPage.tsx để dùng ảnh thật.', 'ok');
+  }
+  document.querySelector('button').disabled = false;
+}
+</script>
+</body>
+</html>
