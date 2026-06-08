@@ -129,6 +129,9 @@ const App: React.FC = () => {
   const floatingStreakCounter = React.useRef(0);
   const [streakPopKey, setStreakPopKey] = useState(0);
   const autoAdvanceTimer = React.useRef<number | null>(null);
+  const autoAdvanceCountdown = React.useRef<number | null>(null);
+  const [advanceCountdown, setAdvanceCountdown] = useState<number>(0);
+  const explanationRef = React.useRef<HTMLDivElement>(null);
   const nextQuestionRef = React.useRef<() => void>(() => {});
 
   // Fetch weekly rank khi vào home
@@ -363,7 +366,7 @@ const App: React.FC = () => {
               setSessionAnswers(sa => [...sa, { questionId: q.id, selectedOption: '__timeout__', isCorrect: false }]);
               setCurrentStreak(0);
               setCurrentFunExplanation(q.funExplanation);
-              // Auto-advance after a short delay
+              // Auto-advance after delay (4s for reading explanation)
               setTimeout(() => {
                 if (currentIndex < currentQuestions.length - 1) {
                   setCurrentIndex(ci => ci + 1);
@@ -372,7 +375,7 @@ const App: React.FC = () => {
                 } else {
                   handleGameOver();
                 }
-              }, 1500);
+              }, 4000);
             }
             return 0;
           }
@@ -544,9 +547,21 @@ const App: React.FC = () => {
       setCurrentStreak(0);
     }
     setCurrentFunExplanation(q.funExplanation);
+    // Auto-scroll to explanation & start visible countdown
+    setTimeout(() => explanationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+    setAdvanceCountdown(4);
+    autoAdvanceCountdown.current = window.setInterval(() => {
+      setAdvanceCountdown(prev => {
+        if (prev <= 1) {
+          if (autoAdvanceCountdown.current) clearInterval(autoAdvanceCountdown.current);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
     autoAdvanceTimer.current = window.setTimeout(() => {
       nextQuestionRef.current();
-    }, 1500);
+    }, 4000);
   };
 
   const nextQuestion = () => {
@@ -554,6 +569,11 @@ const App: React.FC = () => {
       clearTimeout(autoAdvanceTimer.current);
       autoAdvanceTimer.current = null;
     }
+    if (autoAdvanceCountdown.current) {
+      clearInterval(autoAdvanceCountdown.current);
+      autoAdvanceCountdown.current = null;
+    }
+    setAdvanceCountdown(0);
     // Accumulate time spent on this question
     totalTimeSpent.current += QUESTION_TIME_LIMIT - timeLeft;
     if (currentIndex < currentQuestions.length - 1) {
@@ -842,7 +862,7 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-[#0f172a] text-white selection:bg-red-500/30">
       <Header user={user} currentView={view} onNavigate={setView} />
       
-      <main className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
+      <main className="container mx-auto px-2 sm:px-4 py-4 sm:py-8 pb-16 md:pb-8">
         <Suspense fallback={<div className="flex items-center justify-center py-24"><div className="w-8 h-8 border-4 border-red-600/30 border-t-red-600 rounded-full animate-spin" /></div>}>
         {view === 'home' && (
           <div className="max-w-4xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-700">
@@ -850,10 +870,10 @@ const App: React.FC = () => {
                 <div className="inline-block px-4 py-1.5 bg-red-600/10 border border-red-600/50 rounded-full text-red-500 text-xs font-black uppercase tracking-widest">
                   Đấu trường X
                 </div>
-                <h2 className="text-6xl md:text-8xl font-black tracking-tighter italic uppercase text-white leading-none">
+                <h2 className="text-4xl sm:text-5xl md:text-8xl font-black tracking-tighter italic uppercase text-white leading-none">
                   TÌM X <br/> <span className="text-red-600">TÌM BẢN LĨNH</span>
                 </h2>
-                <p className="text-slate-400 text-xl font-medium max-w-2xl mx-auto">
+                <p className="text-slate-400 text-base sm:text-lg md:text-xl font-medium max-w-2xl mx-auto">
                   Vượt qua áp lực thời gian, chinh phục bảng xếp hạng và trở thành Huyền thoại Tiếng Anh X.
                 </p>
              </div>
@@ -961,7 +981,8 @@ const App: React.FC = () => {
                </button>
              )}
 
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+             {/* Desktop: large cards side by side */}
+             <div className="hidden md:grid grid-cols-2 gap-8">
                 <button
                   onClick={() => setView('solo-config')}
                   className="relative group overflow-hidden bg-slate-900 border border-slate-800 p-10 rounded-[40px] hover:border-red-600 transition-all text-left shadow-2xl"
@@ -984,6 +1005,33 @@ const App: React.FC = () => {
                   <div className="flex items-center gap-2 text-blue-500 font-bold uppercase tracking-widest text-sm">
                     THÁCH ĐẤU NGAY <span className="group-hover:translate-x-2 transition-transform">→</span>
                   </div>
+                </button>
+             </div>
+
+             {/* Mobile: compact list rows with chevron */}
+             <div className="md:hidden flex flex-col gap-3">
+                <button
+                  onClick={() => setView('solo-config')}
+                  className="flex items-center gap-4 bg-slate-900 border border-slate-800 p-4 rounded-2xl hover:border-red-600/50 transition-all text-left group"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-red-600/10 border border-red-600/20 flex items-center justify-center text-2xl flex-shrink-0">🎯</div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-base font-black text-white uppercase">Đấu hạng</h3>
+                    <p className="text-slate-500 text-xs mt-0.5">15 câu hỏi · 5 phút · Leo rank</p>
+                  </div>
+                  <span className="text-red-500 font-bold text-lg group-hover:translate-x-1 transition-transform flex-shrink-0">›</span>
+                </button>
+
+                <button
+                  onClick={() => setView('lobby')}
+                  className="flex items-center gap-4 bg-slate-900 border border-slate-800 p-4 rounded-2xl hover:border-blue-500/50 transition-all text-left group"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-blue-600/10 border border-blue-600/20 flex items-center justify-center text-2xl flex-shrink-0">👥</div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-base font-black text-white uppercase">Thách đấu</h3>
+                    <p className="text-slate-500 text-xs mt-0.5">Thách đấu bạn bè · Tích lũy XP</p>
+                  </div>
+                  <span className="text-blue-500 font-bold text-lg group-hover:translate-x-1 transition-transform flex-shrink-0">›</span>
                 </button>
              </div>
 
@@ -1111,18 +1159,7 @@ const App: React.FC = () => {
 
         {view === 'game' && (
           <div className="max-w-4xl mx-auto space-y-3 sm:space-y-6 relative">
-            {/* Floating XP + Streak animation (combined) */}
-            {floatingXp && (
-              <div
-                key={floatingXp.id}
-                className="absolute right-4 top-16 z-50 pointer-events-none float-up flex flex-col items-end gap-0.5"
-              >
-                <span className="text-2xl font-black text-yellow-400 drop-shadow-lg">+{floatingXp.value} XP</span>
-                {floatingStreak && floatingStreak.streak >= 2 && (
-                  <span className="text-sm font-black text-orange-400 drop-shadow-lg">🔥 STREAK x{floatingStreak.streak}!</span>
-                )}
-              </div>
-            )}
+            {/* Floating XP + Streak — rendered inside score div below */}
             {/* Game info bar - compact on mobile */}
             <div className="flex items-center gap-2 sm:gap-4 bg-slate-900/50 p-3 sm:p-6 rounded-2xl sm:rounded-[30px] border border-slate-800 backdrop-blur-md">
               <div className="flex-1 space-y-1 sm:space-y-2 min-w-0">
@@ -1143,13 +1180,35 @@ const App: React.FC = () => {
                   />
                 </div>
               </div>
-              <div className="text-center px-2 sm:px-4 border-l border-slate-800">
+              <div className="text-center px-2 sm:px-4 border-l border-slate-800 relative">
                  <p className="text-[8px] sm:text-[10px] font-black uppercase text-slate-500">Điểm</p>
-                 <p className="text-lg sm:text-2xl font-black text-white">{gameScore}</p>
+                 <p className="text-lg sm:text-2xl font-black text-white relative">
+                   {gameScore}
+                   {/* Floating +XP — starts at score number, floats up */}
+                   {floatingXp && (
+                     <span
+                       key={floatingXp.id}
+                       className="absolute left-1/2 -translate-x-1/2 bottom-full z-50 pointer-events-none float-up"
+                     >
+                       <span className="text-lg sm:text-2xl font-black text-yellow-400 drop-shadow-lg whitespace-nowrap">+{floatingXp.value} XP</span>
+                     </span>
+                   )}
+                 </p>
               </div>
               <div className="text-center px-2 sm:px-4 border-l border-slate-800 relative group cursor-help">
                  <p className="text-[8px] sm:text-[10px] font-black uppercase text-slate-500">Streak</p>
-                 <p className="text-lg sm:text-2xl font-black text-yellow-500">{currentStreak}🔥</p>
+                 <p className="text-lg sm:text-2xl font-black text-yellow-500 relative">
+                   {currentStreak}🔥
+                   {/* Floating streak — starts at streak number, floats up */}
+                   {floatingStreak && floatingStreak.streak >= 2 && floatingXp && (
+                     <span
+                       key={`streak-${floatingXp.id}`}
+                       className="absolute left-1/2 -translate-x-1/2 bottom-full z-50 pointer-events-none float-up"
+                     >
+                       <span className="text-sm sm:text-base font-black text-orange-400 drop-shadow-lg whitespace-nowrap">🔥 STREAK x{floatingStreak.streak}!</span>
+                     </span>
+                   )}
+                 </p>
                  {/* Streak tooltip */}
                  <div className="absolute bottom-full right-0 mb-2 w-56 bg-slate-800 border border-slate-700 rounded-xl p-3 text-left opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
                    <p className="text-white font-bold text-xs">Trả lời đúng liên tiếp để nhận XP thưởng.</p>
@@ -1168,7 +1227,7 @@ const App: React.FC = () => {
             />
 
             {selectedAnswer && (
-              <div className="bg-slate-900/90 border-2 border-slate-800 p-3 sm:p-10 rounded-2xl sm:rounded-[40px] animate-in slide-in-from-bottom-8 flex flex-col items-center text-center gap-2 sm:gap-6 shadow-2xl backdrop-blur-xl">
+              <div ref={explanationRef} className="bg-slate-900/90 border-2 border-slate-800 p-3 sm:p-10 rounded-2xl sm:rounded-[40px] animate-in slide-in-from-bottom-8 flex flex-col items-center text-center gap-2 sm:gap-6 shadow-2xl backdrop-blur-xl">
                 <div className={`text-base sm:text-2xl font-black italic uppercase tracking-tighter ${
                   (() => {
                     if (selectedAnswer === '__timeout__') return false;
@@ -1197,7 +1256,7 @@ const App: React.FC = () => {
                   onClick={nextQuestion}
                   className="px-6 sm:px-14 py-2.5 sm:py-5 bg-red-600/80 text-white font-black rounded-xl sm:rounded-[20px] shadow-2xl shadow-red-600/40 active:scale-95 transition-all uppercase tracking-widest text-xs sm:text-sm opacity-70 hover:opacity-100"
                 >
-                  NHẤN ĐỂ QUA NGAY →
+                  {advanceCountdown > 0 ? `QUA NGAY (${advanceCountdown}s) →` : 'NHẤN ĐỂ QUA NGAY →'}
                 </button>
               </div>
             )}
@@ -1263,6 +1322,7 @@ const App: React.FC = () => {
             onEquipFrame={handleEquipFrame}
             onSpinResult={handleSpinResult}
             onBack={() => setView('profile')}
+            onNavigate={(v: string) => setView(v as any)}
           />
         )}
 
@@ -1298,20 +1358,20 @@ const App: React.FC = () => {
         {view === 'leaderboard' && (
           <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6 animate-in fade-in duration-500">
              <div className="text-center">
-               <h2 className="text-2xl sm:text-4xl font-black italic tracking-tighter">BẢNG VÀNG HỆ THỐNG</h2>
+               <h2 className="text-lg sm:text-2xl md:text-4xl font-black italic tracking-tighter">BẢNG VÀNG HỆ THỐNG</h2>
              </div>
 
              {/* All-time / Weekly tabs */}
              <div className="flex gap-2 justify-center">
                <button
                  onClick={() => setLeaderboardTab('alltime')}
-                 className={`px-5 py-2 rounded-full font-black text-xs uppercase tracking-widest transition-all ${leaderboardTab === 'alltime' ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
+                 className={`px-3 sm:px-5 py-1.5 sm:py-2 rounded-full font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all ${leaderboardTab === 'alltime' ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
                >
                  🏆 Toàn thời gian
                </button>
                <button
                  onClick={() => setLeaderboardTab('weekly')}
-                 className={`px-5 py-2 rounded-full font-black text-xs uppercase tracking-widest transition-all ${leaderboardTab === 'weekly' ? 'bg-amber-500 text-black' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
+                 className={`px-3 sm:px-5 py-1.5 sm:py-2 rounded-full font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all ${leaderboardTab === 'weekly' ? 'bg-amber-500 text-black' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
                >
                  ⚡ Tuần này
                </button>
@@ -1380,36 +1440,36 @@ const App: React.FC = () => {
                      <>
                        {/* Top 3 Podium */}
                        {top3.length >= 1 && (
-                         <div className="flex items-end justify-center gap-3 sm:gap-6 pt-4 pb-2">
+                         <div className="flex items-end justify-center gap-2 sm:gap-6 pt-2 sm:pt-4 pb-2">
                            {/* 2nd place */}
                            {top3[1] && (
-                             <div className="flex flex-col items-center gap-2 mb-2">
-                               <AvatarDisplay avatar={top3[1].avatar} name={top3[1].name} equippedFrame={top3[1].equippedFrame} unlockedFrames={top3[1].unlockedFrames} size="md" />
-                               <p className="text-xs font-black text-white truncate max-w-[72px] text-center">{top3[1].name}</p>
-                               <div className="bg-slate-700 rounded-t-xl w-20 sm:w-24 flex flex-col items-center py-3" style={{ height: '80px' }}>
-                                 <span className="text-2xl">🥈</span>
-                                 <span className="text-xs font-black text-slate-300">{getDisplayXp(top3[1]).toLocaleString()}</span>
+                             <div className="flex flex-col items-center gap-1 sm:gap-2 mb-2">
+                               <AvatarDisplay avatar={top3[1].avatar} name={top3[1].name} equippedFrame={top3[1].equippedFrame} unlockedFrames={top3[1].unlockedFrames} size="sm" />
+                               <p className="text-[10px] sm:text-xs font-black text-white truncate max-w-[60px] sm:max-w-[72px] text-center">{top3[1].name}</p>
+                               <div className="bg-slate-700 rounded-t-xl w-16 sm:w-24 flex flex-col items-center py-2 sm:py-3" style={{ height: '60px' }}>
+                                 <span className="text-lg sm:text-2xl">🥈</span>
+                                 <span className="text-[10px] sm:text-xs font-black text-slate-300">{getDisplayXp(top3[1]).toLocaleString()}</span>
                                </div>
                              </div>
                            )}
                            {/* 1st place */}
-                           <div className="flex flex-col items-center gap-2">
-                             <div className="text-2xl animate-bounce">👑</div>
-                             <AvatarDisplay avatar={top3[0].avatar} name={top3[0].name} equippedFrame={top3[0].equippedFrame} unlockedFrames={top3[0].unlockedFrames} size="lg" />
-                             <p className="text-sm font-black text-white truncate max-w-[88px] text-center">{top3[0].name}</p>
-                             <div className="bg-yellow-500 rounded-t-xl w-24 sm:w-28 flex flex-col items-center py-3" style={{ height: '100px' }}>
-                               <span className="text-3xl">🥇</span>
-                               <span className="text-xs font-black text-black">{getDisplayXp(top3[0]).toLocaleString()}</span>
+                           <div className="flex flex-col items-center gap-1 sm:gap-2">
+                             <div className="text-lg sm:text-2xl animate-bounce">👑</div>
+                             <AvatarDisplay avatar={top3[0].avatar} name={top3[0].name} equippedFrame={top3[0].equippedFrame} unlockedFrames={top3[0].unlockedFrames} size="md" />
+                             <p className="text-xs sm:text-sm font-black text-white truncate max-w-[72px] sm:max-w-[88px] text-center">{top3[0].name}</p>
+                             <div className="bg-yellow-500 rounded-t-xl w-20 sm:w-28 flex flex-col items-center py-2 sm:py-3" style={{ height: '80px' }}>
+                               <span className="text-xl sm:text-3xl">🥇</span>
+                               <span className="text-[10px] sm:text-xs font-black text-black">{getDisplayXp(top3[0]).toLocaleString()}</span>
                              </div>
                            </div>
                            {/* 3rd place */}
                            {top3[2] && (
-                             <div className="flex flex-col items-center gap-2 mb-4">
-                               <AvatarDisplay avatar={top3[2].avatar} name={top3[2].name} equippedFrame={top3[2].equippedFrame} unlockedFrames={top3[2].unlockedFrames} size="md" />
-                               <p className="text-xs font-black text-white truncate max-w-[72px] text-center">{top3[2].name}</p>
-                               <div className="bg-amber-700 rounded-t-xl w-20 sm:w-24 flex flex-col items-center py-3" style={{ height: '64px' }}>
-                                 <span className="text-2xl">🥉</span>
-                                 <span className="text-xs font-black text-amber-100">{getDisplayXp(top3[2]).toLocaleString()}</span>
+                             <div className="flex flex-col items-center gap-1 sm:gap-2 mb-4">
+                               <AvatarDisplay avatar={top3[2].avatar} name={top3[2].name} equippedFrame={top3[2].equippedFrame} unlockedFrames={top3[2].unlockedFrames} size="sm" />
+                               <p className="text-[10px] sm:text-xs font-black text-white truncate max-w-[60px] sm:max-w-[72px] text-center">{top3[2].name}</p>
+                               <div className="bg-amber-700 rounded-t-xl w-16 sm:w-24 flex flex-col items-center py-2 sm:py-3" style={{ height: '48px' }}>
+                                 <span className="text-lg sm:text-2xl">🥉</span>
+                                 <span className="text-[10px] sm:text-xs font-black text-amber-100">{getDisplayXp(top3[2]).toLocaleString()}</span>
                                </div>
                              </div>
                            )}

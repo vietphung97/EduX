@@ -257,7 +257,7 @@ export function useMultiplayerGame({
     const nextIndex = displayedQuestionIndex + 1;
     const hasMoreQuestions = nextIndex < gameState.questions.length;
 
-    // Show answer feedback for 1.5 seconds
+    // Show answer feedback for 4 seconds (enough time to read explanation)
     setTimeout(() => {
       if (hasMoreQuestions) {
         console.log('[handleAnswer] Step 1: Show loading, hide question. Current:', displayedQuestionIndex);
@@ -269,7 +269,7 @@ export function useMultiplayerGame({
         setSelectedAnswer(null);
         setTransitionState('none');
       }
-    }, 1500);
+    }, 4000);
   }, [gameState, selectedAnswer, displayedQuestionIndex, roomCode, playerId, transitionState]);
 
   // Effect to handle question transition when loading state is active

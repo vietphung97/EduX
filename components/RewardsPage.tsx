@@ -1,10 +1,13 @@
 /**
  * RewardsPage.tsx
- * Hiển thị toàn bộ avatar frames theo tuần chương trình hè.
- * Học sinh có thể xem items đã/chưa unlock, trang bị frame, và quay Lucky Spin.
+ * Trang Quà tặng — theo mockup: 4 sections cuộn liền.
+ * ① XP progress bar với milestones
+ * ② Bộ sưu tập khung avatar (horizontal scroll)
+ * ③ Vòng quay may mắn + giải thưởng
+ * ④ Chứng nhận hoàn thành
  */
 
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
 import { UserProfile } from '../types';
 import { WEEKLY_FRAMES, getCurrentProgramWeek } from '../constants';
 import { getFrameUnlockCount, getCompletedFrames, getNextMilestone } from '../utils/frameLogic';
@@ -16,19 +19,16 @@ interface RewardsPageProps {
   onEquipFrame: (frameId: string | undefined) => void;
   onSpinResult?: (prize: SpinPrize, newSpinsUsed: number) => void;
   onBack: () => void;
+  onNavigate?: (view: string) => void;
 }
 
-const RewardsPage: React.FC<RewardsPageProps> = ({ user, onEquipFrame, onSpinResult, onBack }) => {
+const RewardsPage: React.FC<RewardsPageProps> = ({ user, onEquipFrame, onSpinResult, onBack, onNavigate }) => {
   const unlockedFrames = user.unlockedFrames || [];
   const equippedFrame = user.equippedFrame;
   const currentWeek = getCurrentProgramWeek();
   const completedFrames = new Set(getCompletedFrames(unlockedFrames));
   const nextMilestone = getNextMilestone(user.weeklyXp, unlockedFrames, currentWeek);
-
-  const totalUnlockedItems = unlockedFrames.length;
-  const totalItems = WEEKLY_FRAMES.length * 3;
-
-  const [activeTab, setActiveTab] = useState<'frames' | 'spin'>('frames');
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const spinsUsedThisWeek =
     (user.lastSpinWeek ?? 0) === (currentWeek ?? 0) ? (user.spinsUsed ?? 0) : 0;
@@ -38,251 +38,285 @@ const RewardsPage: React.FC<RewardsPageProps> = ({ user, onEquipFrame, onSpinRes
     onSpinResult?.(prize, newSpinsUsed);
   };
 
+  // Current week frame data
+  const currentFrame = currentWeek ? WEEKLY_FRAMES.find(f => f.week === currentWeek) : null;
+  const weeksCompleted = completedFrames.size;
+
   return (
-    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-500 pb-20 px-4">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl sm:text-4xl font-black italic tracking-tighter uppercase">🏅 KHO PHẦN THƯỞNG</h2>
-          <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-1">
-            {totalUnlockedItems}/{totalItems} items · {completedFrames.size}/8 frames
-          </p>
+    <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-500 pb-20">
+
+      {/* ═══ BANNER ═══ */}
+      <div className="relative overflow-hidden rounded-none sm:rounded-[32px] bg-gradient-to-br from-slate-900 via-slate-900 to-red-950/30 border-b sm:border border-slate-800 px-4 sm:px-10 py-8 sm:py-10">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/5 rounded-full blur-3xl" />
+        <div className="relative flex flex-col sm:flex-row items-start sm:items-center gap-6">
+          <div className="flex-1">
+            <h2 className="text-3xl sm:text-4xl font-black italic tracking-tighter uppercase text-white">
+              QUÀ TẶNG
+            </h2>
+            <p className="text-red-500 font-black text-sm uppercase tracking-widest mt-1">
+              Kho quà Tìm X – Tìm bản lĩnh
+            </p>
+            <p className="text-slate-400 text-xs mt-3 max-w-lg leading-relaxed">
+              Tích lũy XP qua Đấu hạng và Thách đấu để mở khóa khung avatar, quay thưởng may mắn và nhận chứng nhận hoàn thành.
+            </p>
+          </div>
+          <div className="flex gap-3 sm:gap-4">
+            <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-3 sm:p-4 text-center min-w-[80px]">
+              <p className="text-2xl">🖼️</p>
+              <p className="text-[10px] text-slate-400 font-bold mt-1.5 leading-tight">Sưu tập<br/>khung avatar</p>
+            </div>
+            <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-3 sm:p-4 text-center min-w-[80px]">
+              <p className="text-2xl">🎰</p>
+              <p className="text-[10px] text-slate-400 font-bold mt-1.5 leading-tight">Quay thưởng<br/>hàng tuần</p>
+            </div>
+            <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-3 sm:p-4 text-center min-w-[80px]">
+              <p className="text-2xl">📜</p>
+              <p className="text-[10px] text-slate-400 font-bold mt-1.5 leading-tight">Chứng nhận<br/>hoàn thành</p>
+            </div>
+          </div>
         </div>
-        <button
-          onClick={onBack}
-          className="px-4 sm:px-6 py-2 sm:py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-black rounded-xl transition-all text-[10px] sm:text-xs uppercase tracking-widest border border-slate-700"
-        >
-          QUAY LẠI
-        </button>
       </div>
 
-      {/* Tab navigation */}
-      <div className="flex gap-2 bg-slate-900 border border-slate-800 rounded-2xl p-1.5">
-        <button
-          onClick={() => setActiveTab('frames')}
-          className={`flex-1 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${
-            activeTab === 'frames' ? 'bg-slate-700 text-white shadow' : 'text-slate-500 hover:text-slate-300'
-          }`}
-        >
-          🖼️ KHUNG AVATAR
-        </button>
-        <button
-          onClick={() => setActiveTab('spin')}
-          className={`flex-1 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all relative ${
-            activeTab === 'spin' ? 'bg-slate-700 text-white shadow' : 'text-slate-500 hover:text-slate-300'
-          }`}
-        >
-          🎰 VÒNG QUAY
-          {spinsLeft > 0 && (
-            <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 rounded-full text-white text-[9px] font-black flex items-center justify-center animate-bounce">
-              {spinsLeft}
-            </span>
-          )}
-        </button>
-      </div>
-
-      {/* SPIN TAB */}
-      {activeTab === 'spin' && (
-        <LuckySpin user={user} onSpinResult={handleSpinResult} />
-      )}
-
-      {/* FRAMES TAB */}
-      {activeTab === 'frames' && (
-        <>
-          {/* Equipped frame preview */}
-          <div className="bg-slate-900 border border-slate-800 rounded-[32px] p-4 sm:p-8 flex items-center gap-4 sm:gap-8">
-            <AvatarDisplay
-              avatar={user.avatar}
-              name={user.name}
-              equippedFrame={equippedFrame}
-              unlockedFrames={unlockedFrames}
-              size="xl"
-            />
-            <div className="flex-1">
-              <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Frame đang trang bị</p>
-              {equippedFrame ? (
-                <>
-                  {(() => {
-                    const f = WEEKLY_FRAMES.find(f => f.id === equippedFrame);
-                    if (!f) return null;
-                    const cnt = getFrameUnlockCount(f.id, unlockedFrames);
-                    return (
-                      <>
-                        <p className="text-2xl font-black text-white">{f.emoji} {f.name}</p>
-                        <p className="text-sm text-slate-400 mt-1">Tuần {f.week} · {cnt}/3 items đã mở</p>
-                        {cnt === 3 && (
-                          <p className="text-xs font-black text-yellow-400 mt-2 animate-pulse">✨ FRAME ĐẦY ĐỦ — HIỆU ỨNG KÍCH HOẠT</p>
-                        )}
-                      </>
-                    );
-                  })()}
-                  <button
-                    onClick={() => onEquipFrame(undefined)}
-                    className="mt-3 px-4 py-1.5 bg-slate-800 hover:bg-red-600/20 text-slate-400 hover:text-red-400 font-bold rounded-xl text-xs transition-all border border-slate-700"
-                  >
-                    Tháo frame
-                  </button>
-                </>
-              ) : (
-                <p className="text-slate-500 font-bold">Không có — hãy chọn frame bên dưới</p>
-              )}
+      {/* ═══ SECTION 1: XP PROGRESS ═══ */}
+      {currentFrame && (
+        <div className="px-4 sm:px-0">
+          <div className="bg-slate-900 border border-slate-800 rounded-[24px] p-5 sm:p-8">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-xs font-black text-slate-500 uppercase tracking-widest">
+                  Tuần {currentFrame.week} · {currentFrame.name}
+                </p>
+                <p className="text-2xl sm:text-3xl font-black text-white mt-1">
+                  {user.weeklyXp.toLocaleString()} <span className="text-sm text-slate-500">XP</span>
+                </p>
+              </div>
+              <button
+                onClick={() => onNavigate?.('home')}
+                className="px-4 sm:px-6 py-2.5 bg-red-600 hover:bg-red-500 text-white font-black rounded-xl text-xs uppercase tracking-widest transition-all shadow-lg shadow-red-600/20"
+              >
+                Tiếp tục săn XP
+              </button>
             </div>
 
-            {currentWeek && (
-              <div className="hidden md:block min-w-[180px]">
-                <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-2">
-                  XP Tuần {currentWeek} hiện tại
-                </p>
-                <p className="text-3xl font-black text-white">{user.weeklyXp.toLocaleString()}</p>
-                {nextMilestone ? (
-                  <>
-                    <p className="text-xs text-slate-400 mt-1">
-                      Cần {nextMilestone.xpRequired.toLocaleString()} XP để nhận {nextMilestone.itemEmoji}
-                    </p>
-                    <div className="h-2 bg-slate-800 rounded-full mt-2 overflow-hidden">
-                      <div
-                        className="h-full rounded-full transition-all duration-700"
-                        style={{
-                          width: `${Math.min(100, (user.weeklyXp / nextMilestone.xpRequired) * 100)}%`,
-                          background: WEEKLY_FRAMES.find(f => f.week === currentWeek)?.color || '#ef4444',
-                        }}
-                      />
-                    </div>
-                    <p className="text-[10px] text-slate-600 mt-1">
-                      Còn {Math.max(0, nextMilestone.xpRequired - user.weeklyXp).toLocaleString()} XP
-                    </p>
-                  </>
-                ) : (
-                  <p className="text-xs text-green-400 mt-1 font-bold">✅ Đã nhận hết phần thưởng tuần này!</p>
-                )}
+            {/* XP milestone bar */}
+            <div className="relative mt-6 mb-2">
+              <div className="h-3 bg-slate-800 rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-700"
+                  style={{
+                    width: `${Math.min(100, (user.weeklyXp / (currentFrame.items[2]?.xpRequired || 2500)) * 100)}%`,
+                    background: `linear-gradient(90deg, ${currentFrame.color}, ${currentFrame.color}cc)`,
+                    boxShadow: `0 0 12px ${currentFrame.glowColor}`,
+                  }}
+                />
               </div>
+
+              {/* Milestone markers */}
+              <div className="relative mt-3 flex justify-between" style={{ paddingLeft: '5%', paddingRight: '5%' }}>
+                {currentFrame.items.map((item, i) => {
+                  const isUnlocked = unlockedFrames.includes(item.id);
+                  const maxXp = currentFrame.items[2]?.xpRequired || 2500;
+                  const pos = (item.xpRequired / maxXp) * 90 + 5;
+                  return (
+                    <div
+                      key={item.id}
+                      className="flex flex-col items-center"
+                      style={{ position: 'absolute', left: `${pos}%`, transform: 'translateX(-50%)' }}
+                    >
+                      <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-lg sm:text-xl border-2 ${
+                        isUnlocked
+                          ? 'bg-slate-800 border-green-500'
+                          : 'bg-slate-900 border-slate-700 grayscale opacity-60'
+                      }`}>
+                        {item.emoji}
+                      </div>
+                      <p className={`text-[10px] font-black mt-1 ${isUnlocked ? 'text-green-400' : 'text-slate-600'}`}>
+                        {item.xpRequired.toLocaleString()}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {nextMilestone ? (
+              <p className="text-xs text-slate-500 text-center mt-8">
+                Còn <span className="text-white font-bold">{Math.max(0, nextMilestone.xpRequired - user.weeklyXp).toLocaleString()} XP</span> để nhận {nextMilestone.itemEmoji} {nextMilestone.itemName}
+              </p>
+            ) : (
+              <p className="text-xs text-green-400 font-bold text-center mt-8">✅ Đã nhận hết phần thưởng tuần này!</p>
             )}
           </div>
-
-          {/* Frame Grid — 8 weeks */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-            {WEEKLY_FRAMES.map(frame => {
-              const unlockCount = getFrameUnlockCount(frame.id, unlockedFrames);
-              const isComplete = unlockCount === 3;
-              const isEquipped = equippedFrame === frame.id;
-              const isCurrentWeek = currentWeek === frame.week;
-              const isPastWeek = currentWeek !== null && frame.week < currentWeek;
-              const isFuture = currentWeek === null || frame.week > currentWeek;
-              const canEquip = unlockCount > 0;
-
-              return (
-                <div
-                  key={frame.id}
-                  className={`relative bg-slate-900 border-2 rounded-[28px] p-6 transition-all ${
-                    isEquipped ? 'border-opacity-100 shadow-lg' : isComplete ? 'border-slate-700 hover:border-opacity-60' : 'border-slate-800 opacity-90'
-                  }`}
-                  style={{
-                    borderColor: isEquipped || isComplete ? frame.color : undefined,
-                    boxShadow: isEquipped ? `0 0 20px ${frame.glowColor}` : undefined,
-                  }}
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl"
-                        style={{ background: `${frame.color}22`, border: `2px solid ${frame.color}44` }}
-                      >
-                        {frame.emoji}
-                      </div>
-                      <div>
-                        <p className="font-black text-white text-sm uppercase tracking-tight">{frame.name}</p>
-                        <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: frame.color }}>
-                          Tuần {frame.week}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-end gap-1">
-                      {isCurrentWeek && (
-                        <span className="text-[9px] font-black uppercase tracking-widest bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full border border-green-500/30 animate-pulse">
-                          Tuần này
-                        </span>
-                      )}
-                      {isPastWeek && (
-                        <span className="text-[9px] font-black uppercase tracking-widest bg-slate-800 text-slate-500 px-2 py-0.5 rounded-full">
-                          Đã qua
-                        </span>
-                      )}
-                      {isFuture && (
-                        <span className="text-[9px] font-black uppercase tracking-widest bg-slate-900 text-slate-600 px-2 py-0.5 rounded-full">
-                          Sắp tới
-                        </span>
-                      )}
-                      <span className="text-xs font-black" style={{ color: frame.color }}>
-                        {unlockCount}/3 items
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2 mb-4">
-                    {frame.items.map(item => {
-                      const isUnlocked = unlockedFrames.includes(item.id);
-                      return (
-                        <div
-                          key={item.id}
-                          className={`flex items-center gap-3 p-3 rounded-xl ${isUnlocked ? 'bg-slate-800' : 'bg-slate-950/50'}`}
-                        >
-                          <span className={`text-lg ${isUnlocked ? '' : 'grayscale opacity-40'}`}>{item.emoji}</span>
-                          <div className="flex-1 min-w-0">
-                            <p className={`text-xs font-bold truncate ${isUnlocked ? 'text-white' : 'text-slate-600'}`}>
-                              {item.name}
-                            </p>
-                            <p className={`text-[10px] font-bold ${isUnlocked ? 'text-slate-400' : 'text-slate-700'}`}>
-                              {item.xpRequired.toLocaleString()} XP tuần
-                            </p>
-                          </div>
-                          {isUnlocked ? (
-                            <span className="text-green-400 text-sm">✓</span>
-                          ) : (
-                            <span className="text-slate-700 text-sm">🔒</span>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden mb-4">
-                    <div
-                      className="h-full rounded-full transition-all duration-700"
-                      style={{
-                        width: `${(unlockCount / 3) * 100}%`,
-                        background: frame.color,
-                        boxShadow: isComplete ? `0 0 6px ${frame.glowColor}` : undefined,
-                      }}
-                    />
-                  </div>
-
-                  {canEquip ? (
-                    <button
-                      onClick={() => onEquipFrame(isEquipped ? undefined : frame.id)}
-                      className="w-full py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all"
-                      style={{
-                        background: isEquipped ? `${frame.color}33` : `${frame.color}22`,
-                        color: frame.color,
-                        border: `1.5px solid ${frame.color}66`,
-                      }}
-                    >
-                      {isEquipped ? '✓ ĐANG TRANG BỊ' : isComplete ? '✨ TRANG BỊ FRAME ĐẦY ĐỦ' : 'TRANG BỊ'}
-                    </button>
-                  ) : (
-                    <div className="w-full py-2.5 rounded-xl text-center text-[11px] font-black uppercase tracking-widest text-slate-700 bg-slate-950 border border-slate-900">
-                      {isFuture ? '⏳ CHƯA MỞ KHÓA' : '🔒 CHƯA ĐẠT MILESTONE'}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          <p className="text-center text-xs text-slate-600 pb-4">
-            Đạt 800 / 1.500 / 2.500 XP mỗi tuần để mở khóa 3 items của tuần đó
-          </p>
-        </>
+        </div>
       )}
+
+      {/* ═══ SECTION 2: BỘ SƯU TẬP KHUNG AVATAR ═══ */}
+      <div className="px-4 sm:px-0">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight text-white">🖼️ Bộ sưu tập khung avatar</h3>
+            <p className="text-xs text-slate-500 font-bold mt-0.5">{completedFrames.size}/8 khung đã hoàn thành</p>
+          </div>
+        </div>
+
+        {/* Horizontal scroll */}
+        <div
+          ref={scrollRef}
+          className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory"
+          style={{ scrollbarWidth: 'thin' }}
+        >
+          {WEEKLY_FRAMES.map(frame => {
+            const unlockCount = getFrameUnlockCount(frame.id, unlockedFrames);
+            const isComplete = unlockCount === 3;
+            const isEquipped = equippedFrame === frame.id;
+            const isFuture = currentWeek === null || frame.week > currentWeek;
+
+            return (
+              <div
+                key={frame.id}
+                className={`flex-shrink-0 w-[200px] sm:w-[220px] bg-slate-900 border-2 rounded-[20px] p-4 snap-start transition-all ${
+                  isEquipped ? 'border-opacity-100 shadow-lg' : isComplete ? 'border-slate-700' : 'border-slate-800'
+                }`}
+                style={{
+                  borderColor: isEquipped ? frame.color : isComplete ? frame.color + '60' : undefined,
+                  boxShadow: isEquipped ? `0 0 16px ${frame.glowColor}` : undefined,
+                }}
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  <div
+                    className="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
+                    style={{ background: `${frame.color}22`, border: `2px solid ${frame.color}44` }}
+                  >
+                    {frame.emoji}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-black text-white text-xs uppercase tracking-tight truncate">{frame.name}</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: frame.color }}>
+                      Tuần {frame.week}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Items */}
+                <div className="space-y-1.5 mb-3">
+                  {frame.items.map(item => {
+                    const isUnlocked = unlockedFrames.includes(item.id);
+                    return (
+                      <div key={item.id} className={`flex items-center gap-2 text-xs ${isUnlocked ? 'text-slate-300' : 'text-slate-600'}`}>
+                        <span className={isUnlocked ? '' : 'grayscale opacity-40'}>{item.emoji}</span>
+                        <span className="truncate">{item.name}</span>
+                        {isUnlocked ? <span className="text-green-400 ml-auto">✓</span> : <span className="ml-auto">🔒</span>}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Progress */}
+                <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden mb-3">
+                  <div
+                    className="h-full rounded-full transition-all"
+                    style={{ width: `${(unlockCount / 3) * 100}%`, background: frame.color }}
+                  />
+                </div>
+
+                {/* Status / Equip button */}
+                {unlockCount > 0 ? (
+                  <button
+                    onClick={() => onEquipFrame(isEquipped ? undefined : frame.id)}
+                    className="w-full py-2 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all"
+                    style={{
+                      background: isEquipped ? `${frame.color}33` : `${frame.color}15`,
+                      color: frame.color,
+                      border: `1.5px solid ${frame.color}55`,
+                    }}
+                  >
+                    {isEquipped ? '✓ Đang dùng' : isComplete ? '✨ Trang bị' : 'Trang bị'}
+                  </button>
+                ) : (
+                  <div className="w-full py-2 rounded-xl text-center text-[10px] font-black uppercase tracking-widest text-slate-700 bg-slate-950 border border-slate-900">
+                    {isFuture ? '⏳ Chưa mở' : '🔒 Chưa đạt'}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ═══ SECTION 3: VÒNG QUAY MAY MẮN ═══ */}
+      <div className="px-4 sm:px-0">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight text-white">🎰 Vòng quay may mắn</h3>
+            <p className="text-xs text-slate-500 font-bold mt-0.5">
+              {spinsLeft > 0 ? `Bạn có ${spinsLeft} lượt quay` : 'Hoàn thành frame để nhận lượt quay'}
+            </p>
+          </div>
+        </div>
+        <LuckySpin user={user} onSpinResult={handleSpinResult} />
+      </div>
+
+      {/* ═══ SECTION 4: CHỨNG NHẬN HOÀN THÀNH ═══ */}
+      <div className="px-4 sm:px-0">
+        <div className="bg-slate-900 border border-slate-800 rounded-[24px] p-5 sm:p-8">
+          <div className="flex flex-col sm:flex-row items-center gap-6">
+            {/* Certificate preview */}
+            <div className="w-full sm:w-[240px] flex-shrink-0 bg-gradient-to-br from-yellow-900/20 to-slate-900 border border-yellow-700/30 rounded-2xl p-6 text-center">
+              <p className="text-4xl mb-2">📜</p>
+              <p className="text-xs font-black text-yellow-500 uppercase tracking-widest">Chứng nhận</p>
+              <p className="text-[10px] text-slate-500 mt-1">Đấu trường X 2026</p>
+              <div className="mt-3 flex items-center justify-center gap-1">
+                <AvatarDisplay
+                  avatar={user.avatar}
+                  name={user.name}
+                  equippedFrame={equippedFrame}
+                  unlockedFrames={unlockedFrames}
+                  size="sm"
+                />
+                <p className="text-xs font-bold text-white truncate">{user.name}</p>
+              </div>
+            </div>
+
+            {/* Info & progress */}
+            <div className="flex-1 text-center sm:text-left">
+              <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight text-white">📜 Chứng nhận hoàn thành</h3>
+              <p className="text-xs text-slate-500 mt-1 mb-4">
+                Hoàn thành tối thiểu 4/8 tuần để nhận chứng nhận
+              </p>
+
+              <div className="flex items-center gap-3 mb-3">
+                <div className="flex-1 h-3 bg-slate-800 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-yellow-600 to-yellow-400 rounded-full transition-all duration-700"
+                    style={{ width: `${(weeksCompleted / 8) * 100}%` }}
+                  />
+                </div>
+                <span className="text-sm font-black text-white">{weeksCompleted}/8</span>
+              </div>
+              <p className="text-xs text-slate-400 mb-5">
+                Đã hoàn thành <span className="text-yellow-400 font-bold">{weeksCompleted} tuần</span>
+                {weeksCompleted >= 4 ? ' — Đủ điều kiện nhận chứng nhận!' : ` — Cần thêm ${4 - weeksCompleted} tuần nữa`}
+              </p>
+
+              <button
+                onClick={() => onNavigate?.('certificate')}
+                className={`px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${
+                  weeksCompleted >= 4
+                    ? 'bg-yellow-600 hover:bg-yellow-500 text-white shadow-lg shadow-yellow-600/20'
+                    : 'bg-slate-800 text-slate-600 cursor-not-allowed'
+                }`}
+                disabled={weeksCompleted < 4}
+              >
+                {weeksCompleted >= 4 ? '📥 Tải chứng nhận' : '🔒 Chưa đủ điều kiện'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p className="text-center text-xs text-slate-600 pb-4 px-4">
+        ĐƯỢC NGHIÊN CỨU VÀ PHÁT TRIỂN BỞI EDUSO
+      </p>
     </div>
   );
 };

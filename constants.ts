@@ -4,7 +4,7 @@ import { Difficulty, UserLevel, WeeklyFrame } from './types';
 // ============ AVATAR FRAME SYSTEM ============
 
 // Ngày khai giảng chương trình hè (Tuần 1 bắt đầu)
-export const PROGRAM_START_DATE = new Date('2026-05-19'); // Tuần 1: 19/05 - 25/05/2026
+export const PROGRAM_START_DATE = new Date('2026-07-01'); // Tuần 1: 01/07 - 07/07/2026
 
 // XP tuần để mở từng item trong frame
 export const FRAME_XP_MILESTONES = [800, 1500, 2500] as const;

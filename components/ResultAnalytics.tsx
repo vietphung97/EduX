@@ -1,8 +1,20 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis } from 'recharts';
 import { GameResult } from '../types';
 import { AdvisorAnalysis } from '../services/gemini';
+
+/** Lightweight markdown → HTML (headings, bold, italic, lists, line breaks) */
+function mdToHtml(md: string): string {
+  return md
+    .replace(/^### (.+)$/gm, '<h3 class="text-base sm:text-lg font-black uppercase text-red-400 mt-4 mb-1">$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2 class="text-lg sm:text-xl font-black uppercase text-red-400 mt-4 mb-1">$1</h2>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong class="text-white font-black">$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/^- (.+)$/gm, '<li class="ml-4 list-disc">$1</li>')
+    .replace(/→/g, '<span class="text-red-400">→</span>')
+    .replace(/\n/g, '<br/>');
+}
 
 interface ResultAnalyticsProps {
   result: GameResult;
@@ -162,9 +174,10 @@ const ResultAnalytics: React.FC<ResultAnalyticsProps> = ({ result, analysis, onC
           <div className="absolute -top-3 sm:-top-4 left-3 sm:left-8 bg-slate-900 px-2 sm:px-4 py-0.5 sm:py-1 rounded-full border border-slate-800">
             <span className="text-[8px] sm:text-[10px] font-black text-red-500 uppercase tracking-widest">PHÂN TÍCH CHI TIẾT</span>
           </div>
-          <p className="text-slate-200 leading-relaxed italic text-sm sm:text-lg relative z-10 whitespace-pre-line mt-1 sm:mt-0">
-            {advice}
-          </p>
+          <div
+            className="text-slate-200 leading-relaxed text-sm sm:text-lg relative z-10 mt-1 sm:mt-0 prose-invert"
+            dangerouslySetInnerHTML={{ __html: mdToHtml(advice) }}
+          />
         </div>
 
         {/* Dynamic Strengths / Weaknesses */}
@@ -225,7 +238,7 @@ const ResultAnalytics: React.FC<ResultAnalyticsProps> = ({ result, analysis, onC
                   <span className="text-base sm:text-lg">{TIP_ICONS[tip.type] || '💡'}</span>
                   <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-yellow-500">{tip.label}</p>
                 </div>
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium">{tip.content}</p>
+                <div className="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium" dangerouslySetInnerHTML={{ __html: mdToHtml(tip.content) }} />
               </div>
             ))}
           </div>

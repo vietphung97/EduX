@@ -388,7 +388,7 @@ const MultiplayerResults: React.FC<MultiplayerResultsProps> = ({
             </div>
             <div>
               <p className="text-3xl font-black text-blue-500">{myResult.score}</p>
-              <p className="text-xs text-slate-500 font-bold mt-1">Tổng điểm</p>
+              <p className="text-xs text-slate-500 font-bold mt-1">Tổng XP</p>
             </div>
             <div>
               <p className="text-3xl font-black text-yellow-500">{myResult.maxStreak}</p>
