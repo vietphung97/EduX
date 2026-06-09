@@ -1,11 +1,11 @@
 /**
- * Service lấy câu hỏi K7 từ file JSON external (public/data/k7_questions.json)
+ * Service lấy câu hỏi K6 từ file JSON external (public/data/k6_questions.json)
  * File được serve tĩnh — cập nhật câu hỏi chỉ cần upload lại file JSON, không cần build lại.
  */
 
 import { Question, Difficulty, QuestionType } from '../types';
 
-interface K7RawQuestion {
+interface K6RawQuestion {
   id: string;
   type: QuestionType;
   question: string;
@@ -18,6 +18,7 @@ interface K7RawQuestion {
   difficulty: string;
   subType?: string;
   instruction?: string;
+  imageUrl?: string;
 }
 
 function mapDifficulty(diff: string): Difficulty {
@@ -31,10 +32,10 @@ let _cache: Question[] | null = null;
 async function loadAll(): Promise<Question[]> {
   if (_cache) return _cache;
 
-  const res = await fetch(`${import.meta.env.BASE_URL}data/k7_questions.json`);
-  if (!res.ok) throw new Error(`Không tải được k7_questions.json: ${res.status}`);
+  const res = await fetch(`${import.meta.env.BASE_URL}data/k6_questions.json`);
+  if (!res.ok) throw new Error(`Không tải được k6_questions.json: ${res.status}`);
 
-  const rawData: K7RawQuestion[] = await res.json();
+  const rawData: K6RawQuestion[] = await res.json();
   _cache = rawData.map(q => ({
     id: q.id,
     type: q.type,
@@ -44,6 +45,7 @@ async function loadAll(): Promise<Question[]> {
     correctAnswer: q.correctAnswer,
     funExplanation: q.funExplanation,
     seriousExplanation: q.seriousExplanation,
+    imageUrl: q.imageUrl,
     category: q.category,
     grade: q.grade,
     difficulty: mapDifficulty(q.difficulty),
@@ -51,7 +53,7 @@ async function loadAll(): Promise<Question[]> {
   return _cache;
 }
 
-export async function fetchK7Questions(
+export async function fetchK6Questions(
   topics: string[],
   difficulty: Difficulty,
   count: number = 15
@@ -71,14 +73,14 @@ export async function fetchK7Questions(
   return filtered.slice(0, count);
 }
 
-export async function getK7Topics(): Promise<string[]> {
+export async function getK6Topics(): Promise<string[]> {
   const all = await loadAll();
   const seen = new Set<string>();
   for (const q of all) seen.add(q.category);
   return Array.from(seen).sort();
 }
 
-export async function getK7Difficulties(): Promise<Difficulty[]> {
+export async function getK6Difficulties(): Promise<Difficulty[]> {
   const all = await loadAll();
   const seen = new Set<Difficulty>();
   for (const q of all) seen.add(q.difficulty);

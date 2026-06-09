@@ -57,7 +57,7 @@ const Header: React.FC<HeaderProps> = ({ user, currentView, onNavigate }) => {
             <div className="flex flex-col">
               <span className="text-xs font-bold truncate max-w-[80px]">{user.name}</span>
               <span className="text-[10px] text-yellow-500 font-medium flex items-center gap-1">
-                 {levelData.emoji} {user.xp} XP
+                 {levelData.emoji} {user.xp.toLocaleString()} XP
               </span>
             </div>
           </div>

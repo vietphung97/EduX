@@ -1,272 +1,6557 @@
 [
   {
     "id": "k7_001",
-    "type": "vocabulary",
-    "question": "What is the meaning of 'enormous'?",
+    "type": "quiz",
+    "question": "Con bọ",
     "options": [
-      "Very small",
-      "Very large",
-      "Very fast",
-      "Very slow"
+      "bug",
+      "stress",
+      "patient",
+      "benefit"
     ],
-    "correctAnswer": "Very large",
-    "funExplanation": "Enormous = khổng lồ! Con voi là enormous, còn con kiến thì tiny!",
-    "seriousExplanation": "'Enormous' là tính từ có nghĩa 'rất lớn, khổng lồ'. Ví dụ: The enormous elephant walked slowly.",
-    "category": "Vocabulary",
+    "correctAnswer": "bug",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
     "grade": 7,
     "difficulty": "Dễ",
-    "instruction": ""
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
   },
   {
     "id": "k7_002",
-    "type": "grammar",
-    "question": "She ___ to school every day.",
+    "type": "quiz",
+    "question": "sự căng thẳng",
     "options": [
-      "go",
-      "goes",
-      "going",
-      "gone"
+      "set",
+      "bug",
+      "stress",
+      "unusual"
     ],
-    "correctAnswer": "goes",
-    "funExplanation": "She/He/It luôn đi kèm 's' ở cuối động từ ở hiện tại đơn!",
-    "seriousExplanation": "Chủ ngữ ngôi 3 số ít (she/he/it) + V-s/es ở thì hiện tại đơn.",
-    "category": "Grammar",
+    "correctAnswer": "stress",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
     "grade": 7,
     "difficulty": "Dễ",
-    "instruction": ""
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
   },
   {
     "id": "k7_003",
-    "type": "vocabulary",
-    "question": "Choose the word that means 'afraid':",
+    "type": "quiz",
+    "question": "kiên nhẫn",
     "options": [
-      "Brave",
-      "Scared",
-      "Happy",
-      "Tired"
+      "insect",
+      "valuable",
+      "patient",
+      "belong"
     ],
-    "correctAnswer": "Scared",
-    "funExplanation": "Scared = hoảng sợ! Khi thấy ma thì bạn là scared!",
-    "seriousExplanation": "'Scared' và 'afraid' đều có nghĩa là 'sợ hãi'. Đây là hai từ đồng nghĩa.",
-    "category": "Vocabulary",
+    "correctAnswer": "patient",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
     "grade": 7,
     "difficulty": "Dễ",
-    "instruction": ""
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
   },
   {
     "id": "k7_004",
-    "type": "grammar",
-    "question": "They ___ watching TV when I called.",
+    "type": "quiz",
+    "question": "côn trùng",
     "options": [
-      "was",
-      "were",
-      "are",
-      "is"
+      "stress",
+      "insect",
+      "valuable",
+      "set"
     ],
-    "correctAnswer": "were",
-    "funExplanation": "They/We/You dùng 'were' còn He/She/It dùng 'was' ở quá khứ tiếp diễn!",
-    "seriousExplanation": "Thì quá khứ tiếp diễn: was/were + V-ing. Chủ ngữ số nhiều (they) dùng 'were'.",
-    "category": "Grammar",
+    "correctAnswer": "insect",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
     "grade": 7,
-    "difficulty": "Trung bình",
-    "instruction": ""
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
   },
   {
     "id": "k7_005",
-    "type": "vocabulary",
-    "question": "What does 'ancient' mean?",
+    "type": "quiz",
+    "question": "quý giá",
     "options": [
-      "New",
-      "Modern",
-      "Very old",
-      "Expensive"
+      "take",
+      "bug",
+      "valuable",
+      "popular"
     ],
-    "correctAnswer": "Very old",
-    "funExplanation": "Ancient = rất cổ xưa! Khủng long là ancient creatures!",
-    "seriousExplanation": "'Ancient' có nghĩa là 'rất cổ, từ thời xa xưa'. Ví dụ: ancient temples, ancient Egypt.",
-    "category": "Vocabulary",
+    "correctAnswer": "valuable",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
     "grade": 7,
-    "difficulty": "Trung bình",
-    "instruction": ""
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
   },
   {
     "id": "k7_006",
-    "type": "grammar",
-    "question": "___ you ever been to Paris?",
+    "type": "quiz",
+    "question": "My sister likes __________ with paper and glue in her free time.",
     "options": [
-      "Did",
-      "Have",
-      "Has",
-      "Do"
+      "doing gardening",
+      "making models",
+      "collecting coins",
+      "doing yoga"
     ],
-    "correctAnswer": "Have",
-    "funExplanation": "'Have you ever' là câu hỏi quen thuộc của thì hiện tại hoàn thành!",
-    "seriousExplanation": "Hiện tại hoàn thành với 'ever': Have + S + ever + V3/ed? Dùng 'have' với I/you/we/they.",
-    "category": "Grammar",
+    "correctAnswer": "making models",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
     "grade": 7,
-    "difficulty": "Trung bình",
-    "instruction": ""
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
   },
   {
     "id": "k7_007",
-    "type": "vocabulary",
-    "question": "Find the synonym of 'beautiful':",
+    "type": "quiz",
+    "question": "I joined a reading _______ at school last month.",
     "options": [
-      "Ugly",
-      "Pretty",
-      "Boring",
-      "Old"
+      "insect",
+      "responsibility",
+      "group",
+      "stress"
     ],
-    "correctAnswer": "Pretty",
-    "funExplanation": "Beautiful = Pretty = xinh đẹp! Cả hai đều khen nhan sắc!",
-    "seriousExplanation": "'Beautiful' và 'pretty' đều có nghĩa 'xinh đẹp'. Pretty thường dùng cho người, vật nhỏ xinh.",
-    "category": "Vocabulary",
+    "correctAnswer": "group",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
     "grade": 7,
     "difficulty": "Dễ",
-    "instruction": "Chọn từ đồng nghĩa với:"
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
   },
   {
     "id": "k7_008",
-    "type": "grammar",
-    "question": "This is the book ___ I bought yesterday.",
+    "type": "quiz",
+    "question": "My brother and I often go __________ at the weekend to stay healthy.",
     "options": [
-      "who",
-      "whom",
-      "which",
-      "whose"
+      "collecting",
+      "riding",
+      "building",
+      "jogging"
     ],
-    "correctAnswer": "which",
-    "funExplanation": "'which' dùng cho vật, 'who' dùng cho người - đơn giản vậy thôi!",
-    "seriousExplanation": "Mệnh đề quan hệ: 'which' dùng cho đồ vật/sự việc, 'who' dùng cho người.",
-    "category": "Grammar",
+    "correctAnswer": "jogging",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
     "grade": 7,
-    "difficulty": "Trung bình",
-    "instruction": ""
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
   },
   {
     "id": "k7_009",
-    "type": "vocabulary",
-    "question": "What is the opposite of 'noisy'?",
+    "type": "quiz",
+    "question": "Doing outdoor activities can help you reduce _______.",
     "options": [
-      "Loud",
-      "Quiet",
-      "Dark",
-      "Bright"
+      "stress",
+      "group",
+      "insect",
+      "patient"
     ],
-    "correctAnswer": "Quiet",
-    "funExplanation": "Noisy là ồn ào, Quiet là yên tĩnh - ngược nhau hoàn toàn như ngày và đêm!",
-    "seriousExplanation": "'Noisy' (ồn ào) và 'quiet' (yên tĩnh) là cặp từ trái nghĩa.",
-    "category": "Vocabulary",
+    "correctAnswer": "stress",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
     "grade": 7,
     "difficulty": "Dễ",
-    "instruction": "Chọn từ trái nghĩa với:"
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
   },
   {
     "id": "k7_010",
-    "type": "grammar",
-    "question": "If it ___ tomorrow, we will stay home.",
+    "type": "quiz",
+    "question": "The sun always _______ in the west.",
     "options": [
-      "rain",
-      "rains",
-      "rained",
-      "will rain"
+      "sets",
+      "takes",
+      "makes",
+      "develops"
     ],
-    "correctAnswer": "rains",
-    "funExplanation": "Câu điều kiện loại 1: If + hiện tại đơn, sẽ + động từ nguyên thể!",
-    "seriousExplanation": "Câu điều kiện loại 1 (có thể xảy ra): If + V (hiện tại đơn), will + V nguyên thể.",
-    "category": "Grammar",
+    "correctAnswer": "sets",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
     "grade": 7,
-    "difficulty": "Khó",
-    "instruction": ""
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
   },
   {
     "id": "k7_011",
-    "type": "vocabulary",
-    "question": "Choose the correct meaning of 'generous':",
+    "type": "quiz",
+    "question": "Anna is very _______. She never gets angry with her little brother.",
     "options": [
-      "Mean",
-      "Selfish",
-      "Kind and giving",
-      "Angry"
+      "popular",
+      "patient",
+      "group",
+      "stress"
     ],
-    "correctAnswer": "Kind and giving",
-    "funExplanation": "Generous = hào phóng, rộng rãi! Người generous luôn chia sẻ với mọi người!",
-    "seriousExplanation": "'Generous' có nghĩa là rộng rãi, hào phóng - sẵn sàng cho đi thời gian và tiền bạc.",
-    "category": "Vocabulary",
+    "correctAnswer": "patient",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
     "grade": 7,
-    "difficulty": "Trung bình",
-    "instruction": ""
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
   },
   {
     "id": "k7_012",
-    "type": "grammar",
-    "question": "The movie ___ by millions of people last year.",
+    "type": "quiz",
+    "question": "Collecting bugs is an unusual but interesting _______.",
     "options": [
-      "watched",
-      "was watched",
-      "watches",
-      "is watching"
+      "insect",
+      "group",
+      "hobby",
+      "benefit"
     ],
-    "correctAnswer": "was watched",
-    "funExplanation": "Câu bị động quá khứ đơn: was/were + V3! Movie không tự xem mình, nó được xem!",
-    "seriousExplanation": "Câu bị động thì quá khứ đơn: was/were + past participle (V3).",
-    "category": "Grammar",
+    "correctAnswer": "hobby",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
     "grade": 7,
-    "difficulty": "Khó",
-    "instruction": ""
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
   },
   {
     "id": "k7_013",
-    "type": "vocabulary",
-    "question": "What does 'exhausted' mean?",
+    "type": "quiz",
+    "question": "Many teens love spending time on _______ activities.",
     "options": [
-      "Excited",
-      "Very tired",
-      "Hungry",
-      "Confused"
+      "belong",
+      "hobby",
+      "develop",
+      "outdoor"
     ],
-    "correctAnswer": "Very tired",
-    "funExplanation": "Exhausted = kiệt sức! Sau khi chạy marathon, bạn sẽ cảm thấy exhausted!",
-    "seriousExplanation": "'Exhausted' nghĩa là cực kỳ mệt mỏi, kiệt sức hoàn toàn.",
-    "category": "Vocabulary",
+    "correctAnswer": "outdoor",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
     "grade": 7,
-    "difficulty": "Trung bình",
-    "instruction": ""
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
   },
   {
     "id": "k7_014",
-    "type": "grammar",
-    "question": "He asked me ___ I liked the food.",
+    "type": "quiz",
+    "question": "These books belong _______ my sister.",
     "options": [
-      "that",
-      "if",
-      "what",
-      "which"
+      "in",
+      "on",
+      "to",
+      "for"
     ],
-    "correctAnswer": "if",
-    "funExplanation": "Câu hỏi gián tiếp Yes/No dùng 'if' hoặc 'whether'!",
-    "seriousExplanation": "Câu hỏi gián tiếp từ câu hỏi Yes/No: S + asked + if/whether + S + V.",
-    "category": "Grammar",
+    "correctAnswer": "to",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
     "grade": 7,
-    "difficulty": "Khó",
-    "instruction": ""
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
   },
   {
     "id": "k7_015",
-    "type": "vocabulary",
-    "question": "Find the word that does NOT belong:",
+    "type": "quiz",
+    "question": "This activity helps students learn about _______ and teamwork.",
     "options": [
-      "Happy",
-      "Joyful",
-      "Cheerful",
-      "Miserable"
+      "cardboard",
+      "wardrobe",
+      "bugs",
+      "responsibility"
     ],
-    "correctAnswer": "Miserable",
-    "funExplanation": "Happy, Joyful, Cheerful đều vui vẻ, còn Miserable thì khổ sở - đứa lẻ loi!",
-    "seriousExplanation": "Happy, joyful, cheerful đều có nghĩa tích cực (vui vẻ). Miserable có nghĩa tiêu cực (khổ sở, bất hạnh).",
-    "category": "Vocabulary",
+    "correctAnswer": "responsibility",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_016",
+    "type": "quiz",
+    "question": "I learned a _______ lesson after joining the charity trip.",
+    "options": [
+      "cardboard",
+      "patient",
+      "valuable",
+      "stress"
+    ],
+    "correctAnswer": "valuable",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_017",
+    "type": "quiz",
+    "question": "I love spending time _______ coins with my grandfather.",
+    "options": [
+      "collect",
+      "collecting",
+      "collected",
+      "to collect"
+    ],
+    "correctAnswer": "collecting",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_018",
+    "type": "quiz",
+    "question": "Gardening helps me relax and _______ me happy.",
+    "options": [
+      "is",
+      "does",
+      "makes",
+      "helps"
+    ],
+    "correctAnswer": "makes",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_019",
+    "type": "quiz",
+    "question": "I’m waiting _______ my friends to go horse riding together.",
+    "options": [
+      "to",
+      "on",
+      "for",
+      "with"
+    ],
+    "correctAnswer": "for",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_020",
+    "type": "quiz",
+    "question": "He uses cardboard to __________ a big dollhouse.",
+    "options": [
+      "collect",
+      "build",
+      "do",
+      "ride"
+    ],
+    "correctAnswer": "build",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_021",
+    "type": "quiz",
+    "question": "My friend is very creative. She has a lot of __________.",
+    "options": [
+      "creativity",
+      "creative",
+      "create",
+      "creatively"
+    ],
+    "correctAnswer": "creativity",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_022",
+    "type": "quiz",
+    "question": "My cousin loves __________ dolls. She has more than 50 now!",
+    "options": [
+      "making",
+      "collecting",
+      "playing",
+      "building"
+    ],
+    "correctAnswer": "collecting",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_023",
+    "type": "quiz",
+    "question": "We need some __________ to make the dollhouse walls.",
+    "options": [
+      "coin",
+      "cardboard",
+      "wardrobe",
+      "glue"
+    ],
+    "correctAnswer": "cardboard",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_024",
+    "type": "quiz",
+    "question": "I often use __________ to stick paper together.",
+    "options": [
+      "cardboard",
+      "creativity",
+      "glue",
+      "plastic"
+    ],
+    "correctAnswer": "glue",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_025",
+    "type": "quiz",
+    "question": "My uncle likes __________ coins from different countries.",
+    "options": [
+      "collecting",
+      "building",
+      "playing",
+      "doing"
+    ],
+    "correctAnswer": "collecting",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_026",
+    "type": "quiz",
+    "question": "Tom usually __________ judo on Monday and Thursday.",
+    "options": [
+      "plays",
+      "goes",
+      "builds",
+      "does"
+    ],
+    "correctAnswer": "does",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
     "grade": 7,
     "difficulty": "Trung bình",
-    "instruction": ""
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_027",
+    "type": "quiz",
+    "question": "They __________ doing gardening in the garden every morning.",
+    "options": [
+      "enjoy",
+      "enjoys",
+      "interested",
+      "are interested"
+    ],
+    "correctAnswer": "enjoy",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_028",
+    "type": "quiz",
+    "question": "Let’s __________ some paper to make a dollhouse.",
+    "options": [
+      "to collect",
+      "collect",
+      "collected",
+      "collection"
+    ],
+    "correctAnswer": "collect",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_029",
+    "type": "quiz",
+    "question": "She enjoys __________ models with her brother.",
+    "options": [
+      "build",
+      "to build",
+      "builds",
+      "building"
+    ],
+    "correctAnswer": "building",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_030",
+    "type": "quiz",
+    "question": "I’d love __________ horse riding this weekend.",
+    "options": [
+      "to go",
+      "going",
+      "go",
+      "went"
+    ],
+    "correctAnswer": "to go",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_031",
+    "type": "quiz",
+    "question": "It’s fun __________ how to build a dollhouse.",
+    "options": [
+      "learn",
+      "learning",
+      "to learn",
+      "learned"
+    ],
+    "correctAnswer": "to learn",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_032",
+    "type": "quiz",
+    "question": "They are interested __________ collecting coins from different countries.",
+    "options": [
+      "to",
+      "in",
+      "on",
+      "with"
+    ],
+    "correctAnswer": "in",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_040",
+    "type": "quiz",
+    "question": "We need some __________ to build a dollhouse.",
+    "options": [
+      "paper",
+      "paint",
+      "cardboard",
+      "mirror"
+    ],
+    "correctAnswer": "cardboard",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_041",
+    "type": "quiz",
+    "question": "He loves __________ coins from different countries.",
+    "options": [
+      "collect",
+      "collecting",
+      "to collect",
+      "collected"
+    ],
+    "correctAnswer": "collecting",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_042",
+    "type": "quiz",
+    "question": "My sister is good at __________ models.",
+    "options": [
+      "doing",
+      "making",
+      "washing",
+      "having"
+    ],
+    "correctAnswer": "making",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_043",
+    "type": "quiz",
+    "question": "We often go __________ on Sundays.",
+    "options": [
+      "jog",
+      "jogs",
+      "jogging",
+      "to jog"
+    ],
+    "correctAnswer": "jogging",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_044",
+    "type": "quiz",
+    "question": "They want to __________ a dollhouse with glue and cardboard.",
+    "options": [
+      "play",
+      "do",
+      "build",
+      "write"
+    ],
+    "correctAnswer": "build",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_045",
+    "type": "quiz",
+    "question": "Anna is learning how to __________ judo.",
+    "options": [
+      "go",
+      "do",
+      "make",
+      "play"
+    ],
+    "correctAnswer": "do",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_046",
+    "type": "quiz",
+    "question": "Let’s __________ some dolls for our collection.",
+    "options": [
+      "collect",
+      "collecting",
+      "to collect",
+      "collects"
+    ],
+    "correctAnswer": "collect",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_047",
+    "type": "quiz",
+    "question": "Our yoga class starts at __________ every Saturday.",
+    "options": [
+      "night",
+      "early",
+      "9 o’clock",
+      "always"
+    ],
+    "correctAnswer": "9 o’clock",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_048",
+    "type": "quiz",
+    "question": "Tom is __________ in doing gardening in his free time.",
+    "options": [
+      "fond",
+      "excited",
+      "interested",
+      "likes"
+    ],
+    "correctAnswer": "interested",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_049",
+    "type": "quiz",
+    "question": "She needs help __________ building her model house.",
+    "options": [
+      "in",
+      "to",
+      "with",
+      "of"
+    ],
+    "correctAnswer": "with",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_050",
+    "type": "quiz",
+    "question": "My brother enjoys going swimming ________ the summer.",
+    "options": [
+      "at",
+      "on",
+      "in",
+      "to"
+    ],
+    "correctAnswer": "in",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_051",
+    "type": "quiz",
+    "question": "That hobby helps students develop their __________.",
+    "options": [
+      "create",
+      "creates",
+      "creative",
+      "creativity"
+    ],
+    "correctAnswer": "creativity",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_052",
+    "type": "quiz",
+    "question": "Making models is a very __________ activity.",
+    "options": [
+      "use",
+      "useful",
+      "usefully",
+      "useless"
+    ],
+    "correctAnswer": "useful",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_053",
+    "type": "quiz",
+    "question": "I hate __________ coins because it's boring to me.",
+    "options": [
+      "collect",
+      "collecting",
+      "to collect",
+      "collects"
+    ],
+    "correctAnswer": "collecting",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_054",
+    "type": "quiz",
+    "question": "Volunteering helps students develop their __________.",
+    "options": [
+      "responsibility",
+      "dollhouse",
+      "bug",
+      "stress"
+    ],
+    "correctAnswer": "responsibility",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_055",
+    "type": "quiz",
+    "question": "We did many __________ activities at the summer camp, like hiking and kayaking.",
+    "options": [
+      "indoor",
+      "unusual",
+      "outdoor",
+      "popular"
+    ],
+    "correctAnswer": "outdoor",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_056",
+    "type": "quiz",
+    "question": "Anna learned a __________ lesson after she lost her favourite model in the rain.",
+    "options": [
+      "valuable",
+      "glue",
+      "insect",
+      "crazy"
+    ],
+    "correctAnswer": "valuable",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_057",
+    "type": "quiz",
+    "question": "Tom loves nature. He enjoys watching __________ in the garden.",
+    "options": [
+      "bugs",
+      "glue",
+      "cardboard",
+      "coins"
+    ],
+    "correctAnswer": "bugs",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_058",
+    "type": "quiz",
+    "question": "Joining a group activity can reduce your __________.",
+    "options": [
+      "maturity",
+      "patient",
+      "stress",
+      "cardboard"
+    ],
+    "correctAnswer": "stress",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_059",
+    "type": "quiz",
+    "question": "My sister wants to collect coins because she thinks they’re __________.",
+    "options": [
+      "insect",
+      "valuable",
+      "stress",
+      "exercise"
+    ],
+    "correctAnswer": "valuable",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_060",
+    "type": "quiz",
+    "question": "My brother is very __________. He never gets angry when I ask him for help.",
+    "options": [
+      "patient",
+      "popular",
+      "glue",
+      "responsible"
+    ],
+    "correctAnswer": "patient",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_061",
+    "type": "quiz",
+    "question": "My hobby is __________ because I like planting flowers.",
+    "options": [
+      "doing judo",
+      "going swimming",
+      "doing gardening",
+      "collecting coins"
+    ],
+    "correctAnswer": "doing gardening",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_062",
+    "type": "quiz",
+    "question": "I always collect coins because I find it very _______.",
+    "options": [
+      "boring",
+      "stressful",
+      "relaxing",
+      "strange"
+    ],
+    "correctAnswer": "relaxing",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_063",
+    "type": "quiz",
+    "question": "My little brother can't wait _______ his new dollhouse.",
+    "options": [
+      "build",
+      "builds",
+      "building",
+      "to build"
+    ],
+    "correctAnswer": "to build",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_064",
+    "type": "quiz",
+    "question": "I spent two hours _______ models with glue and cardboard.",
+    "options": [
+      "make",
+      "making",
+      "made",
+      "to make"
+    ],
+    "correctAnswer": "making",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_065",
+    "type": "quiz",
+    "question": "Can you help me _______ this coin into the box?",
+    "options": [
+      "put",
+      "puts",
+      "putting",
+      "to putting"
+    ],
+    "correctAnswer": "put",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_066",
+    "type": "quiz",
+    "question": "Doing outdoor activities helps students develop their _______.",
+    "options": [
+      "creative",
+      "create",
+      "creativity",
+      "creatively"
+    ],
+    "correctAnswer": "creativity",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_067",
+    "type": "quiz",
+    "question": "Being a group leader is a big _______ for such a young student.",
+    "options": [
+      "responsible",
+      "responsibly",
+      "responsibility",
+      "response"
+    ],
+    "correctAnswer": "responsibility",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_068",
+    "type": "quiz",
+    "question": "Regular exercise brings many health _______ to students.",
+    "options": [
+      "developments",
+      "benefits",
+      "valuables",
+      "maturities"
+    ],
+    "correctAnswer": "benefits",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_069",
+    "type": "quiz",
+    "question": "My mother is interested in doing yoga after work. ( is interested in)",
+    "options": [
+      "feels",
+      "dislikes",
+      "enjoys",
+      "hates"
+    ],
+    "correctAnswer": "enjoys",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the word(s) CLOSEST in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_070",
+    "type": "quiz",
+    "question": "What do you usually do to keep fit every day? ( keep fit )",
+    "options": [
+      "relaxing",
+      "strong",
+      "stress",
+      "stay healthy"
+    ],
+    "correctAnswer": "stay healthy",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the word(s) CLOSEST in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_071",
+    "type": "quiz",
+    "question": "My family members have different hobbies . (hobbies)",
+    "options": [
+      "cares",
+      "interests",
+      "concerns",
+      "activities"
+    ],
+    "correctAnswer": "interests",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the word(s) CLOSEST in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_072",
+    "type": "quiz",
+    "question": "We go camping twice a week. ( twice)",
+    "options": [
+      "two times",
+      "two",
+      "second",
+      "secondly"
+    ],
+    "correctAnswer": "two times",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the word(s) CLOSEST in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_073",
+    "type": "quiz",
+    "question": "Gardening can help me reduce stress. (reduce stress)",
+    "options": [
+      "decrease",
+      "tired",
+      "relax",
+      "tense"
+    ],
+    "correctAnswer": "relax",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the word(s) CLOSEST in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_074",
+    "type": "quiz",
+    "question": "I always so jogging in the evenings. ( always)",
+    "options": [
+      "often",
+      "never",
+      "sometime",
+      "seldom"
+    ],
+    "correctAnswer": "never",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_075",
+    "type": "quiz",
+    "question": "My drawing class starts at 5 p.m every Friday. ( starts)",
+    "options": [
+      "continues",
+      "originates",
+      "begins",
+      "ends"
+    ],
+    "correctAnswer": "ends",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_076",
+    "type": "quiz",
+    "question": "Are you good at playing football? ( good)",
+    "options": [
+      "badly",
+      "well",
+      "bad",
+      "excellent"
+    ],
+    "correctAnswer": "bad",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_077",
+    "type": "quiz",
+    "question": "He has a Iot of coins from many countries. ( a Iot of)",
+    "options": [
+      "a few",
+      "some",
+      "a variety of",
+      "much"
+    ],
+    "correctAnswer": "a few",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_078",
+    "type": "quiz",
+    "question": "My sister prefers outdoor activities. ( outdoor)",
+    "options": [
+      "indoor",
+      "outside",
+      "away",
+      "in"
+    ],
+    "correctAnswer": "indoor",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_079",
+    "type": "quiz",
+    "question": "She usually goes _____________ with her friends in the pool near her school.",
+    "options": [
+      "photos",
+      "fishing",
+      "eggshells",
+      "swimming"
+    ],
+    "correctAnswer": "swimming",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_080",
+    "type": "quiz",
+    "question": "Sarah likes _____________. She plants lots of flowers and vegetables in her home garden.",
+    "options": [
+      "photos",
+      "fishing",
+      "eggshells",
+      "gardening"
+    ],
+    "correctAnswer": "gardening",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_081",
+    "type": "quiz",
+    "question": "Every weekend, I go _____________ in my uncle’s boat, or just off the shoreline.",
+    "options": [
+      "photos",
+      "fishing",
+      "eggshells",
+      "music"
+    ],
+    "correctAnswer": "fishing",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_082",
+    "type": "quiz",
+    "question": "In later years, he took up _____________ as a hobby. He drew watercolour landscapes.",
+    "options": [
+      "photos",
+      "fishing",
+      "eggshells",
+      "painting"
+    ],
+    "correctAnswer": "painting",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_083",
+    "type": "quiz",
+    "question": "My hobby is listening to _____________. It can help relax my mind.",
+    "options": [
+      "photos",
+      "fishing",
+      "eggshells",
+      "music"
+    ],
+    "correctAnswer": "music",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_084",
+    "type": "quiz",
+    "question": "I have recently started a new hobby – collecting _____________.",
+    "options": [
+      "photos",
+      "fishing",
+      "eggshells",
+      "model cars"
+    ],
+    "correctAnswer": "model cars",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_085",
+    "type": "quiz",
+    "question": "Most people take _____________ and post them on their social networking accounts.",
+    "options": [
+      "photos",
+      "fishing",
+      "eggshells",
+      "music"
+    ],
+    "correctAnswer": "photos",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_086",
+    "type": "quiz",
+    "question": "Carving _____________ is a great hobby that can make you happier.",
+    "options": [
+      "photos",
+      "fishing",
+      "eggshells",
+      "music"
+    ],
+    "correctAnswer": "eggshells",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_087",
+    "type": "quiz",
+    "question": "This game is very __________ among children.",
+    "options": [
+      "popular",
+      "popularity",
+      "popularly",
+      "popularize"
+    ],
+    "correctAnswer": "popular",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_088",
+    "type": "quiz",
+    "question": "Too much __________ is bad for health.",
+    "options": [
+      "stressing",
+      "stress",
+      "stresses",
+      "stressful"
+    ],
+    "correctAnswer": "stress",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_089",
+    "type": "quiz",
+    "question": "My little brother is interested in_____ coins.",
+    "options": [
+      "going",
+      "doing",
+      "collecting",
+      "making"
+    ],
+    "correctAnswer": "collecting",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_090",
+    "type": "quiz",
+    "question": "What do you do____ your free time?",
+    "options": [
+      "in",
+      "on",
+      "at",
+      "by"
+    ],
+    "correctAnswer": "in",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_091",
+    "type": "quiz",
+    "question": "Are there any____clubs in Ho Chi Minh City?",
+    "options": [
+      "ride horse",
+      "horse riding",
+      "horse ride",
+      "riding horsing"
+    ],
+    "correctAnswer": "horse riding",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_092",
+    "type": "quiz",
+    "question": "Do you want to ____ how to sew clothes?",
+    "options": [
+      "study",
+      "ask",
+      "teach",
+      "learn"
+    ],
+    "correctAnswer": "learn",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_093",
+    "type": "quiz",
+    "question": "Many women like _____yoga because it helps reduce stress and relieve pain.",
+    "options": [
+      "going",
+      "doing",
+      "playing",
+      "making"
+    ],
+    "correctAnswer": "doing",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_094",
+    "type": "quiz",
+    "question": "Why do you hate____ computer games, Phil?",
+    "options": [
+      "playing",
+      "taking",
+      "doing",
+      "having"
+    ],
+    "correctAnswer": "playing",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_095",
+    "type": "quiz",
+    "question": "My father____ two hours taking care of plants in the garden every afternoon.",
+    "options": [
+      "takes",
+      "has",
+      "spends",
+      "gives"
+    ],
+    "correctAnswer": "spends",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_096",
+    "type": "quiz",
+    "question": "Is she interested ____art?",
+    "options": [
+      "at",
+      "of",
+      "on",
+      "in"
+    ],
+    "correctAnswer": "in",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_097",
+    "type": "quiz",
+    "question": "How____free time do you have a day?",
+    "options": [
+      "many",
+      "much",
+      "some",
+      "any"
+    ],
+    "correctAnswer": "much",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_098",
+    "type": "quiz",
+    "question": "Gardening makes children become more and more____.",
+    "options": [
+      "responsible",
+      "responsibly",
+      "responsibility",
+      "response"
+    ],
+    "correctAnswer": "responsible",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_099",
+    "type": "quiz",
+    "question": "I share my hobby ____my sister.",
+    "options": [
+      "by",
+      "with",
+      "for",
+      "to"
+    ],
+    "correctAnswer": "with",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_100",
+    "type": "quiz",
+    "question": "What does your brother adore____?",
+    "options": [
+      "to do",
+      "to doing",
+      "does",
+      "doing"
+    ],
+    "correctAnswer": "doing",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_101",
+    "type": "quiz",
+    "question": "How ____does Jack go to the judo club? - Three times a week.",
+    "options": [
+      "far",
+      "often",
+      "long",
+      "many"
+    ],
+    "correctAnswer": "often",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_102",
+    "type": "quiz",
+    "question": "I think carving eggshells____ very interesting.",
+    "options": [
+      "x",
+      "are",
+      "is",
+      "be"
+    ],
+    "correctAnswer": "is",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_103",
+    "type": "quiz",
+    "question": "Many people believe that a hobby will always give us____ and help us____.",
+    "options": [
+      "pleased - relax",
+      "pleasure - relaxed",
+      "pleased - relaxing",
+      "pleasure - relax"
+    ],
+    "correctAnswer": "pleasure - relax",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_104",
+    "type": "quiz",
+    "question": "Why don't you ____playing tennis in your free time?",
+    "options": [
+      "take care",
+      "take up",
+      "take out",
+      "take off"
+    ],
+    "correctAnswer": "take up",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_105",
+    "type": "quiz",
+    "question": "My best friend does not join a class to leam how____.",
+    "options": [
+      "sings",
+      "sing",
+      "singing",
+      "to sing"
+    ],
+    "correctAnswer": "to sing",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_106",
+    "type": "quiz",
+    "question": "Emma____arranging flowers interesting.",
+    "options": [
+      "thinks",
+      "think",
+      "finds",
+      "find"
+    ],
+    "correctAnswer": "finds",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_107",
+    "type": "quiz",
+    "question": "Amy likes____pottery very much.",
+    "options": [
+      "playing",
+      "taking",
+      "making",
+      "doing"
+    ],
+    "correctAnswer": "making",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_108",
+    "type": "quiz",
+    "question": "Nowadays people ____________ hours sitting in front of computers.",
+    "options": [
+      "take",
+      "last",
+      "set",
+      "spend"
+    ],
+    "correctAnswer": "spend",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_109",
+    "type": "quiz",
+    "question": "I think you should take up swimming ____________ it is suitable for your health condition.",
+    "options": [
+      "so",
+      "because",
+      "although",
+      "but"
+    ],
+    "correctAnswer": "because",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_110",
+    "type": "quiz",
+    "question": "My family enjoys ____________ because we can sell vegetables and flowers ____________ money.",
+    "options": [
+      "garden-to",
+      "gardening-for",
+      "gardening-with ​​​​​​​",
+      "garden - of"
+    ],
+    "correctAnswer": "gardening-for",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_111",
+    "type": "quiz",
+    "question": "If your hobby is greeting card making, you can give your ____________ to your friends as presents.",
+    "options": [
+      "hobby",
+      "money",
+      "greetings",
+      "products"
+    ],
+    "correctAnswer": "products",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_112",
+    "type": "quiz",
+    "question": "My sister's hobby is sewing, and she can get the sewing patterns from the ____________ magazines.",
+    "options": [
+      "fashion",
+      "cooking",
+      "sports",
+      "science"
+    ],
+    "correctAnswer": "fashion",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_113",
+    "type": "quiz",
+    "question": "There are many ____________ why it is important to have a hobby.",
+    "options": [
+      "answers ​​​​​​​",
+      "reasons",
+      "details",
+      "facts"
+    ],
+    "correctAnswer": "reasons",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_114",
+    "type": "quiz",
+    "question": "Will you ____________ making models in the future?",
+    "options": [
+      "pickup",
+      "look for",
+      "take up",
+      "find"
+    ],
+    "correctAnswer": "take up",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_115",
+    "type": "quiz",
+    "question": "Do you think that hobby is ____________ and boring?",
+    "options": [
+      "easy",
+      "difficult",
+      "danger",
+      "interesting"
+    ],
+    "correctAnswer": "difficult",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_116",
+    "type": "quiz",
+    "question": "I love my sister's paintings because she is very ____________ in using colours.",
+    "options": [
+      "careless",
+      "care",
+      "creative",
+      "imagine"
+    ],
+    "correctAnswer": "creative",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_117",
+    "type": "quiz",
+    "question": "A hobby helps you to connect with ____________ people.",
+    "options": [
+      "other",
+      "others",
+      "another",
+      "the other"
+    ],
+    "correctAnswer": "other",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_118",
+    "type": "quiz",
+    "question": "I join a photography club, and all the members love ____________ a lot of beautiful photos.",
+    "options": [
+      "take",
+      "taking",
+      "make",
+      "making"
+    ],
+    "correctAnswer": "taking",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_119",
+    "type": "quiz",
+    "question": "What does your father do ____________ his free time?",
+    "options": [
+      "in",
+      "on",
+      "at",
+      "while"
+    ],
+    "correctAnswer": "in",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_120",
+    "type": "quiz",
+    "question": "I think a hobby will always give you ____________ and help you ___________",
+    "options": [
+      "pleased - relax",
+      "pleasure - relaxed",
+      "pleased - relaxing",
+      "pleasure - relax"
+    ],
+    "correctAnswer": "pleasure - relax",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_121",
+    "type": "quiz",
+    "question": "You can share your stamps ____________ other collectors ____________ a stamp club.",
+    "options": [
+      "with- at",
+      "with- in",
+      "to -in",
+      "to -at"
+    ],
+    "correctAnswer": "with- in",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_122",
+    "type": "quiz",
+    "question": "I think this hobby does not cost you much, and ____________ you need is time.",
+    "options": [
+      "most",
+      "all",
+      "some",
+      "all of"
+    ],
+    "correctAnswer": "all",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_123",
+    "type": "quiz",
+    "question": "My cousin is a famous____.",
+    "options": [
+      "collector",
+      "collection",
+      "collect",
+      "collecting"
+    ],
+    "correctAnswer": "collector",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_124",
+    "type": "quiz",
+    "question": "Gardening is also good because everyone in the family can join in and do something together. They learn to wait for the plants to grow to maturity . ( maturity)",
+    "options": [
+      "Adulthood",
+      "youth",
+      "old age",
+      "grown-up"
+    ],
+    "correctAnswer": "youth",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_125",
+    "type": "quiz",
+    "question": "Taking care of a family garden requires a sense of responsibility as it involves tending to plants, watering them regularly, and ensuring their overall well-being. ( responsibility)",
+    "options": [
+      "Duty",
+      "obligation",
+      "commitment",
+      "carelessness"
+    ],
+    "correctAnswer": "carelessness",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_126",
+    "type": "quiz",
+    "question": "Engaging in creative hobbies like painting and drawing can be valuable for children as they promote self-expression, imagination, and develop artistic skills. ( valuable)",
+    "options": [
+      "Worthless",
+      "worthwhile",
+      "important",
+      "significant"
+    ],
+    "correctAnswer": "Worthless",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_127",
+    "type": "quiz",
+    "question": "They seldom _____ dinner with each other",
+    "options": [
+      "have",
+      "has",
+      "",
+      ""
+    ],
+    "correctAnswer": "have",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_128",
+    "type": "quiz",
+    "question": "I _____ from Ha Noi, Viet Nam.",
+    "options": [
+      "come",
+      "comes",
+      "",
+      ""
+    ],
+    "correctAnswer": "come",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_129",
+    "type": "quiz",
+    "question": "Jim and I _____ go to school by bus.",
+    "options": [
+      "don’t",
+      "doesn’t",
+      "",
+      ""
+    ],
+    "correctAnswer": "don’t",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_130",
+    "type": "quiz",
+    "question": "His hobby _____ collecting stamps",
+    "options": [
+      "is",
+      "are",
+      "",
+      ""
+    ],
+    "correctAnswer": "is",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_131",
+    "type": "quiz",
+    "question": "My cat doesn’t _____ vegetables.",
+    "options": [
+      "eat",
+      "eats",
+      "",
+      ""
+    ],
+    "correctAnswer": "eat",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_132",
+    "type": "quiz",
+    "question": "_____ your mother finish her work at 4 o’clock?",
+    "options": [
+      "Does",
+      "Do",
+      "",
+      ""
+    ],
+    "correctAnswer": "Does",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_133",
+    "type": "quiz",
+    "question": "We _____ TV every day.",
+    "options": [
+      "watch",
+      "watches",
+      "",
+      ""
+    ],
+    "correctAnswer": "watch",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_134",
+    "type": "quiz",
+    "question": "Peter never _____ to do his homework.",
+    "options": [
+      "forgets",
+      "forget",
+      "",
+      ""
+    ],
+    "correctAnswer": "forgets",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_135",
+    "type": "quiz",
+    "question": "Tom always _____ when he plays chess",
+    "options": [
+      "win",
+      "wins",
+      "",
+      ""
+    ],
+    "correctAnswer": "wins",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_136",
+    "type": "quiz",
+    "question": "_____ you a student?",
+    "options": [
+      "Do",
+      "Are",
+      "",
+      ""
+    ],
+    "correctAnswer": "Are",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_137",
+    "type": "quiz",
+    "question": "This book __________ to me.",
+    "options": [
+      "belong",
+      "belongs",
+      "belonging",
+      "is belonging"
+    ],
+    "correctAnswer": "belongs",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_138",
+    "type": "quiz",
+    "question": "The sun __________ in the west.",
+    "options": [
+      "sets",
+      "set",
+      "setting",
+      "setted"
+    ],
+    "correctAnswer": "sets",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_139",
+    "type": "quiz",
+    "question": "He _____go to school on Sundays.",
+    "options": [
+      "isn't",
+      "aren't",
+      "don't",
+      "doesn't"
+    ],
+    "correctAnswer": "doesn't",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_140",
+    "type": "quiz",
+    "question": "I_____to school at 7.30",
+    "options": [
+      "am go",
+      "goes",
+      "going",
+      "go"
+    ],
+    "correctAnswer": "go",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_141",
+    "type": "quiz",
+    "question": "They _____TV every night.",
+    "options": [
+      "watch",
+      "watching",
+      "are watch",
+      "watches"
+    ],
+    "correctAnswer": "watch",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_142",
+    "type": "quiz",
+    "question": "He __________ models in his room.",
+    "options": [
+      "make",
+      "makes",
+      "go",
+      "goes"
+    ],
+    "correctAnswer": "makes",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_143",
+    "type": "quiz",
+    "question": "He __________ gardening in his free time.",
+    "options": [
+      "enjoying",
+      "enjoyed",
+      "enjoys",
+      "enjoy"
+    ],
+    "correctAnswer": "enjoys",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_144",
+    "type": "quiz",
+    "question": "My grandfather___________fishing very often.",
+    "options": [
+      "goes",
+      "go",
+      "don’t go",
+      "is"
+    ],
+    "correctAnswer": "goes",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_145",
+    "type": "quiz",
+    "question": "___________tidy your room?",
+    "options": [
+      "How often are you",
+      "How often do you",
+      "How often you",
+      "How often does you"
+    ],
+    "correctAnswer": "How often do you",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_146",
+    "type": "quiz",
+    "question": "What ___________your nationality? I am Vietnamese.",
+    "options": [
+      "is",
+      "are",
+      "do",
+      "does"
+    ],
+    "correctAnswer": "is",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_147",
+    "type": "quiz",
+    "question": "I really love making models and my brother ___________it too.",
+    "options": [
+      "love",
+      "loves",
+      "don’t love",
+      "doesn’t love"
+    ],
+    "correctAnswer": "loves",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_148",
+    "type": "quiz",
+    "question": "My sister ___________ how to swim.",
+    "options": [
+      "don’t know",
+      "doesn’t know",
+      "don’t knows",
+      "not know."
+    ],
+    "correctAnswer": "doesn’t know",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_149",
+    "type": "quiz",
+    "question": "Mai has lots of dolls. She ______ a dollhouse for them.",
+    "options": [
+      "wants to build",
+      "want to build",
+      "is wanting to build",
+      "will want to build"
+    ],
+    "correctAnswer": "wants to build",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_150",
+    "type": "quiz",
+    "question": "She _____swimming every weekend.",
+    "options": [
+      "go",
+      "goes",
+      "do",
+      "does"
+    ],
+    "correctAnswer": "goes",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_151",
+    "type": "quiz",
+    "question": "The train ___________at 6 am tomorrow.",
+    "options": [
+      "leaves",
+      "leave",
+      "is leave",
+      "don’t leave"
+    ],
+    "correctAnswer": "leaves",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_152",
+    "type": "error-finding",
+    "question": "I often gets up early to catch the bus to go to school.",
+    "options": [
+      "often",
+      "gets",
+      "early",
+      ""
+    ],
+    "correctAnswer": "gets",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_153",
+    "type": "error-finding",
+    "question": "She teach students in a local high school.",
+    "options": [
+      "teach",
+      "students",
+      "in",
+      ""
+    ],
+    "correctAnswer": "teach",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_154",
+    "type": "error-finding",
+    "question": "They doesn't own a house. They still have to rent one to live.",
+    "options": [
+      "doesn't",
+      "own",
+      "have",
+      ""
+    ],
+    "correctAnswer": "doesn't",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_155",
+    "type": "error-finding",
+    "question": "Dang Van Lam am a famous goalkeeper in the National Football Team.",
+    "options": [
+      "famous",
+      "the",
+      "am",
+      ""
+    ],
+    "correctAnswer": "am",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_156",
+    "type": "error-finding",
+    "question": "What do your brother do?",
+    "options": [
+      "do your",
+      "brother",
+      "What",
+      ""
+    ],
+    "correctAnswer": "do your",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_157",
+    "type": "error-finding",
+    "question": "Bruce and Tim doesn't go swimming in the lake.",
+    "options": [
+      "doesn't",
+      "go",
+      "swimming",
+      ""
+    ],
+    "correctAnswer": "doesn't",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_158",
+    "type": "error-finding",
+    "question": "Hannah speak Chinese very well .",
+    "options": [
+      "speak",
+      "well",
+      "Chinese",
+      ""
+    ],
+    "correctAnswer": "speak",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_159",
+    "type": "error-finding",
+    "question": "How often does she goes shopping in the supermarket?",
+    "options": [
+      "How often",
+      "shopping",
+      "goes",
+      ""
+    ],
+    "correctAnswer": "goes",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_160",
+    "type": "error-finding",
+    "question": "Our dogs aren't eat bones.",
+    "options": [
+      "aren't",
+      "Our dogs",
+      "eat",
+      ""
+    ],
+    "correctAnswer": "aren't",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_161",
+    "type": "error-finding",
+    "question": "Mary's parents is very friendly and helpful.",
+    "options": [
+      "Mary's parents",
+      "is",
+      "friendly",
+      ""
+    ],
+    "correctAnswer": "is",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_162",
+    "type": "quiz",
+    "question": "I’m told you are ill. I hope you ________ better again.",
+    "options": [
+      "will feel",
+      "feel",
+      "are feeling",
+      "don’t feel"
+    ],
+    "correctAnswer": "will feel",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_163",
+    "type": "quiz",
+    "question": "We were getting tired, so we stopped ________ lunch.",
+    "options": [
+      "have",
+      "having",
+      "to have",
+      "for having"
+    ],
+    "correctAnswer": "to have",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_164",
+    "type": "quiz",
+    "question": "______ you ______ to school every morning?",
+    "options": [
+      "Does ... walk",
+      "Do ... walk",
+      "Will... walk",
+      "Are ... walking"
+    ],
+    "correctAnswer": "Do ... walk",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_165",
+    "type": "quiz",
+    "question": "He enjoys ________ cycling at the weekend.",
+    "options": [
+      "to go",
+      "going",
+      "goes",
+      "go"
+    ],
+    "correctAnswer": "going",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_166",
+    "type": "quiz",
+    "question": "You needn’t wear your coat. It ________ cold today.",
+    "options": [
+      "will be",
+      "won’t be",
+      "doesn’t be",
+      "is"
+    ],
+    "correctAnswer": "won’t be",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_167",
+    "type": "quiz",
+    "question": "We ________ swimming because it’s fun and good exercise.",
+    "options": [
+      "like",
+      "are liking",
+      "will like",
+      "liked"
+    ],
+    "correctAnswer": "like",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_168",
+    "type": "quiz",
+    "question": "My grandparents don’t like ________ in the city because it’s noisy and crowded.",
+    "options": [
+      "live",
+      "lived",
+      "living",
+      "to living"
+    ],
+    "correctAnswer": "living",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_169",
+    "type": "quiz",
+    "question": "Fire needs oxygen to burn. It ________ without oxygen.",
+    "options": [
+      "burn",
+      "burns",
+      "don’t burn",
+      "doesn’t burn"
+    ],
+    "correctAnswer": "doesn’t burn",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_170",
+    "type": "quiz",
+    "question": "How much time do you spend ________ the Internet per day?",
+    "options": [
+      "surf",
+      "to surf",
+      "surfing",
+      "to be surfing"
+    ],
+    "correctAnswer": "surfing",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_171",
+    "type": "quiz",
+    "question": "I don’t mind ________ a DVD, but I prefer ________ to the cinema.",
+    "options": [
+      "to watch - to go",
+      "watching – go",
+      "to watch – going",
+      "watching – to go"
+    ],
+    "correctAnswer": "watching – to go",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_172",
+    "type": "error-finding",
+    "question": "The children are playing boarding games, and their mother is arranging flowers.",
+    "options": [
+      "are",
+      "boarding",
+      "and",
+      "arranging"
+    ],
+    "correctAnswer": "boarding",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_173",
+    "type": "error-finding",
+    "question": "One of his father's favourite hobbies is playing horse-riding, and he just practises it twice a month .",
+    "options": [
+      "One",
+      "hobbies",
+      "playing",
+      "twice a month"
+    ],
+    "correctAnswer": "playing",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_174",
+    "type": "error-finding",
+    "question": "He started learning how to play the guitar on his elder brother.",
+    "options": [
+      "started",
+      "how to",
+      "the",
+      "on"
+    ],
+    "correctAnswer": "on",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_175",
+    "type": "error-finding",
+    "question": "Your favourite football match will begin at 3 p.m., so you should arrive there soon to get a good seat.",
+    "options": [
+      "will begin",
+      "so",
+      "arrive",
+      "to get"
+    ],
+    "correctAnswer": "will begin",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_176",
+    "type": "error-finding",
+    "question": "She will attend the judo class next month because she intends to have a long vacation in Ho Chi Minh City.",
+    "options": [
+      "will attend",
+      "because",
+      "to have",
+      "vacation"
+    ],
+    "correctAnswer": "will attend",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_177",
+    "type": "error-finding",
+    "question": "He loves to list en to classical music, but he spends a little time doing it.",
+    "options": [
+      "to listen",
+      "but",
+      "spends",
+      "doing"
+    ],
+    "correctAnswer": "to listen",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_178",
+    "type": "error-finding",
+    "question": "She didn't enjoy the party very much because she didn't like music and to dance there.",
+    "options": [
+      "didn’t enjoy",
+      "because",
+      "music",
+      "to dance"
+    ],
+    "correctAnswer": "to dance",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_179",
+    "type": "error-finding",
+    "question": "She's 18 and she’s France . She lives in a village near Toulouse. She studies engineering at university.",
+    "options": [
+      "France",
+      "lives",
+      "studies",
+      "engineering"
+    ],
+    "correctAnswer": "France",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_180",
+    "type": "error-finding",
+    "question": "She has a short black hair and very dark eyes. She is intelligent and funny, but sometimes she’s a bit sad too .",
+    "options": [
+      "a",
+      "very dark",
+      "intelligent",
+      "too"
+    ],
+    "correctAnswer": "a",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_181",
+    "type": "error-finding",
+    "question": "She loves music and she likes writing songs. She can plays the guitar very well and she has a beautiful voice.",
+    "options": [
+      "loves",
+      "writing",
+      "plays",
+      "beautiful"
+    ],
+    "correctAnswer": "plays",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "Hobbies",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_182",
+    "type": "quiz",
+    "question": "trong nhà",
+    "options": [
+      "Indoors",
+      "Lip balm",
+      "Pimple",
+      "Pop"
+    ],
+    "correctAnswer": "Indoors",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_183",
+    "type": "quiz",
+    "question": "kem/son dưỡng môi",
+    "options": [
+      "Lip balm",
+      "Pimple",
+      "Protein",
+      "Virus"
+    ],
+    "correctAnswer": "Lip balm",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_184",
+    "type": "quiz",
+    "question": "mụn",
+    "options": [
+      "Tofu",
+      "Vitamin",
+      "Pimple",
+      "Skin condition"
+    ],
+    "correctAnswer": "Pimple",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_185",
+    "type": "quiz",
+    "question": "nặn mụn",
+    "options": [
+      "Pop",
+      "Protein",
+      "Sunburn",
+      "Virus"
+    ],
+    "correctAnswer": "Pop",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_186",
+    "type": "quiz",
+    "question": "đậu nành",
+    "options": [
+      "Lip balm",
+      "Pimple",
+      "Soybean",
+      "Virus"
+    ],
+    "correctAnswer": "Soybean",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_187",
+    "type": "quiz",
+    "question": "đậu phụ",
+    "options": [
+      "Vitamin",
+      "Pimple",
+      "Tofu",
+      "Indoors"
+    ],
+    "correctAnswer": "Tofu",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_188",
+    "type": "quiz",
+    "question": "mụn trứng cá",
+    "options": [
+      "Acne",
+      "Affect",
+      "chapped",
+      "pop"
+    ],
+    "correctAnswer": "Acne",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_189",
+    "type": "quiz",
+    "question": "ảnh hưởng đến",
+    "options": [
+      "Acne",
+      "Avoid",
+      "Affect",
+      "Chapped"
+    ],
+    "correctAnswer": "Affect",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_190",
+    "type": "quiz",
+    "question": "tránh",
+    "options": [
+      "Avoid",
+      "Chapped",
+      "Acne",
+      "Affect"
+    ],
+    "correctAnswer": "Avoid",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_191",
+    "type": "quiz",
+    "question": "bệnh",
+    "options": [
+      "Disease",
+      "Acne",
+      "Affect",
+      "Avoid"
+    ],
+    "correctAnswer": "Disease",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_192",
+    "type": "quiz",
+    "question": "thuốc nhỏ mắt",
+    "options": [
+      "Acne",
+      "Affect",
+      "Avoid",
+      "Eye drops"
+    ],
+    "correctAnswer": "Eye drops",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_193",
+    "type": "quiz",
+    "question": "mỡ",
+    "options": [
+      "Acne",
+      "Affect",
+      "Avoid",
+      "Fat"
+    ],
+    "correctAnswer": "Fat",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_194",
+    "type": "quiz",
+    "question": "khỏe mạnh",
+    "options": [
+      "Acne",
+      "Affect",
+      "Avoid",
+      "Healthy"
+    ],
+    "correctAnswer": "Healthy",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_195",
+    "type": "quiz",
+    "question": "We can get __________ if we eat too much fat and don’t do exercise.",
+    "options": [
+      "put on weight",
+      "get sunburn",
+      "affect",
+      "breathe"
+    ],
+    "correctAnswer": "put on weight",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_196",
+    "type": "quiz",
+    "question": "I always use __________ in winter to avoid chapped lips.",
+    "options": [
+      "vitamin",
+      "lip balm",
+      "protein",
+      "quiet"
+    ],
+    "correctAnswer": "lip balm",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_197",
+    "type": "quiz",
+    "question": "You __________ eat too much fat. It's bad for your health.",
+    "options": [
+      "should eat",
+      "shouldn’t eat",
+      "should to eat",
+      "shouldn’t to eat"
+    ],
+    "correctAnswer": "shouldn’t eat",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_198",
+    "type": "quiz",
+    "question": "I eat __________ fruit and vegetables every day.",
+    "options": [
+      "any",
+      "many",
+      "little",
+      "a lot of"
+    ],
+    "correctAnswer": "a lot of",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_199",
+    "type": "quiz",
+    "question": "There isn’t __________ protein in this food.",
+    "options": [
+      "any",
+      "a",
+      "many",
+      "little"
+    ],
+    "correctAnswer": "any",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_200",
+    "type": "quiz",
+    "question": "Too much sun can __________ your skin.",
+    "options": [
+      "affect",
+      "avoid",
+      "protect",
+      "pop"
+    ],
+    "correctAnswer": "affect",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_201",
+    "type": "quiz",
+    "question": "We must take __________ our health.",
+    "options": [
+      "care",
+      "after",
+      "care of",
+      "away"
+    ],
+    "correctAnswer": "care of",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_202",
+    "type": "quiz",
+    "question": "We should eat more fruit and __________ fast food.",
+    "options": [
+      "much",
+      "less",
+      "any",
+      "few"
+    ],
+    "correctAnswer": "less",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_203",
+    "type": "quiz",
+    "question": "Sunlight can __________ your skin if you stay outdoors too long.",
+    "options": [
+      "avoid",
+      "affect",
+      "indoors",
+      "pop"
+    ],
+    "correctAnswer": "affect",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_204",
+    "type": "quiz",
+    "question": "I like to stay __________ when it's raining.",
+    "options": [
+      "lip balm",
+      "indoors",
+      "sunburn",
+      "tofu"
+    ],
+    "correctAnswer": "indoors",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_205",
+    "type": "quiz",
+    "question": "Use __________ to protect your lips from getting dry.",
+    "options": [
+      "lip balm",
+      "acne",
+      "pimple",
+      "virus"
+    ],
+    "correctAnswer": "lip balm",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_206",
+    "type": "quiz",
+    "question": "You shouldn't __________ your pimples.",
+    "options": [
+      "pop",
+      "protein",
+      "indoors",
+      "line"
+    ],
+    "correctAnswer": "pop",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_207",
+    "type": "quiz",
+    "question": "Eggs are a good source of __________.",
+    "options": [
+      "virus",
+      "eye drops",
+      "fat",
+      "protein"
+    ],
+    "correctAnswer": "protein",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_208",
+    "type": "quiz",
+    "question": "His __________ is getting better with treatment.",
+    "options": [
+      "skin condition",
+      "lip balm",
+      "sunburn",
+      "healthy"
+    ],
+    "correctAnswer": "skin condition",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_209",
+    "type": "quiz",
+    "question": "__________ is used in many Asian dishes.",
+    "options": [
+      "Lip balm",
+      "Soybean",
+      "Pimple",
+      "Virus"
+    ],
+    "correctAnswer": "Soybean",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_210",
+    "type": "quiz",
+    "question": "__________ is a popular food for vegetarians.",
+    "options": [
+      "Virus",
+      "Pimple",
+      "Tofu",
+      "Protein"
+    ],
+    "correctAnswer": "Tofu",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_211",
+    "type": "quiz",
+    "question": "You should eat lots of coloured __________ every day.",
+    "options": [
+      "air",
+      "vegetables",
+      "tables",
+      "drinks"
+    ],
+    "correctAnswer": "vegetables",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_212",
+    "type": "quiz",
+    "question": "Don’t forget to bring your __________ to the beach!",
+    "options": [
+      "suncream",
+      "sandwich",
+      "soft drink",
+      "skin condition"
+    ],
+    "correctAnswer": "suncream",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_213",
+    "type": "quiz",
+    "question": "Too many soft drinks are not __________ for your body.",
+    "options": [
+      "healthy",
+      "fresh",
+      "quiet",
+      "clean"
+    ],
+    "correctAnswer": "healthy",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_214",
+    "type": "quiz",
+    "question": "She has red spots on her face. Her __________ is not good.",
+    "options": [
+      "skin condition",
+      "soft drink",
+      "suncream",
+      "health"
+    ],
+    "correctAnswer": "skin condition",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_215",
+    "type": "quiz",
+    "question": "Doing exercise every day helps you stay __________.",
+    "options": [
+      "chapped",
+      "dim",
+      "boat",
+      "fit"
+    ],
+    "correctAnswer": "fit",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_216",
+    "type": "quiz",
+    "question": "Let’s go for a walk and enjoy the __________ air.",
+    "options": [
+      "health",
+      "noise",
+      "fresh",
+      "dim"
+    ],
+    "correctAnswer": "fresh",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_217",
+    "type": "quiz",
+    "question": "Don’t sit too long under the sun or you’ll __________.",
+    "options": [
+      "go boating",
+      "get sunburn",
+      "feel quiet",
+      "drink soft drinks"
+    ],
+    "correctAnswer": "get sunburn",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_218",
+    "type": "quiz",
+    "question": "We should __________ junk food to stay healthy.",
+    "options": [
+      "bring",
+      "enjoy",
+      "avoid",
+      "affect"
+    ],
+    "correctAnswer": "avoid",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_219",
+    "type": "quiz",
+    "question": "Her lips are very dry and have cracks. They are __________.",
+    "options": [
+      "quiet",
+      "soft",
+      "chapped",
+      "dim"
+    ],
+    "correctAnswer": "chapped",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_220",
+    "type": "quiz",
+    "question": "It’s better to read books in a bright room, not in __________ light.",
+    "options": [
+      "dim",
+      "red",
+      "healthy",
+      "soft"
+    ],
+    "correctAnswer": "dim",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_221",
+    "type": "quiz",
+    "question": "Doing yoga every morning helps me __________ fit.",
+    "options": [
+      "keep",
+      "have",
+      "affect",
+      "avoid"
+    ],
+    "correctAnswer": "keep",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_222",
+    "type": "quiz",
+    "question": "My favourite activity is __________ in the quiet park near my house.",
+    "options": [
+      "boat",
+      "boating",
+      "boated",
+      "boats"
+    ],
+    "correctAnswer": "boating",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_223",
+    "type": "quiz",
+    "question": "We need suncream __________ our trip to the beach tomorrow.",
+    "options": [
+      "to",
+      "on",
+      "for",
+      "at"
+    ],
+    "correctAnswer": "for",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_224",
+    "type": "quiz",
+    "question": "She often _________ an hour __________ in the fresh air every afternoon.",
+    "options": [
+      "spends / walks",
+      "spend / walking",
+      "spends / walking",
+      "spends / to walk"
+    ],
+    "correctAnswer": "spends / walking",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_225",
+    "type": "quiz",
+    "question": "To have good skin, we should __________ unhealthy food like soft drinks and fast food.",
+    "options": [
+      "prevent",
+      "have",
+      "avoid",
+      "keep"
+    ],
+    "correctAnswer": "avoid",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_247",
+    "type": "quiz",
+    "question": "My grandfather is 70 years old, but he is still very __________.",
+    "options": [
+      "active",
+      "activity",
+      "action",
+      "actively"
+    ],
+    "correctAnswer": "active",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_248",
+    "type": "quiz",
+    "question": "Acne is not dangerous, but it can be a __________ skin problem.",
+    "options": [
+      "seriously",
+      "serious",
+      "seriousness",
+      "more serious"
+    ],
+    "correctAnswer": "serious",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_249",
+    "type": "quiz",
+    "question": "He often eats too much and doesn’t do exercise. He always puts on __________.",
+    "options": [
+      "weigh",
+      "weight",
+      "weights",
+      "weighted"
+    ],
+    "correctAnswer": "weight",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_250",
+    "type": "quiz",
+    "question": "We use __________ when our eyes are dry or tired.",
+    "options": [
+      "suncream",
+      "lip balm",
+      "eye drops",
+      "protein"
+    ],
+    "correctAnswer": "eye drops",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_251",
+    "type": "quiz",
+    "question": "He got sunburn because he didn’t use any __________.",
+    "options": [
+      "eye drops",
+      "soft drinks",
+      "suncream",
+      "protein"
+    ],
+    "correctAnswer": "suncream",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_252",
+    "type": "quiz",
+    "question": "Teenagers often have __________ on their face.",
+    "options": [
+      "vitamin",
+      "soybean",
+      "red spots",
+      "pimples"
+    ],
+    "correctAnswer": "pimples",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_253",
+    "type": "quiz",
+    "question": "Soybeans are a good source of __________.",
+    "options": [
+      "virus",
+      "protein",
+      "dim",
+      "skin"
+    ],
+    "correctAnswer": "protein",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_254",
+    "type": "quiz",
+    "question": "Washing your face every day can help prevent __________.",
+    "options": [
+      "vitamin",
+      "acne",
+      "chapped",
+      "eye drops"
+    ],
+    "correctAnswer": "acne",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_255",
+    "type": "quiz",
+    "question": "It’s better to stay __________ during the hottest part of the day.",
+    "options": [
+      "indoors",
+      "outdoors",
+      "on boat",
+      "on water"
+    ],
+    "correctAnswer": "indoors",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_256",
+    "type": "quiz",
+    "question": "A virus can cause a serious __________, so you should wash your hands often.",
+    "options": [
+      "health",
+      "boat",
+      "disease",
+      "suncream"
+    ],
+    "correctAnswer": "disease",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_257",
+    "type": "quiz",
+    "question": "You __________ pop your pimples because it can make your skin worse.",
+    "options": [
+      "should",
+      "shouldn’t",
+      "must",
+      "can"
+    ],
+    "correctAnswer": "shouldn’t",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_258",
+    "type": "quiz",
+    "question": "Soybeans have __________ protein and are good for your body.",
+    "options": [
+      "a lot of",
+      "little",
+      "many",
+      "any"
+    ],
+    "correctAnswer": "a lot of",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_259",
+    "type": "quiz",
+    "question": "There isn’t __________ vitamin C in soft drinks.",
+    "options": [
+      "much",
+      "a",
+      "any",
+      "some"
+    ],
+    "correctAnswer": "any",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_260",
+    "type": "quiz",
+    "question": "Too much fat in your meals can __________ your skin condition.",
+    "options": [
+      "avoid",
+      "affect",
+      "protect",
+      "improve"
+    ],
+    "correctAnswer": "affect",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_261",
+    "type": "quiz",
+    "question": "You should _________ your eyes and use eye drops when they are dry.",
+    "options": [
+      "look for",
+      "take after",
+      "look care",
+      "take care of"
+    ],
+    "correctAnswer": "take care of",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_262",
+    "type": "quiz",
+    "question": "We should eat more coloured vegetables and __________ soft drinks.",
+    "options": [
+      "little",
+      "fewer",
+      "less",
+      "much"
+    ],
+    "correctAnswer": "less",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_263",
+    "type": "quiz",
+    "question": "After spending two hours under the sun without a hat or __________, he got sunburn.",
+    "options": [
+      "direction",
+      "suncream",
+      "sunlight",
+      "tablet"
+    ],
+    "correctAnswer": "suncream",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_264",
+    "type": "quiz",
+    "question": "Coloured vegetables are full of vitamins and can improve your __________.",
+    "options": [
+      "balance",
+      "health",
+      "direction",
+      "feeling"
+    ],
+    "correctAnswer": "health",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_265",
+    "type": "quiz",
+    "question": "After a long walk in the cold wind, my lips became __________ and painful.",
+    "options": [
+      "fresh",
+      "chapped",
+      "noisy",
+      "crowded"
+    ],
+    "correctAnswer": "chapped",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_266",
+    "type": "quiz",
+    "question": "Doing regular exercise can help you __________ fit and strong.",
+    "options": [
+      "stay",
+      "be",
+      "make",
+      "turn"
+    ],
+    "correctAnswer": "stay",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_267",
+    "type": "quiz",
+    "question": "We should eat more fruit and vegetables to __________ a healthy lifestyle.",
+    "options": [
+      "make",
+      "take",
+      "keep",
+      "bring"
+    ],
+    "correctAnswer": "keep",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_268",
+    "type": "quiz",
+    "question": "We should do morning exercise in the park to __________ fresh air.",
+    "options": [
+      "take",
+      "breathe",
+      "break",
+      "share"
+    ],
+    "correctAnswer": "breathe",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_269",
+    "type": "quiz",
+    "question": "My favourite activity is __________ in the swimming pool after school.",
+    "options": [
+      "to swim",
+      "swim",
+      "swimming",
+      "swims"
+    ],
+    "correctAnswer": "swimming",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_270",
+    "type": "quiz",
+    "question": "We need warm clothes __________ our camping trip in the mountains.",
+    "options": [
+      "with",
+      "about",
+      "for",
+      "of"
+    ],
+    "correctAnswer": "for",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_271",
+    "type": "quiz",
+    "question": "At the weekend, I usually spend one hour __________ with my little brother.",
+    "options": [
+      "playing",
+      "to play",
+      "play",
+      "plays"
+    ],
+    "correctAnswer": "playing",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_272",
+    "type": "quiz",
+    "question": "To stay healthy, we should avoid __________ with dirty hands.",
+    "options": [
+      "eat",
+      "to eat",
+      "eats",
+      "eating"
+    ],
+    "correctAnswer": "eating",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_273",
+    "type": "quiz",
+    "question": "He is very __________. He always joins sports and plays outside with friends.",
+    "options": [
+      "active",
+      "activity",
+      "action",
+      "actively"
+    ],
+    "correctAnswer": "active",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_274",
+    "type": "quiz",
+    "question": "Too much sunlight can cause skin __________ like red spots or chapped lips.",
+    "options": [
+      "condition",
+      "conditional",
+      "conditioned",
+      "conditioning"
+    ],
+    "correctAnswer": "condition",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_275",
+    "type": "quiz",
+    "question": "We all know that good food and exercise are very __________ for our health.",
+    "options": [
+      "use",
+      "useful",
+      "usage",
+      "useless"
+    ],
+    "correctAnswer": "useful",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_276",
+    "type": "quiz",
+    "question": "You shouldn't eat sweets, ____ you will have a toothache.",
+    "options": [
+      "and",
+      "or",
+      "but",
+      "if"
+    ],
+    "correctAnswer": "or",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_277",
+    "type": "quiz",
+    "question": "I forgot to____suncream today and I got a sunburn.",
+    "options": [
+      "take",
+      "cover",
+      "wear",
+      "scrub"
+    ],
+    "correctAnswer": "wear",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_278",
+    "type": "quiz",
+    "question": "The doctor advised him to exercise more,____ he didn't follow his advice.",
+    "options": [
+      "so",
+      "or",
+      "and",
+      "but"
+    ],
+    "correctAnswer": "but",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_279",
+    "type": "quiz",
+    "question": "She eats so much fast food that she's_____",
+    "options": [
+      "underweight",
+      "weightless",
+      "overweight",
+      "overweigh"
+    ],
+    "correctAnswer": "overweight",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_280",
+    "type": "quiz",
+    "question": "Using your mobile phone too much is not good _____your eyes.",
+    "options": [
+      "for",
+      "to",
+      "with",
+      "by"
+    ],
+    "correctAnswer": "for",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_281",
+    "type": "quiz",
+    "question": "We can____some diseases by keeping ourselves clean.",
+    "options": [
+      "care",
+      "avoid",
+      "get",
+      "spread"
+    ],
+    "correctAnswer": "avoid",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_282",
+    "type": "quiz",
+    "question": "Exercise is key____ good health.",
+    "options": [
+      "against",
+      "at",
+      "to",
+      "for"
+    ],
+    "correctAnswer": "to",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_283",
+    "type": "quiz",
+    "question": "Vitamin D has been shown to fight diseases, improve bone health, and prevent_____.",
+    "options": [
+      "depresses",
+      "depressed",
+      "depression",
+      "depressing"
+    ],
+    "correctAnswer": "depression",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_284",
+    "type": "quiz",
+    "question": "Kids and teens who are bored, stressed, or depressed may eat _____ to cope with negative emotions.",
+    "options": [
+      "many",
+      "fewer",
+      "less",
+      "more"
+    ],
+    "correctAnswer": "more",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_285",
+    "type": "quiz",
+    "question": "I'm allergic to seafood,_____ I can't eat lobsters and shrimps.",
+    "options": [
+      "but",
+      "when",
+      "so",
+      "because"
+    ],
+    "correctAnswer": "so",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_286",
+    "type": "quiz",
+    "question": "You should eat a lot of fruits and vegetables because they provide _____ A, which is good for the eyes.",
+    "options": [
+      "vitamin",
+      "virus",
+      "pimple",
+      "lip balm"
+    ],
+    "correctAnswer": "vitamin",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_287",
+    "type": "quiz",
+    "question": "Acne is a ________ , it causes small, red spots on the face and the back. It affects 70-80% of young people between 12 and 30",
+    "options": [
+      "virus",
+      "lip balm",
+      "skin condition",
+      "protein"
+    ],
+    "correctAnswer": "skin condition",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_288",
+    "type": "quiz",
+    "question": "Don’t touch or ______ spots, especially when your hands are dirty.",
+    "options": [
+      "play",
+      "pop",
+      "listen",
+      "work"
+    ],
+    "correctAnswer": "pop",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_289",
+    "type": "quiz",
+    "question": "_________ is a nutrient that is essential for growth and repair of body tissues.",
+    "options": [
+      "Indoors",
+      "Lip balm",
+      "Protein",
+      "Sunburn"
+    ],
+    "correctAnswer": "Protein",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_290",
+    "type": "quiz",
+    "question": "_________ is a plant-based source of protein commonly used in vegetarian and vegan diets.",
+    "options": [
+      "Soybean",
+      "Skin condition",
+      "Sunburn",
+      "Vitamin"
+    ],
+    "correctAnswer": "Soybean",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_291",
+    "type": "quiz",
+    "question": "_________ is a microorganism that can cause various illnesses.",
+    "options": [
+      "Virus",
+      "Protein",
+      "Tofu",
+      "Pimple"
+    ],
+    "correctAnswer": "Virus",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_292",
+    "type": "quiz",
+    "question": "_________ is a common legume used to make tofu.",
+    "options": [
+      "Pimple",
+      "Sunburn",
+      "Soybean",
+      "Vitamin"
+    ],
+    "correctAnswer": "Soybean",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_293",
+    "type": "quiz",
+    "question": "If you want to protect your lips from getting chapped, you can apply _________.",
+    "options": [
+      "Indoors",
+      "Soybean",
+      "Lip balm",
+      "Virus"
+    ],
+    "correctAnswer": "Lip balm",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_294",
+    "type": "quiz",
+    "question": "Some of a vegetarian's main foods are _______ and vegetables.",
+    "options": [
+      "Virus",
+      "Protein",
+      "Tofu",
+      "Pimple"
+    ],
+    "correctAnswer": "Tofu",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_295",
+    "type": "quiz",
+    "question": "Having a healthy diet and proper skincare routine can help prevent ______ breakouts.",
+    "options": [
+      "pimple",
+      "soybean",
+      "tofu",
+      "skin condition"
+    ],
+    "correctAnswer": "pimple",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_296",
+    "type": "quiz",
+    "question": "There isn’t __________ suncream in my bag.",
+    "options": [
+      "a",
+      "some",
+      "any",
+      "much"
+    ],
+    "correctAnswer": "any",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_297",
+    "type": "quiz",
+    "question": "Too much fat in your food can __________ your skin condition.",
+    "options": [
+      "affect",
+      "protect",
+      "pop",
+      "take"
+    ],
+    "correctAnswer": "affect",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_298",
+    "type": "quiz",
+    "question": "Soybeans have more protein __________ soft drinks.",
+    "options": [
+      "to",
+      "with",
+      "than",
+      "from"
+    ],
+    "correctAnswer": "than",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_299",
+    "type": "quiz",
+    "question": "flu",
+    "options": [
+      "a common illness that affects the nose and/or throat, making you cough, sneeze, etc.",
+      "an abnormally high body temperature",
+      "a medical condition that makes you become ill or get a rash when you eat, smell, or touch something",
+      "a very bad cold caused by a virus that causes fever, pains and weakness"
+    ],
+    "correctAnswer": "a very bad cold caused by a virus that causes fever, pains and weakness",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the DEFINITION that matches the word.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_300",
+    "type": "quiz",
+    "question": "allergy",
+    "options": [
+      "a common illness that affects the nose and/or throat, making you cough, sneeze, etc.",
+      "an abnormally high body temperature",
+      "a medical condition that makes you become ill or get a rash when you eat, smell, or touch something",
+      "the pain in the middle or inner ear"
+    ],
+    "correctAnswer": "a medical condition that makes you become ill or get a rash when you eat, smell, or touch something",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the DEFINITION that matches the word.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_301",
+    "type": "quiz",
+    "question": "cold",
+    "options": [
+      "a common illness that affects the nose and/or throat, making you cough, sneeze, etc.",
+      "an abnormally high body temperature",
+      "a medical condition that makes you become ill or get a rash when you eat, smell, or touch something",
+      "the pain in the middle or inner ear"
+    ],
+    "correctAnswer": "a common illness that affects the nose and/or throat, making you cough, sneeze, etc.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the DEFINITION that matches the word.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_302",
+    "type": "quiz",
+    "question": "sunburn",
+    "options": [
+      "a common illness that affects the nose and/or throat, making you cough, sneeze, etc.",
+      "an abnormally high body temperature",
+      "a medical condition that makes you become ill or get a rash when you eat, smell, or touch something",
+      "the condition of having painful red skin that is caused by staying in the sun for too long"
+    ],
+    "correctAnswer": "the condition of having painful red skin that is caused by staying in the sun for too long",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the DEFINITION that matches the word.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_303",
+    "type": "quiz",
+    "question": "obesity",
+    "options": [
+      "a common illness that affects the nose and/or throat, making you cough, sneeze, etc.",
+      "an abnormally high body temperature",
+      "a medical condition that makes you become ill or get a rash when you eat, smell, or touch something",
+      "the condition of being fat or overweight"
+    ],
+    "correctAnswer": "the condition of being fat or overweight",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the DEFINITION that matches the word.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_304",
+    "type": "quiz",
+    "question": "earache",
+    "options": [
+      "a common illness that affects the nose and/or throat, making you cough, sneeze, etc.",
+      "an abnormally high body temperature",
+      "a medical condition that makes you become ill or get a rash when you eat, smell, or touch something",
+      "the pain in the middle or inner ear"
+    ],
+    "correctAnswer": "the pain in the middle or inner ear",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the DEFINITION that matches the word.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_305",
+    "type": "quiz",
+    "question": "toothache",
+    "options": [
+      "a common illness that affects the nose and/or throat, making you cough, sneeze, etc.",
+      "an abnormally high body temperature",
+      "a medical condition that makes you become ill or get a rash when you eat, smell, or touch something",
+      "the pain in a tooth or teeth"
+    ],
+    "correctAnswer": "the pain in a tooth or teeth",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the DEFINITION that matches the word.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_306",
+    "type": "quiz",
+    "question": "fever",
+    "options": [
+      "a common illness that affects the nose and/or throat, making you cough, sneeze, etc.",
+      "an abnormally high body temperature",
+      "a medical condition that makes you become ill or get a rash when you eat, smell, or touch something",
+      "the pain in the middle or inner ear"
+    ],
+    "correctAnswer": "an abnormally high body temperature",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the DEFINITION that matches the word.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_307",
+    "type": "quiz",
+    "question": "We should do more physical activities. (should)",
+    "options": [
+      "had better",
+      "have to",
+      "must",
+      "can"
+    ],
+    "correctAnswer": "had better",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) CLOSEST in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_308",
+    "type": "quiz",
+    "question": "What is the benefit of swimming? ( benefit)",
+    "options": [
+      "cause",
+      "effect",
+      "advantage",
+      "harm"
+    ],
+    "correctAnswer": "advantage",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) CLOSEST in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_309",
+    "type": "quiz",
+    "question": "Acne affects 70-80% of young people between 12 and 30. ( affects)",
+    "options": [
+      "helps",
+      "attracts",
+      "saves",
+      "has an impact on"
+    ],
+    "correctAnswer": "has an impact on",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) CLOSEST in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_310",
+    "type": "quiz",
+    "question": "Children should avoid soft drinks. ( avoid )",
+    "options": [
+      "have",
+      "take",
+      "come",
+      "stay away from"
+    ],
+    "correctAnswer": "stay away from",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) CLOSEST in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_311",
+    "type": "quiz",
+    "question": "Acne causes black and white pimples on the face. ( causes)",
+    "options": [
+      "results from",
+      "results in",
+      "leads",
+      "makes"
+    ],
+    "correctAnswer": "results in",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) CLOSEST in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_312",
+    "type": "quiz",
+    "question": "Don't touch your face with dirty hands. (dirty)",
+    "options": [
+      "clear",
+      "neat",
+      "full",
+      "clean"
+    ],
+    "correctAnswer": "clean",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_313",
+    "type": "quiz",
+    "question": "Breakfast is very important , so you shouldn't skip it. (important)",
+    "options": [
+      "trivial",
+      "necessary",
+      "vital",
+      "essential"
+    ],
+    "correctAnswer": "trivial",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_314",
+    "type": "quiz",
+    "question": "Remember to wear a hat and use some suncream when you go to the beach. (wear)",
+    "options": [
+      "put on",
+      "cover",
+      "make",
+      "take off"
+    ],
+    "correctAnswer": "take off",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_315",
+    "type": "quiz",
+    "question": "If you don't want to gain weight, you should go to the gym every day. (gain)",
+    "options": [
+      "rise",
+      "increase",
+      "lose",
+      "loose"
+    ],
+    "correctAnswer": "lose",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_316",
+    "type": "quiz",
+    "question": "Clean hands help prevent the spread of some diseases. (prevent)",
+    "options": [
+      "boost",
+      "stop",
+      "increase",
+      "enhance"
+    ],
+    "correctAnswer": "stop",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_317",
+    "type": "quiz",
+    "question": "My dog runs fast, and it jumps high.",
+    "options": [
+      "Câu trên là câu đơn. (simple sentence)",
+      "Câu trên không phải là câu đơn.",
+      "",
+      ""
+    ],
+    "correctAnswer": "Câu trên không phải là câu đơn.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_318",
+    "type": "quiz",
+    "question": "The boy reads a book and eats an apple.",
+    "options": [
+      "Câu trên là câu đơn. (simple sentence)",
+      "Câu trên không phải là câu đơn.",
+      "",
+      ""
+    ],
+    "correctAnswer": "Câu trên là câu đơn. (simple sentence)",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_319",
+    "type": "quiz",
+    "question": "She drinks milk every morning.",
+    "options": [
+      "Câu trên là câu đơn. (simple sentence)",
+      "Câu trên không phải là câu đơn.",
+      "",
+      ""
+    ],
+    "correctAnswer": "Câu trên là câu đơn. (simple sentence)",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_320",
+    "type": "quiz",
+    "question": "He likes cats, but he doesn't like dogs.",
+    "options": [
+      "Câu trên là câu đơn.",
+      "Câu trên không phải là câu đơn.",
+      "",
+      ""
+    ],
+    "correctAnswer": "Câu trên không phải là câu đơn.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_321",
+    "type": "quiz",
+    "question": "Birds sing loudly.",
+    "options": [
+      "Câu trên là câu đơn. (simple sentence)",
+      "Câu trên không phải là câu đơn.",
+      "",
+      ""
+    ],
+    "correctAnswer": "Câu trên là câu đơn. (simple sentence)",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_322",
+    "type": "quiz",
+    "question": "My brother and I play soccer every weekend.",
+    "options": [
+      "Câu trên là câu đơn. (simple sentence)",
+      "Câu trên không phải là câu đơn.",
+      "",
+      ""
+    ],
+    "correctAnswer": "Câu trên là câu đơn. (simple sentence)",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_323",
+    "type": "quiz",
+    "question": "You can eat either spinach______ cabbage.",
+    "options": [
+      "and",
+      "but",
+      "or",
+      "nor"
+    ],
+    "correctAnswer": "or",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_324",
+    "type": "quiz",
+    "question": "Laughter______ love are good for your health.",
+    "options": [
+      "nor",
+      "or",
+      "and",
+      "but"
+    ],
+    "correctAnswer": "and",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_325",
+    "type": "quiz",
+    "question": "My brother likes running _____ cycling.",
+    "options": [
+      "so",
+      "and",
+      "as",
+      "or"
+    ],
+    "correctAnswer": "and",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_326",
+    "type": "quiz",
+    "question": "Stand up every hour____ do some simple exercise to reduce sitting time.",
+    "options": [
+      "since",
+      "and",
+      "or",
+      "but"
+    ],
+    "correctAnswer": "and",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_327",
+    "type": "quiz",
+    "question": "Don't eat a lot of meat____ snacks.",
+    "options": [
+      "and",
+      "or",
+      "so",
+      "while"
+    ],
+    "correctAnswer": "and",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_328",
+    "type": "quiz",
+    "question": "We stayed at home, and we watched a film.",
+    "options": [
+      "Câu trên là câu đơn. (simple sentence)",
+      "Câu trên là câu ghép. (compound sentence)",
+      "",
+      ""
+    ],
+    "correctAnswer": "Câu trên là câu ghép. (compound sentence)",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_329",
+    "type": "quiz",
+    "question": "My sister and I go to the gym and eat healthy food every day.",
+    "options": [
+      "Câu trên là câu đơn. (simple sentence)",
+      "​​​​​​​Câu trên là câu ghép. (compound sentence)",
+      "",
+      ""
+    ],
+    "correctAnswer": "Câu trên là câu đơn. (simple sentence)",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_330",
+    "type": "quiz",
+    "question": "She had a terrible headache last night.",
+    "options": [
+      "Câu trên là câu đơn. (simple sentence)",
+      "​​​​​​​Câu trên là câu ghép. (compound sentence)",
+      "",
+      ""
+    ],
+    "correctAnswer": "Câu trên là câu đơn. (simple sentence)",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_331",
+    "type": "quiz",
+    "question": "I never eat biscuits.",
+    "options": [
+      "Câu trên là câu đơn. (simple sentence)",
+      "​​​​​​​Câu trên là câu ghép. (compound sentence)",
+      "",
+      ""
+    ],
+    "correctAnswer": "Câu trên là câu đơn. (simple sentence)",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_332",
+    "type": "quiz",
+    "question": "Would you like cake with your coffee?",
+    "options": [
+      "Câu trên là câu đơn. (simple sentence)",
+      "​​​​​​​Câu trên là câu ghép. (compound sentence)",
+      "",
+      ""
+    ],
+    "correctAnswer": "Câu trên là câu đơn. (simple sentence)",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_333",
+    "type": "quiz",
+    "question": "My job is very interesting, but it doesn’t pay very well.",
+    "options": [
+      "Câu trên là câu đơn. (simple sentence)",
+      "​​​​​​​Câu trên là câu ghép. (compound sentence)",
+      "",
+      ""
+    ],
+    "correctAnswer": "​​​​​​​Câu trên là câu ghép. (compound sentence)",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_334",
+    "type": "quiz",
+    "question": "We can go by bus, or we can walk.",
+    "options": [
+      "Câu trên là câu đơn. (simple sentence)",
+      "​​​​​​​Câu trên là câu ghép. (compound sentence)",
+      "",
+      ""
+    ],
+    "correctAnswer": "​​​​​​​Câu trên là câu ghép. (compound sentence)",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_335",
+    "type": "quiz",
+    "question": "My classmate studies very hard.",
+    "options": [
+      "Câu trên là câu đơn. (simple sentence)",
+      "​​​​​​​Câu trên là câu ghép. (compound sentence)",
+      "",
+      ""
+    ],
+    "correctAnswer": "Câu trên là câu đơn. (simple sentence)",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_336",
+    "type": "quiz",
+    "question": "He drinks a lot of water and sleeps eight hours a night.",
+    "options": [
+      "Câu trên là câu đơn. (simple sentence)",
+      "​​​​​​​Câu trên là câu ghép. (compound sentence)",
+      "",
+      ""
+    ],
+    "correctAnswer": "Câu trên là câu đơn. (simple sentence)",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_337",
+    "type": "quiz",
+    "question": "The Japanese eat healthily.",
+    "options": [
+      "Câu trên là câu đơn. (simple sentence)",
+      "​​​​​​​Câu trên là câu ghép. (compound sentence)",
+      "",
+      ""
+    ],
+    "correctAnswer": "Câu trên là câu đơn. (simple sentence)",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_338",
+    "type": "quiz",
+    "question": "We eat dinner together _______________",
+    "options": [
+      "and talk about our day.",
+      "because we are a happy family.",
+      "",
+      ""
+    ],
+    "correctAnswer": "and talk about our day.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_339",
+    "type": "quiz",
+    "question": "Minh and Lan _______________",
+    "options": [
+      "play football every afternoon.",
+      "play football, and they are good friends.",
+      "",
+      ""
+    ],
+    "correctAnswer": "play football every afternoon.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_340",
+    "type": "quiz",
+    "question": "_______________ and drink milk before bed.",
+    "options": [
+      "The children are hungry, so they",
+      "The children brush their teeth",
+      "",
+      ""
+    ],
+    "correctAnswer": "The children brush their teeth",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_341",
+    "type": "quiz",
+    "question": "I eat vegetables every day _______________",
+    "options": [
+      "and feel healthier.",
+      "because my mom tells me to.",
+      "",
+      ""
+    ],
+    "correctAnswer": "and feel healthier.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_342",
+    "type": "quiz",
+    "question": "_______________ like apples and bananas.",
+    "options": [
+      "My sister and my brother",
+      "My friends don’t like grapes, but they",
+      "",
+      ""
+    ],
+    "correctAnswer": "My sister and my brother",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_343",
+    "type": "quiz",
+    "question": "We go to the gym _______________",
+    "options": [
+      "and do yoga together.",
+      "so we can be stronger.",
+      "",
+      ""
+    ],
+    "correctAnswer": "and do yoga together.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_344",
+    "type": "quiz",
+    "question": "Câu đơn là:",
+    "options": [
+      "Simple sentences",
+      "Complex sentences",
+      "Compound sentences",
+      "Conditional sentences"
+    ],
+    "correctAnswer": "Simple sentences",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_345",
+    "type": "quiz",
+    "question": "Câu đơn là câu ______",
+    "options": [
+      "kết hợp giữa câu ghép và câu phức.",
+      "có ít nhất 2 mệnh đề.",
+      "chỉ gồm 1 mệnh đề độc lập gồm chủ ngữ và động từ và các thành phần phụ khác.",
+      "có ít nhất một mệnh đề chính và một hoặc nhiều hơn một mệnh đề phụ."
+    ],
+    "correctAnswer": "chỉ gồm 1 mệnh đề độc lập gồm chủ ngữ và động từ và các thành phần phụ khác.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_346",
+    "type": "quiz",
+    "question": "Đâu không phải cấu trúc câu đơn trong tiếng Anh?",
+    "options": [
+      "S+V",
+      "S+V+O",
+      "S+V+O+adv",
+      "S+V, conjunction, S+V"
+    ],
+    "correctAnswer": "S+V, conjunction, S+V",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_347",
+    "type": "quiz",
+    "question": "Đâu là câu đơn?",
+    "options": [
+      "He don't know why he loves her",
+      "It's late, but he still came home",
+      "Nam and Ba are good friends.",
+      "Although I miss my parents, I can not return home to meet them."
+    ],
+    "correctAnswer": "Nam and Ba are good friends.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_348",
+    "type": "quiz",
+    "question": "I eat rice every day. I eat vegetables every day. → ___________________________________________",
+    "options": [
+      "I eat every day rice and vegetables.",
+      "I eat rice and vegetables every day.",
+      "I eat vegetables but rice every day.",
+      "I eat rice or vegetables every day."
+    ],
+    "correctAnswer": "I eat rice and vegetables every day.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the sentence with the SAME meaning as the original one.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_349",
+    "type": "quiz",
+    "question": "My sister likes apples. I like apples. → ___________________________________________",
+    "options": [
+      "My sister and I like apples.",
+      "I and my sister likes apples.",
+      "I like apples with my sister.",
+      "My sister likes apples and I too."
+    ],
+    "correctAnswer": "My sister and I like apples.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the sentence with the SAME meaning as the original one.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_350",
+    "type": "quiz",
+    "question": "Tom plays sports in the afternoon. His friend plays sports in the afternoon. → ___________________________________________",
+    "options": [
+      "Tom with his friend play sports in afternoon.",
+      "Tom and his friend plays sports in the afternoon.",
+      "Tom and his friend play sports in the afternoon.",
+      "Tom plays and his friend plays sports in the afternoon."
+    ],
+    "correctAnswer": "Tom and his friend play sports in the afternoon.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the sentence with the SAME meaning as the original one.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_351",
+    "type": "quiz",
+    "question": "She doesn’t eat fast food. She doesn’t drink cola. → ___________________________________________",
+    "options": [
+      "She doesn’t eat fast food and drink cola.",
+      "She doesn’t eat fast food or drink cola.",
+      "She doesn’t eat or drink fast food and cola.",
+      "She doesn’t eat fast food or cola."
+    ],
+    "correctAnswer": "She doesn’t eat fast food or drink cola.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the sentence with the SAME meaning as the original one.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_352",
+    "type": "quiz",
+    "question": "Do you want an orange? Or do you want a banana? → ___________________________________________",
+    "options": [
+      "Do you want an orange and banana?",
+      "Do you want an orange or a banana?",
+      "Do you want orange or banana?",
+      "You want an orange or a banana?"
+    ],
+    "correctAnswer": "Do you want an orange or a banana?",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the sentence with the SAME meaning as the original one.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_353",
+    "type": "quiz",
+    "question": "We go swimming in the morning _______________",
+    "options": [
+      "and play video games in the evening.",
+      "or we play video games in the evening.",
+      "because we like swimming.",
+      "if we play video games in the evening."
+    ],
+    "correctAnswer": "and play video games in the evening.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_354",
+    "type": "quiz",
+    "question": "Minh and his sister_______________",
+    "options": [
+      "like fruits, but they don’t like vegetables.",
+      "like fruits and vegetables.",
+      "like fruits, and they are active.",
+      "like fruits and vegetables because they’re healthy."
+    ],
+    "correctAnswer": "like fruits and vegetables.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_355",
+    "type": "quiz",
+    "question": "_______________ need to drink more water every day.",
+    "options": [
+      "People",
+      "Hot",
+      "Because people are hot, they",
+      "Drinking water is good, so people"
+    ],
+    "correctAnswer": "People",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_356",
+    "type": "quiz",
+    "question": "Lan eats a lot of fruit _______________",
+    "options": [
+      "and drinks fresh juice every morning.",
+      "but her brother doesn’t like fruit.",
+      "because it’s good for her health.",
+      "although she sometimes drinks juice."
+    ],
+    "correctAnswer": "and drinks fresh juice every morning.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_357",
+    "type": "quiz",
+    "question": "My friends and I _______________",
+    "options": [
+      "go cycling every weekend.",
+      "go cycling, and we take photos.",
+      "go cycling, but it often rains.",
+      "go cycling because it’s fun."
+    ],
+    "correctAnswer": "go cycling every weekend.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_358",
+    "type": "quiz",
+    "question": "_______________ and have a picnic in the park.",
+    "options": [
+      "We play badminton",
+      "We",
+      "We are active",
+      "If we have free time"
+    ],
+    "correctAnswer": "We play badminton",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_359",
+    "type": "quiz",
+    "question": "Nam eats a lot of vegetables. Nam eats a lot of fruit. → ___________________________________________",
+    "options": [
+      "Nam eats a lot of vegetables or fruit.",
+      "Nam eat a lot of fruit with vegetables.",
+      "Nam eats a lot of vegetables and fruit.",
+      "Nam eats a lot of and fruit vegetables."
+    ],
+    "correctAnswer": "Nam eats a lot of vegetables and fruit.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the sentence with the SAME meaning as the original one.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_360",
+    "type": "quiz",
+    "question": "My father likes jogging. I like jogging. → ___________________________________________",
+    "options": [
+      "My father and I like jogging.",
+      "I like jogging and my father.",
+      "My father like jogging with me.",
+      "I and my father likes jogging."
+    ],
+    "correctAnswer": "My father and I like jogging.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the sentence with the SAME meaning as the original one.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_361",
+    "type": "quiz",
+    "question": "Anna walks to school every day. Her friend walks to school every day. → ___________________________________________",
+    "options": [
+      "Anna and her friend walk to school every day.",
+      "Anna with her friend walks to school every day.",
+      "Anna walks and her friend walks to school.",
+      "Anna and her friend walks to school every day."
+    ],
+    "correctAnswer": "Anna and her friend walk to school every day.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the sentence with the SAME meaning as the original one.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_362",
+    "type": "quiz",
+    "question": "He doesn’t like cold drinks. He doesn’t like ice cream. → ___________________________________________",
+    "options": [
+      "He doesn’t like cold drinks or like ice cream.",
+      "He doesn’t like cold drinks or ice cream.",
+      "He doesn’t like cold drinks and ice cream.",
+      "He doesn’t like or ice cream cold drinks."
+    ],
+    "correctAnswer": "He doesn’t like cold drinks and ice cream.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the sentence with the SAME meaning as the original one.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_363",
+    "type": "quiz",
+    "question": "Do you eat carrots? Do you eat cabbages? → ___________________________________________",
+    "options": [
+      "You eat carrots or cabbages?",
+      "Do you eat carrots but cabbages?",
+      "Does you eat carrots or cabbages?",
+      "Do you eat carrots or cabbages?"
+    ],
+    "correctAnswer": "Do you eat carrots or cabbages?",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the sentence with the SAME meaning as the original one.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_364",
+    "type": "quiz",
+    "question": "We stayed at home _________ watched a film.",
+    "options": [
+      "and",
+      "but",
+      "or",
+      "so"
+    ],
+    "correctAnswer": "and",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_365",
+    "type": "quiz",
+    "question": "I want to buy a new car, _________ I don't have enough money.",
+    "options": [
+      "and",
+      "but",
+      "or",
+      "so"
+    ],
+    "correctAnswer": "but",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_366",
+    "type": "quiz",
+    "question": "She had a terrible headache last night, _________ she couldn't go out.",
+    "options": [
+      "and",
+      "but",
+      "or",
+      "so"
+    ],
+    "correctAnswer": "so",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_367",
+    "type": "quiz",
+    "question": "I eat cakes, _________ I never eat biscuits; I don't like them.",
+    "options": [
+      "and",
+      "but",
+      "or",
+      "so"
+    ],
+    "correctAnswer": "but",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_368",
+    "type": "quiz",
+    "question": "Would you like cakes _________ biscuits with your coffee?",
+    "options": [
+      "and",
+      "but",
+      "or",
+      "so"
+    ],
+    "correctAnswer": "or",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_369",
+    "type": "quiz",
+    "question": "My job is very interesting, _________ it doesn't pay very well.",
+    "options": [
+      "and",
+      "but",
+      "or",
+      "so"
+    ],
+    "correctAnswer": "but",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_370",
+    "type": "quiz",
+    "question": "We can go by bus, _________ we can walk.",
+    "options": [
+      "and",
+      "but",
+      "or",
+      "so"
+    ],
+    "correctAnswer": "or",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_371",
+    "type": "quiz",
+    "question": "My classmate studies very hard, _________ she always gets good marks.",
+    "options": [
+      "and",
+      "but",
+      "or",
+      "so"
+    ],
+    "correctAnswer": "so",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_372",
+    "type": "quiz",
+    "question": "You had better hurry up, _________ you'll be late for work.",
+    "options": [
+      "and",
+      "but",
+      "or",
+      "so"
+    ],
+    "correctAnswer": "or",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k7_373",
+    "type": "quiz",
+    "question": "The Japanese eat healthily, _________ they have high life expectancy.",
+    "options": [
+      "and",
+      "but",
+      "or",
+      "so"
+    ],
+    "correctAnswer": "so",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "HEALTHY LIVING",
+    "grade": 7,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
   }
 ]

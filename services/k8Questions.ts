@@ -62,7 +62,7 @@ export async function fetchK8Questions(
     if (q.difficulty !== difficulty) return false;
     if (topics.length > 0) {
       const qTopic = q.category.toLowerCase();
-      return topics.some(t => qTopic === t.toLowerCase());
+      return topics.some(t => qTopic.includes(t.toLowerCase()) || t.toLowerCase().includes(qTopic));
     }
     return true;
   });
@@ -76,4 +76,11 @@ export async function getK8Topics(): Promise<string[]> {
   const seen = new Set<string>();
   for (const q of all) seen.add(q.category);
   return Array.from(seen).sort();
+}
+
+export async function getK8Difficulties(): Promise<Difficulty[]> {
+  const all = await loadAll();
+  const seen = new Set<Difficulty>();
+  for (const q of all) seen.add(q.difficulty);
+  return Array.from(seen);
 }

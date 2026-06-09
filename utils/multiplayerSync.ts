@@ -5,6 +5,7 @@
 
 import { supabase } from '../services/supabase';
 import { MultiplayerGameState, PlayerInfo, Question, Difficulty } from '../types';
+import { XP_PER_QUESTION } from './gameLogic';
 
 // Constants
 const ROOM_PREFIX = 'edux_room_';
@@ -349,7 +350,6 @@ export async function submitAnswer(
   player.lastActivity = Date.now();
 
   if (isCorrect) {
-    player.score += scoreEarned;
     player.correctCount++;
     player.streak++;
     if (player.streak > player.maxStreak) {
@@ -358,6 +358,10 @@ export async function submitAnswer(
   } else {
     player.streak = 0;
   }
+
+  // Recalculate total score = correctXp + streakBonus (always up-to-date)
+  const xpPerQ = XP_PER_QUESTION[state.roomSettings.difficulty] || 10;
+  player.score = player.correctCount * xpPerQ + player.maxStreak * 5;
 
   // Check if player finished all questions
   if (player.currentQuestionIndex >= state.questions.length) {

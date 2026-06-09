@@ -21,6 +21,7 @@ function toSnakeCase(profile: Partial<UserProfile>): Record<string, any> {
   if (profile.totalGames !== undefined) result.total_games = profile.totalGames;
   if (profile.bestStreak !== undefined) result.best_streak = profile.bestStreak;
   if (profile.weeklyXp !== undefined) result.weekly_xp = profile.weeklyXp;
+  // weekly_xp_week chỉ lưu local (localStorage), không sync lên Supabase
   if (profile.topicStats !== undefined) result.topic_stats = profile.topicStats;
   if (profile.gradeXp !== undefined) result.grade_xp = profile.gradeXp;
   if (profile.unlockedFrames !== undefined) result.unlocked_frames = profile.unlockedFrames;
@@ -242,6 +243,92 @@ export async function migrateAllUsersGradeXp(): Promise<{ success: number; faile
 
   console.log(`\n=== Migration complete: ${success} success, ${failed} failed ===`);
   return { success, failed };
+}
+
+// ============ RECALCULATE ALL USERS XP ============
+
+/**
+ * Tính lại XP cho TẤT CẢ users từ game history trên Supabase.
+ * Fix: correctCount float, xpEarned float, weeklyXp tích lũy sai.
+ */
+export async function recalculateAllUsersXp(programStartMs: number, currentWeek: number | null): Promise<{ total: number; fixed: number }> {
+  const XP_MAP: Record<string, number> = {
+    'Dễ': 10, 'Trung bình': 12, 'Khó': 15, 'Chuyên gia': 20
+  };
+  const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+
+  // Lấy tất cả profiles
+  const { data: profiles, error: pErr } = await supabase
+    .from('edux_profiles')
+    .select('id, xp, weekly_xp');
+  if (pErr || !profiles) return { total: 0, fixed: 0 };
+
+  let fixed = 0;
+
+  for (const profile of profiles) {
+    // Lấy toàn bộ game history của user
+    const { data: games, error: gErr } = await supabase
+      .from('edux_game_history')
+      .select('id, difficulty, correct_count, total_questions, xp_earned, max_streak, played_at')
+      .eq('user_id', profile.id);
+    if (gErr || !games) continue;
+
+    let totalXpRecalc = 0;
+    let weeklyXpRecalc = 0;
+    const gameFixes: { id: string; correct_count: number; xp_earned: number }[] = [];
+
+    for (const g of games) {
+      const xpPerQ = XP_MAP[g.difficulty] || 10;
+      const safeCorrect = Math.round(g.correct_count || 0);
+      const correctXp = safeCorrect * xpPerQ;
+      const streakBonus = (g.max_streak || 0) * 5;
+      const oldRankBonus = Math.max(0, Math.round(g.xp_earned || 0) - correctXp - streakBonus);
+      const newXp = correctXp + streakBonus + oldRankBonus;
+
+      totalXpRecalc += newXp;
+
+      // Tính weeklyXp cho tuần hiện tại
+      if (currentWeek && g.played_at) {
+        const t = new Date(g.played_at).getTime();
+        const weekStart = programStartMs + (currentWeek - 1) * msPerWeek;
+        const weekEnd = weekStart + msPerWeek;
+        if (t >= weekStart && t < weekEnd) {
+          weeklyXpRecalc += newXp;
+        }
+      }
+
+      // Nếu game data sai → cần fix
+      if (g.correct_count !== safeCorrect || Math.round(g.xp_earned) !== newXp) {
+        gameFixes.push({ id: g.id, correct_count: safeCorrect, xp_earned: newXp });
+      }
+    }
+
+    const needsProfileFix = Math.round(profile.xp) !== totalXpRecalc ||
+                            Math.round(profile.weekly_xp) !== weeklyXpRecalc ||
+                            gameFixes.length > 0;
+
+    if (needsProfileFix) {
+      fixed++;
+      // Update profile
+      await supabase
+        .from('edux_profiles')
+        .update({
+          xp: totalXpRecalc,
+          weekly_xp: weeklyXpRecalc,
+        })
+        .eq('id', profile.id);
+
+      // Update từng game bị sai
+      for (const fix of gameFixes) {
+        await supabase
+          .from('edux_game_history')
+          .update({ correct_count: fix.correct_count, xp_earned: fix.xp_earned })
+          .eq('id', fix.id);
+      }
+    }
+  }
+
+  return { total: profiles.length, fixed };
 }
 
 // ============ LEADERBOARD ============

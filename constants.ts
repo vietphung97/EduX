@@ -4,7 +4,7 @@ import { Difficulty, UserLevel, WeeklyFrame } from './types';
 // ============ AVATAR FRAME SYSTEM ============
 
 // Ngày khai giảng chương trình hè (Tuần 1 bắt đầu)
-export const PROGRAM_START_DATE = new Date('2026-07-01'); // Tuần 1: 01/07 - 07/07/2026
+export const PROGRAM_START_DATE = new Date('2026-06-01'); // Tuần 1: 01/07 - 07/07/2026
 
 // XP tuần để mở từng item trong frame
 export const FRAME_XP_MILESTONES = [800, 1500, 2500] as const;
@@ -12,7 +12,7 @@ export const FRAME_XP_MILESTONES = [800, 1500, 2500] as const;
 export const WEEKLY_FRAMES: WeeklyFrame[] = [
   {
     id: 'week_1', week: 1, name: 'START PASSPORT', emoji: '🧭',
-    color: '#10b981', glowColor: 'rgba(16,185,129,0.5)',
+    color: '#10b981', glowColor: 'rgba(16,185,129,0.5)', frameImage: 'frames/w1.png',
     items: [
       { id: 'w1_a', name: 'Huy hiệu Hộ Chiếu', emoji: '🗺️', xpRequired: 800 },
       { id: 'w1_b', name: 'Viền Khởi Hành', emoji: '🧭', xpRequired: 1500 },
@@ -21,7 +21,7 @@ export const WEEKLY_FRAMES: WeeklyFrame[] = [
   },
   {
     id: 'week_2', week: 2, name: 'FOREST CODE', emoji: '🐉',
-    color: '#22c55e', glowColor: 'rgba(34,197,94,0.5)',
+    color: '#22c55e', glowColor: 'rgba(34,197,94,0.5)', frameImage: 'frames/w2.png',
     items: [
       { id: 'w2_a', name: 'Rồng Rừng Xanh', emoji: '🐉', xpRequired: 800 },
       { id: 'w2_b', name: 'Viền Mật Lệnh', emoji: '🌲', xpRequired: 1500 },
@@ -30,7 +30,7 @@ export const WEEKLY_FRAMES: WeeklyFrame[] = [
   },
   {
     id: 'week_3', week: 3, name: 'CITY ADVENTURE', emoji: '⚡',
-    color: '#818cf8', glowColor: 'rgba(129,140,248,0.5)',
+    color: '#818cf8', glowColor: 'rgba(129,140,248,0.5)', frameImage: 'frames/w3.png',
     items: [
       { id: 'w3_a', name: 'Tia Chớp Đô Thị', emoji: '⚡', xpRequired: 800 },
       { id: 'w3_b', name: 'Viền Thành Phố', emoji: '🏙️', xpRequired: 1500 },
@@ -39,7 +39,7 @@ export const WEEKLY_FRAMES: WeeklyFrame[] = [
   },
   {
     id: 'week_4', week: 4, name: 'DEEP OCEAN', emoji: '🐋',
-    color: '#38bdf8', glowColor: 'rgba(56,189,248,0.5)',
+    color: '#38bdf8', glowColor: 'rgba(56,189,248,0.5)', frameImage: 'frames/w4.png',
     items: [
       { id: 'w4_a', name: 'Cá Voi Đại Dương', emoji: '🐋', xpRequired: 800 },
       { id: 'w4_b', name: 'Viền Vực Sâu', emoji: '🌊', xpRequired: 1500 },
@@ -48,7 +48,7 @@ export const WEEKLY_FRAMES: WeeklyFrame[] = [
   },
   {
     id: 'week_5', week: 5, name: 'MOUNTAIN PEAK', emoji: '🦅',
-    color: '#a8a29e', glowColor: 'rgba(168,162,158,0.5)',
+    color: '#a8a29e', glowColor: 'rgba(168,162,158,0.5)', frameImage: 'frames/w5.png',
     items: [
       { id: 'w5_a', name: 'Đại Bàng Đỉnh Núi', emoji: '🦅', xpRequired: 800 },
       { id: 'w5_b', name: 'Viền Chinh Phục', emoji: '⛰️', xpRequired: 1500 },
@@ -57,7 +57,7 @@ export const WEEKLY_FRAMES: WeeklyFrame[] = [
   },
   {
     id: 'week_6', week: 6, name: 'DESERT CROSSING', emoji: '☀️',
-    color: '#fb923c', glowColor: 'rgba(251,146,60,0.5)',
+    color: '#fb923c', glowColor: 'rgba(251,146,60,0.5)', frameImage: 'frames/w6.png',
     items: [
       { id: 'w6_a', name: 'Mặt Trời Sa Mạc', emoji: '☀️', xpRequired: 800 },
       { id: 'w6_b', name: 'Viền Băng Qua', emoji: '🏜️', xpRequired: 1500 },
@@ -66,7 +66,7 @@ export const WEEKLY_FRAMES: WeeklyFrame[] = [
   },
   {
     id: 'week_7', week: 7, name: 'SKY ISLAND', emoji: '🪂',
-    color: '#a78bfa', glowColor: 'rgba(167,139,250,0.6)',
+    color: '#a78bfa', glowColor: 'rgba(167,139,250,0.6)', frameImage: 'frames/w7.png',
     items: [
       { id: 'w7_a', name: 'Dù Trời Mây', emoji: '🪂', xpRequired: 800 },
       { id: 'w7_b', name: 'Viền Đảo Trên Mây', emoji: '🏝️', xpRequired: 1500 },
@@ -75,7 +75,7 @@ export const WEEKLY_FRAMES: WeeklyFrame[] = [
   },
   {
     id: 'week_8', week: 8, name: 'SPACE MISSION', emoji: '🛸',
-    color: '#e879f9', glowColor: 'rgba(232,121,249,0.6)',
+    color: '#e879f9', glowColor: 'rgba(232,121,249,0.6)', frameImage: 'frames/w8.png',
     items: [
       { id: 'w8_a', name: 'Tàu Vũ Trụ', emoji: '🛸', xpRequired: 800 },
       { id: 'w8_b', name: 'Viền Thiên Hà', emoji: '🚀', xpRequired: 1500 },
@@ -110,9 +110,9 @@ export const DEFAULT_TOPICS_BY_GRADE: Record<number, string[]> = {
   3: ["My Friends", "My Body", "My House", "Our Toys"],
   4: ["My Birthday", "My Favourite Food", "Jobs", "Animals"],
   5: ["What's Your Address?", "My Town", "The Weather", "Seasons and Weather"],
-  6: ["My New School", "My Home", "My Friends", "Natural Wonders"],
-  7: ["Hobbies", "Healthy Living", "Music and Arts"],
-  8: ["Leisure Time", "Life in the Countryside", "Lifestyles"],
+  6: ["My New School", "MY HOUSE"],
+  7: ["Hobbies", "HEALTHY LIVING"],
+  8: ["LEISURE TIME", "LIFE IN THE COUNTRYSIDE"],
   9: ["Local Community", "City Life", "Teen Stress"],
   10: ["Family Life", "Environment", "Gender Equality"],
   11: ["Generation Gap", "Cities of the Future", "Global Warming"],

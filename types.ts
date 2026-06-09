@@ -107,6 +107,7 @@ export interface WeeklyFrame {
   emoji: string;
   color: string;
   glowColor: string;
+  frameImage: string;
   items: [FrameItem, FrameItem, FrameItem];
 }
 
@@ -120,6 +121,7 @@ export interface UserProfile {
   totalGames: number;
   bestStreak: number;
   weeklyXp: number;
+  weeklyXpWeek?: number; // Tuần chương trình mà weeklyXp đang tính cho (1-8)
   topicStats?: Record<string, { correct: number; total: number }>;
   gradeXp?: Record<number, number>;
   unlockedFrames?: string[];
@@ -151,6 +153,16 @@ export interface GameHistory {
   score: number;
   mode?: 'solo' | 'multiplayer';
   roomCode?: string;
+  // Multiplayer result details
+  myRank?: number;
+  totalPlayers?: number;
+  opponents?: Array<{
+    name: string;
+    avatar: string;
+    score: number;
+    correctCount: number;
+    rank: number;
+  }>;
 }
 
 // ============ MULTIPLAYER TYPES ============
@@ -203,6 +215,7 @@ export interface MultiplayerResult {
   rank: number;
   playerId: string;
   playerName: string;
+  playerAvatar?: string;
   score: number;
   correctCount: number;
   totalQuestions: number;

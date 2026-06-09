@@ -23,7 +23,7 @@ import {
   transitionToPlaying
 } from '../utils/multiplayerSync';
 import { getPlayerId, clearActiveRoom } from '../utils/playerSession';
-import { playSound, DIFFICULTY_MULTIPLIERS } from '../utils/gameLogic';
+import { playSound, XP_PER_QUESTION } from '../utils/gameLogic';
 
 interface UseMultiplayerGameProps {
   roomCode: string;
@@ -49,6 +49,7 @@ interface UseMultiplayerGameReturn {
 
   // Actions
   handleAnswer: (answer: string) => void;
+  handleSkipToNext: () => void;
   handleStartGame: () => Promise<boolean>;
   handleEndGame: () => Promise<void>;
 
@@ -58,6 +59,7 @@ interface UseMultiplayerGameReturn {
   isMyTurn: boolean;
   hasFinished: boolean;
   isTransitioning: boolean;
+  feedbackCountdown: number;
 }
 
 export function useMultiplayerGame({
@@ -79,6 +81,9 @@ export function useMultiplayerGame({
   // Transition state: 'none' | 'showing_answer' | 'loading' | 'ready'
   const [transitionState, setTransitionState] = useState<'none' | 'showing_answer' | 'loading' | 'ready'>('none');
 
+  // Feedback countdown (seconds remaining before auto-advance)
+  const [feedbackCountdown, setFeedbackCountdown] = useState(0);
+
   // Track the displayed question index (controls what the UI shows)
   const [displayedQuestionIndex, setDisplayedQuestionIndex] = useState(0);
 
@@ -88,6 +93,9 @@ export function useMultiplayerGame({
   const countdownRef = useRef<number | null>(null);
   const lastProcessedUpdateRef = useRef<number>(0);
   const activityIntervalRef = useRef<number | null>(null);
+  const feedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const feedbackCountdownIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const gameEndCalledRef = useRef(false);
 
   // Refs for values needed in subscription callback
   const transitionStateRef = useRef(transitionState);
@@ -137,20 +145,28 @@ export function useMultiplayerGame({
         setTimeLeft(remaining);
       }
 
-      // Handle game completion
-      if (state.gamePhase === 'completed' && onGameEnd) {
+      // Handle game completion (only once)
+      if (state.gamePhase === 'completed' && onGameEnd && !gameEndCalledRef.current) {
+        gameEndCalledRef.current = true;
         const rankings = calculateRankings(state);
-        const results: MultiplayerResult[] = rankings.map(r => ({
-          rank: r.rank,
-          playerId: r.player.id,
-          playerName: r.player.name,
-          score: r.player.score,
-          correctCount: r.player.correctCount,
-          totalQuestions: state.questions.length,
-          maxStreak: r.player.maxStreak,
-          timeSpent: r.timeSpent,
-          xpEarned: calculateXp(r.player.correctCount, r.player.maxStreak, state.roomSettings.difficulty)
-        }));
+        const totalPlayers = rankings.length;
+        const results: MultiplayerResult[] = rankings.map(r => {
+          // Rank bonus: 1st = 100, others = 0
+          const rankBonus = r.rank === 1 ? 100 : 0;
+          const baseXp = calculateXp(r.player.correctCount, r.player.maxStreak, state.roomSettings.difficulty);
+          return {
+            rank: r.rank,
+            playerId: r.player.id,
+            playerName: r.player.name,
+            playerAvatar: r.player.avatar,
+            score: r.player.score + rankBonus,
+            correctCount: r.player.correctCount,
+            totalQuestions: state.questions.length,
+            maxStreak: r.player.maxStreak,
+            timeSpent: r.timeSpent,
+            xpEarned: baseXp + rankBonus
+          };
+        });
         onGameEnd(results);
       }
     });
@@ -197,27 +213,37 @@ export function useMultiplayerGame({
     };
   }, [gameState?.gamePhase, roomCode]);
 
-  // Game timer
+  // Game timer - sync from server startedAt to survive reload
   useEffect(() => {
-    if (gameState?.gamePhase !== 'playing') return;
+    if (gameState?.gamePhase !== 'playing' || !gameState?.startedAt) return;
+
+    const timeLimit = gameState.roomSettings.timeLimit || 300;
+    const startedAt = gameState.startedAt;
+
+    // Calculate correct remaining time from server timestamp
+    const calcRemaining = () => {
+      const elapsed = Math.floor((Date.now() - startedAt) / 1000);
+      return Math.max(0, timeLimit - elapsed);
+    };
+
+    // Set initial value from server
+    setTimeLeft(calcRemaining());
 
     timerRef.current = window.setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          // Time's up - end game
-          if (isHost) {
-            endGame(roomCode);
-          }
-          return 0;
+      const remaining = calcRemaining();
+      setTimeLeft(remaining);
+      if (remaining <= 0) {
+        if (timerRef.current) clearInterval(timerRef.current);
+        if (isHost) {
+          endGame(roomCode);
         }
-        return prev - 1;
-      });
+      }
     }, 1000);
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [gameState?.gamePhase, isHost, roomCode]);
+  }, [gameState?.gamePhase, gameState?.startedAt, isHost, roomCode]);
 
   // Keep-alive activity updates
   useEffect(() => {
@@ -245,10 +271,9 @@ export function useMultiplayerGame({
     const isCorrect = answer === currentQ.correctAnswer;
     playSound(isCorrect);
 
-    // Calculate score
-    const baseScore = 10;
-    const multiplier = DIFFICULTY_MULTIPLIERS[gameState.roomSettings.difficulty];
-    const scoreEarned = isCorrect ? Math.floor(baseScore * multiplier) : 0;
+    // Calculate score using XP per question based on difficulty
+    const xpPerQ = XP_PER_QUESTION[gameState.roomSettings.difficulty] || 10;
+    const scoreEarned = isCorrect ? xpPerQ : 0;
 
     // Submit to server
     await submitAnswer(roomCode, playerId, displayedQuestionIndex, isCorrect, scoreEarned);
@@ -257,20 +282,56 @@ export function useMultiplayerGame({
     const nextIndex = displayedQuestionIndex + 1;
     const hasMoreQuestions = nextIndex < gameState.questions.length;
 
-    // Show answer feedback for 4 seconds (enough time to read explanation)
-    setTimeout(() => {
+    // Show answer feedback with countdown
+    const FEEDBACK_DURATION = 4; // seconds
+    setFeedbackCountdown(FEEDBACK_DURATION);
+
+    // Countdown interval
+    const countdownInterval = setInterval(() => {
+      setFeedbackCountdown(prev => {
+        if (prev <= 1) {
+          clearInterval(countdownInterval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    feedbackCountdownIntervalRef.current = countdownInterval;
+
+    // Auto-advance after countdown
+    const timer = setTimeout(() => {
       if (hasMoreQuestions) {
         console.log('[handleAnswer] Step 1: Show loading, hide question. Current:', displayedQuestionIndex);
-        // Step 1: Show loading screen (this hides the question card)
         setTransitionState('loading');
       } else {
         console.log('[handleAnswer] Last question completed');
-        // Last question - just reset state
         setSelectedAnswer(null);
         setTransitionState('none');
       }
-    }, 4000);
+      setFeedbackCountdown(0);
+    }, FEEDBACK_DURATION * 1000);
+    feedbackTimerRef.current = timer;
   }, [gameState, selectedAnswer, displayedQuestionIndex, roomCode, playerId, transitionState]);
+
+  // Skip to next question immediately
+  const handleSkipToNext = useCallback(() => {
+    if (transitionState !== 'showing_answer' || !gameState) return;
+
+    // Clear pending timers
+    if (feedbackTimerRef.current) clearTimeout(feedbackTimerRef.current);
+    if (feedbackCountdownIntervalRef.current) clearInterval(feedbackCountdownIntervalRef.current);
+    setFeedbackCountdown(0);
+
+    const nextIndex = displayedQuestionIndex + 1;
+    const hasMoreQuestions = nextIndex < gameState.questions.length;
+
+    if (hasMoreQuestions) {
+      setTransitionState('loading');
+    } else {
+      setSelectedAnswer(null);
+      setTransitionState('none');
+    }
+  }, [transitionState, gameState, displayedQuestionIndex]);
 
   // Effect to handle question transition when loading state is active
   useEffect(() => {
@@ -350,21 +411,22 @@ export function useMultiplayerGame({
     players,
     rankings,
     handleAnswer,
+    handleSkipToNext,
     handleStartGame,
     handleEndGame,
     isLoading,
     error,
     isMyTurn: true, // In this mode, all players answer simultaneously
     hasFinished,
-    isTransitioning
+    isTransitioning,
+    feedbackCountdown
   };
 }
 
 // Helper function to calculate XP
 function calculateXp(correctCount: number, maxStreak: number, difficulty: Difficulty): number {
-  const baseXp = correctCount * 10 + maxStreak * 5;
-  const multiplier = DIFFICULTY_MULTIPLIERS[difficulty];
-  return Math.floor(baseXp * multiplier);
+  const xpPerQ = XP_PER_QUESTION[difficulty] || 10;
+  return correctCount * xpPerQ + maxStreak * 5;
 }
 
 export default useMultiplayerGame;

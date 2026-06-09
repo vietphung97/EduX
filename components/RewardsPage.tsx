@@ -10,7 +10,7 @@
 import React, { useRef } from 'react';
 import { UserProfile } from '../types';
 import { WEEKLY_FRAMES, getCurrentProgramWeek } from '../constants';
-import { getFrameUnlockCount, getCompletedFrames, getNextMilestone } from '../utils/frameLogic';
+import { getFrameUnlockCount, getCompletedFrames, getNextMilestone, isFrameUsable } from '../utils/frameLogic';
 import AvatarDisplay from './AvatarDisplay';
 import LuckySpin, { SpinPrize } from './LuckySpin';
 
@@ -111,25 +111,35 @@ const RewardsPage: React.FC<RewardsPageProps> = ({ user, onEquipFrame, onSpinRes
                 />
               </div>
 
-              {/* Milestone markers */}
-              <div className="relative mt-3 flex justify-between" style={{ paddingLeft: '5%', paddingRight: '5%' }}>
+              {/* Milestone markers — 3 mốc XP, mốc cuối hiện ảnh frame */}
+              <div className="relative mt-3 flex justify-between" style={{ paddingLeft: '5%', paddingRight: '5%', minHeight: '60px' }}>
                 {currentFrame.items.map((item, i) => {
                   const isUnlocked = unlockedFrames.includes(item.id);
                   const maxXp = currentFrame.items[2]?.xpRequired || 2500;
                   const pos = (item.xpRequired / maxXp) * 90 + 5;
+                  const isLastMilestone = i === 2;
+                  const baseUrl = (import.meta as any).env?.BASE_URL || '/';
                   return (
                     <div
                       key={item.id}
                       className="flex flex-col items-center"
                       style={{ position: 'absolute', left: `${pos}%`, transform: 'translateX(-50%)' }}
                     >
-                      <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-lg sm:text-xl border-2 ${
-                        isUnlocked
-                          ? 'bg-slate-800 border-green-500'
-                          : 'bg-slate-900 border-slate-700 grayscale opacity-60'
-                      }`}>
-                        {item.emoji}
-                      </div>
+                      {isLastMilestone ? (
+                        <img
+                          src={`${baseUrl}${currentFrame.frameImage}`}
+                          alt={currentFrame.name}
+                          className={`w-10 h-10 sm:w-12 sm:h-12 ${!isUnlocked ? 'grayscale opacity-40' : ''}`}
+                        />
+                      ) : (
+                        <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm font-black border-2 ${
+                          isUnlocked
+                            ? 'border-green-500 text-green-400 bg-green-500/10'
+                            : 'border-slate-700 text-slate-600 bg-slate-900'
+                        }`}>
+                          {isUnlocked ? '✓' : `${i + 1}`}
+                        </div>
+                      )}
                       <p className={`text-[10px] font-black mt-1 ${isUnlocked ? 'text-green-400' : 'text-slate-600'}`}>
                         {item.xpRequired.toLocaleString()}
                       </p>
@@ -141,10 +151,10 @@ const RewardsPage: React.FC<RewardsPageProps> = ({ user, onEquipFrame, onSpinRes
 
             {nextMilestone ? (
               <p className="text-xs text-slate-500 text-center mt-8">
-                Còn <span className="text-white font-bold">{Math.max(0, nextMilestone.xpRequired - user.weeklyXp).toLocaleString()} XP</span> để nhận {nextMilestone.itemEmoji} {nextMilestone.itemName}
+                Còn <span className="text-white font-bold">{Math.max(0, nextMilestone.xpRequired - user.weeklyXp).toLocaleString()} XP</span> để {nextMilestone.xpRequired === 2500 ? 'mở khung avatar tuần này' : `đạt mốc ${nextMilestone.xpRequired.toLocaleString()} XP`}
               </p>
             ) : (
-              <p className="text-xs text-green-400 font-bold text-center mt-8">✅ Đã nhận hết phần thưởng tuần này!</p>
+              <p className="text-xs text-green-400 font-bold text-center mt-8">✅ Đã mở khung avatar tuần này!</p>
             )}
           </div>
         </div>
@@ -169,58 +179,64 @@ const RewardsPage: React.FC<RewardsPageProps> = ({ user, onEquipFrame, onSpinRes
             const unlockCount = getFrameUnlockCount(frame.id, unlockedFrames);
             const isComplete = unlockCount === 3;
             const isEquipped = equippedFrame === frame.id;
-            const isFuture = currentWeek === null || frame.week > currentWeek;
+            const isFuture = currentWeek !== null && frame.week > currentWeek;
+            const canUse = isFrameUsable(frame.id, unlockedFrames);
+            const baseUrl = (import.meta as any).env?.BASE_URL || '/';
 
             return (
               <div
                 key={frame.id}
                 className={`flex-shrink-0 w-[200px] sm:w-[220px] bg-slate-900 border-2 rounded-[20px] p-4 snap-start transition-all ${
-                  isEquipped ? 'border-opacity-100 shadow-lg' : isComplete ? 'border-slate-700' : 'border-slate-800'
+                  isEquipped ? 'border-opacity-100 shadow-lg' : canUse ? 'border-slate-700' : 'border-slate-800'
                 }`}
                 style={{
-                  borderColor: isEquipped ? frame.color : isComplete ? frame.color + '60' : undefined,
+                  borderColor: isEquipped ? frame.color : canUse ? frame.color + '60' : undefined,
                   boxShadow: isEquipped ? `0 0 16px ${frame.glowColor}` : undefined,
                 }}
               >
-                <div className="flex items-center gap-2 mb-3">
-                  <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
-                    style={{ background: `${frame.color}22`, border: `2px solid ${frame.color}44` }}
-                  >
-                    {frame.emoji}
+                {/* Frame image preview */}
+                <div className="relative w-24 h-24 mx-auto mb-3">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-14 h-14 rounded-full bg-slate-800 flex items-center justify-center overflow-hidden">
+                      {user.avatar && user.avatar.startsWith('http') ? (
+                        <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-2xl">{user.avatar || '🎮'}</span>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-black text-white text-xs uppercase tracking-tight truncate">{frame.name}</p>
-                    <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: frame.color }}>
-                      Tuần {frame.week}
-                    </p>
-                  </div>
+                  <img
+                    src={`${baseUrl}${frame.frameImage}`}
+                    alt={frame.name}
+                    className={`w-full h-full ${!canUse ? 'grayscale opacity-40' : ''}`}
+                  />
                 </div>
 
-                {/* Items */}
-                <div className="space-y-1.5 mb-3">
-                  {frame.items.map(item => {
-                    const isUnlocked = unlockedFrames.includes(item.id);
+                {/* Name + week */}
+                <div className="text-center mb-3">
+                  <p className="font-black text-white text-xs uppercase tracking-tight">{frame.name}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: canUse ? frame.color : '#475569' }}>
+                    Tuần {frame.week}
+                  </p>
+                </div>
+
+                {/* XP Progress — 3 milestones */}
+                <div className="flex items-center gap-1 mb-3">
+                  {frame.items.map((item, i) => {
+                    const reached = unlockedFrames.includes(item.id);
                     return (
-                      <div key={item.id} className={`flex items-center gap-2 text-xs ${isUnlocked ? 'text-slate-300' : 'text-slate-600'}`}>
-                        <span className={isUnlocked ? '' : 'grayscale opacity-40'}>{item.emoji}</span>
-                        <span className="truncate">{item.name}</span>
-                        {isUnlocked ? <span className="text-green-400 ml-auto">✓</span> : <span className="ml-auto">🔒</span>}
+                      <div key={item.id} className="flex-1">
+                        <div className="h-1.5 rounded-full" style={{ background: reached ? frame.color : '#1e293b' }} />
+                        <p className={`text-[8px] text-center mt-0.5 font-bold ${reached ? 'text-slate-400' : 'text-slate-700'}`}>
+                          {item.xpRequired}
+                        </p>
                       </div>
                     );
                   })}
                 </div>
 
-                {/* Progress */}
-                <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden mb-3">
-                  <div
-                    className="h-full rounded-full transition-all"
-                    style={{ width: `${(unlockCount / 3) * 100}%`, background: frame.color }}
-                  />
-                </div>
-
                 {/* Status / Equip button */}
-                {unlockCount > 0 ? (
+                {canUse ? (
                   <button
                     onClick={() => onEquipFrame(isEquipped ? undefined : frame.id)}
                     className="w-full py-2 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all"
@@ -230,11 +246,11 @@ const RewardsPage: React.FC<RewardsPageProps> = ({ user, onEquipFrame, onSpinRes
                       border: `1.5px solid ${frame.color}55`,
                     }}
                   >
-                    {isEquipped ? '✓ Đang dùng' : isComplete ? '✨ Trang bị' : 'Trang bị'}
+                    {isEquipped ? '✓ Đang dùng' : '✨ Trang bị'}
                   </button>
                 ) : (
                   <div className="w-full py-2 rounded-xl text-center text-[10px] font-black uppercase tracking-widest text-slate-700 bg-slate-950 border border-slate-900">
-                    {isFuture ? '⏳ Chưa mở' : '🔒 Chưa đạt'}
+                    {isFuture ? '⏳ Chưa đến tuần' : isComplete ? '⏳ Chưa đến tuần' : `🔒 ${unlockCount}/3 mốc`}
                   </div>
                 )}
               </div>

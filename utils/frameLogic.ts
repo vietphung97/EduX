@@ -7,13 +7,12 @@ import { WEEKLY_FRAMES, getCurrentProgramWeek } from '../constants';
 import { WeeklyFrame } from '../types';
 
 /**
- * Kiểm tra frame nào đã hoàn chỉnh (cả 3 items đã unlock).
- * Trả về array frame IDs đã complete.
+ * Kiểm tra frame nào đã hoàn chỉnh VÀ có thể sử dụng (đạt 3 mốc + tuần đã đến).
+ * Trả về array frame IDs đã complete và usable.
  */
 export function getCompletedFrames(unlockedFrames: string[]): string[] {
-  const unlocked = new Set(unlockedFrames);
   return WEEKLY_FRAMES
-    .filter(f => f.items.every(item => unlocked.has(item.id)))
+    .filter(f => isFrameUsable(f.id, unlockedFrames))
     .map(f => f.id);
 }
 
@@ -97,6 +96,20 @@ export function getNextMilestone(
     }
   }
   return null; // Đã unlock hết items của tuần này
+}
+
+/**
+ * Kiểm tra frame có thể sử dụng không.
+ * Điều kiện: đạt đủ 3 mốc XP (cả 3 items unlocked) VÀ tuần đó đã đến/qua.
+ */
+export function isFrameUsable(frameId: string, unlockedFrames: string[]): boolean {
+  const frame = WEEKLY_FRAMES.find(f => f.id === frameId);
+  if (!frame) return false;
+  const currentWeek = getCurrentProgramWeek();
+  const allItemsUnlocked = frame.items.every(item => unlockedFrames.includes(item.id));
+  // Tuần đã đến hoặc đã qua (currentWeek >= frame.week), hoặc chương trình đã kết thúc (currentWeek === null nhưng đã qua)
+  const weekReached = currentWeek !== null ? currentWeek >= frame.week : true; // null = chương trình kết thúc → tất cả tuần đều "đã qua"
+  return allItemsUnlocked && weekReached;
 }
 
 /**

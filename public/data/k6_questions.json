@@ -1,0 +1,6215 @@
+[
+  {
+    "id": "k6_001",
+    "type": "image-quiz",
+    "question": "Look and choose (Nhìn tranh và chọn đáp án đúng)",
+    "options": [
+      "history",
+      "excercise",
+      "school",
+      "homework"
+    ],
+    "correctAnswer": "school",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Look and choose (Nhìn tranh và chọn đáp án đúng)",
+    "imageUrl": "https://static.eduso.vn/Files/CKEditorImages/64e2547c-a5d2-4be7-98bb-9ea5a4ec9eda.png"
+  },
+  {
+    "id": "k6_002",
+    "type": "image-quiz",
+    "question": "Look and choose (Nhìn tranh và chọn đáp án đúng)",
+    "options": [
+      "pencil",
+      "playground",
+      "calculator",
+      "lesson"
+    ],
+    "correctAnswer": "playground",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Look and choose (Nhìn tranh và chọn đáp án đúng)",
+    "imageUrl": "https://static.eduso.vn/Files/CKEditorImages/c99ea7cd-14c5-40a9-8529-27ee2563a0a4.png"
+  },
+  {
+    "id": "k6_003",
+    "type": "image-quiz",
+    "question": "Look and choose (Nhìn tranh và chọn đáp án đúng)",
+    "options": [
+      "holiday",
+      "school",
+      "playground",
+      "subject"
+    ],
+    "correctAnswer": "subject",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Look and choose (Nhìn tranh và chọn đáp án đúng)",
+    "imageUrl": "https://static.eduso.vn/Files/CKEditorImages/02d2be97-9093-4b36-80da-37dca7ceb5a1.png"
+  },
+  {
+    "id": "k6_004",
+    "type": "image-quiz",
+    "question": "Look and choose (Nhìn tranh và chọn đáp án đúng)",
+    "options": [
+      "rubber",
+      "school",
+      "pencil sharpener",
+      "compass"
+    ],
+    "correctAnswer": "compass",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Look and choose (Nhìn tranh và chọn đáp án đúng)",
+    "imageUrl": "https://static.eduso.vn/Files/CKEditorImages/229a90c6-974a-4327-9af8-e128b9717655.png"
+  },
+  {
+    "id": "k6_005",
+    "type": "image-quiz",
+    "question": "Look and choose (Nhìn tranh và chọn đáp án đúng)",
+    "options": [
+      "smart",
+      "classroom",
+      "calculator",
+      "pencil"
+    ],
+    "correctAnswer": "calculator",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Look and choose (Nhìn tranh và chọn đáp án đúng)",
+    "imageUrl": "https://static.eduso.vn/Files/CKEditorImages/30df0460-5713-442e-bf7f-fdd28c41f599.png"
+  },
+  {
+    "id": "k6_006",
+    "type": "quiz",
+    "question": "My school is an __________ school. Students from many countries study here.",
+    "options": [
+      "green",
+      "international",
+      "computer",
+      "mountain"
+    ],
+    "correctAnswer": "international",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_007",
+    "type": "quiz",
+    "question": "I often __________ my books with my friends.",
+    "options": [
+      "help",
+      "share",
+      "swim",
+      "remember"
+    ],
+    "correctAnswer": "share",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_008",
+    "type": "quiz",
+    "question": "We can swim in the __________.",
+    "options": [
+      "swimming pool",
+      "computer room",
+      "green field",
+      "mountain"
+    ],
+    "correctAnswer": "swimming pool",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_009",
+    "type": "quiz",
+    "question": "This is the __________ room. We learn to use computers here.",
+    "options": [
+      "green",
+      "swimming",
+      "computer",
+      "mountain"
+    ],
+    "correctAnswer": "computer",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_010",
+    "type": "quiz",
+    "question": "She always __________ her brother with his homework.",
+    "options": [
+      "helps",
+      "interviews",
+      "swims",
+      "remembers"
+    ],
+    "correctAnswer": "helps",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_011",
+    "type": "quiz",
+    "question": "My school has a big __________ with clean water.",
+    "options": [
+      "swimming pool",
+      "computer",
+      "share",
+      "interview"
+    ],
+    "correctAnswer": "swimming pool",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_012",
+    "type": "quiz",
+    "question": "Can you __________ me carry this heavy bag, please?",
+    "options": [
+      "help",
+      "share",
+      "interview",
+      "remember"
+    ],
+    "correctAnswer": "help",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_013",
+    "type": "quiz",
+    "question": "My sister goes to a __________ school and sleeps there.",
+    "options": [
+      "green",
+      "swimming",
+      "boarding",
+      "computer"
+    ],
+    "correctAnswer": "boarding",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_014",
+    "type": "quiz",
+    "question": "I have an __________ with my teacher this afternoon.",
+    "options": [
+      "green",
+      "remember",
+      "interview",
+      "swimming"
+    ],
+    "correctAnswer": "interview",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_015",
+    "type": "quiz",
+    "question": "There is a high __________ behind my school.",
+    "options": [
+      "computer",
+      "mountain",
+      "help",
+      "share"
+    ],
+    "correctAnswer": "mountain",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_016",
+    "type": "quiz",
+    "question": "The school has students from many countries __________ the world.",
+    "options": [
+      "around",
+      "behind",
+      "on",
+      "between"
+    ],
+    "correctAnswer": "around",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_017",
+    "type": "quiz",
+    "question": "I want to __________ the football club.",
+    "options": [
+      "play",
+      "go",
+      "join",
+      "have"
+    ],
+    "correctAnswer": "join",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_018",
+    "type": "quiz",
+    "question": "I would like __________ a new song.",
+    "options": [
+      "listening",
+      "listens",
+      "to listen",
+      "listen"
+    ],
+    "correctAnswer": "to listen",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_019",
+    "type": "quiz",
+    "question": "Can you help me __________ my bag?",
+    "options": [
+      "on",
+      "at",
+      "from",
+      "with"
+    ],
+    "correctAnswer": "with",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_020",
+    "type": "quiz",
+    "question": "We always listen __________ the teacher.",
+    "options": [
+      "on",
+      "to",
+      "in",
+      "with"
+    ],
+    "correctAnswer": "to",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_021",
+    "type": "quiz",
+    "question": "I always __________ my school uniform in the morning.",
+    "options": [
+      "study",
+      "do",
+      "wear",
+      "play"
+    ],
+    "correctAnswer": "wear",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_022",
+    "type": "quiz",
+    "question": "We have __________ at 11:30.",
+    "options": [
+      "calculator",
+      "school lunch",
+      "subject",
+      "uniform"
+    ],
+    "correctAnswer": "school lunch",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_023",
+    "type": "quiz",
+    "question": "My __________ subject is English. I really enjoy it.",
+    "options": [
+      "favourite",
+      "history",
+      "school",
+      "play"
+    ],
+    "correctAnswer": "favourite",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_024",
+    "type": "quiz",
+    "question": "I use a __________ to do maths.",
+    "options": [
+      "compass",
+      "school",
+      "uniform",
+      "calculator"
+    ],
+    "correctAnswer": "calculator",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_025",
+    "type": "quiz",
+    "question": "Hoa and Lan are my __________.",
+    "options": [
+      "homework",
+      "schools",
+      "classmates",
+      "lessons"
+    ],
+    "correctAnswer": "classmates",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_026",
+    "type": "quiz",
+    "question": "We __________ exercise every morning.",
+    "options": [
+      "do",
+      "play",
+      "have",
+      "study"
+    ],
+    "correctAnswer": "do",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_027",
+    "type": "quiz",
+    "question": "Nam looks __________ in his new uniforms.",
+    "options": [
+      "music",
+      "biology",
+      "smart",
+      "do"
+    ],
+    "correctAnswer": "smart",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_028",
+    "type": "quiz",
+    "question": "I have five __________ on Monday.",
+    "options": [
+      "calculators",
+      "uniforms",
+      "lessons",
+      "classmates"
+    ],
+    "correctAnswer": "lessons",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_029",
+    "type": "quiz",
+    "question": "We often __________ art and music on Fridays.",
+    "options": [
+      "wear",
+      "play",
+      "have",
+      "do"
+    ],
+    "correctAnswer": "have",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_030",
+    "type": "quiz",
+    "question": "We always do our __________ at home after dinner.",
+    "options": [
+      "history",
+      "uniform",
+      "homework",
+      "subject"
+    ],
+    "correctAnswer": "homework",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_031",
+    "type": "quiz",
+    "question": "Mai is good at __________. She always sings very well.",
+    "options": [
+      "music",
+      "art",
+      "lesson",
+      "uniform"
+    ],
+    "correctAnswer": "music",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_032",
+    "type": "quiz",
+    "question": "My school has many fun __________ after class.",
+    "options": [
+      "calculators",
+      "activities",
+      "uniforms",
+      "compasses"
+    ],
+    "correctAnswer": "activities",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_033",
+    "type": "quiz",
+    "question": "We learn to draw in __________ class.",
+    "options": [
+      "compass",
+      "music",
+      "art",
+      "subject"
+    ],
+    "correctAnswer": "art",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_034",
+    "type": "quiz",
+    "question": "I __________ a new friend. Her name is Anna.",
+    "options": [
+      "do",
+      "has",
+      "have",
+      "play"
+    ],
+    "correctAnswer": "have",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_035",
+    "type": "quiz",
+    "question": "I would like __________ to Sunrise School.",
+    "options": [
+      "to going",
+      "go",
+      "to go",
+      "going"
+    ],
+    "correctAnswer": "to go",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_036",
+    "type": "quiz",
+    "question": "My parents let me __________ to school with friends.",
+    "options": [
+      "going",
+      "go",
+      "to go",
+      "gone"
+    ],
+    "correctAnswer": "go",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_037",
+    "type": "quiz",
+    "question": "The teacher always lets us __________ questions after class.",
+    "options": [
+      "ask",
+      "to ask",
+      "asking",
+      "asked"
+    ],
+    "correctAnswer": "ask",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_038",
+    "type": "quiz",
+    "question": "My favourite __________ is maths.",
+    "options": [
+      "school",
+      "subject",
+      "calculator",
+      "uniform"
+    ],
+    "correctAnswer": "subject",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_039",
+    "type": "quiz",
+    "question": "In __________, we learn about animals and plants.",
+    "options": [
+      "history",
+      "music",
+      "biology",
+      "art"
+    ],
+    "correctAnswer": "biology",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_040",
+    "type": "quiz",
+    "question": "We learn about the past in __________ class.",
+    "options": [
+      "science",
+      "art",
+      "history",
+      "music"
+    ],
+    "correctAnswer": "history",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_041",
+    "type": "quiz",
+    "question": "In __________ class, we do experiments and learn about the world.",
+    "options": [
+      "maths",
+      "history",
+      "geography",
+      "science"
+    ],
+    "correctAnswer": "science",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_042",
+    "type": "quiz",
+    "question": "Which one of the following words is an action verb ?",
+    "options": [
+      "activity",
+      "calculator",
+      "compass",
+      "help"
+    ],
+    "correctAnswer": "help",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_043",
+    "type": "quiz",
+    "question": "Which one of the following words is a noun ?",
+    "options": [
+      "classmate",
+      "knock",
+      "share",
+      "study"
+    ],
+    "correctAnswer": "classmate",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_044",
+    "type": "quiz",
+    "question": "Which one of the following words is an adjective ?",
+    "options": [
+      "swimming pool",
+      "interview",
+      "boarding school",
+      "favourite"
+    ],
+    "correctAnswer": "favourite",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_045",
+    "type": "quiz",
+    "question": "Which one of the following words is NOT an adjective ?",
+    "options": [
+      "history",
+      "famous",
+      "smart",
+      "dry"
+    ],
+    "correctAnswer": "history",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_046",
+    "type": "quiz",
+    "question": "Which one of the following words is a noun ?",
+    "options": [
+      "famous",
+      "helpful",
+      "favourite",
+      "calculator"
+    ],
+    "correctAnswer": "calculator",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_047",
+    "type": "quiz",
+    "question": "Which one of the following words is NOT a verb ?",
+    "options": [
+      "subject",
+      "help",
+      "learn",
+      "act"
+    ],
+    "correctAnswer": "subject",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_048",
+    "type": "quiz",
+    "question": "We have an __________ with the new teacher this afternoon.",
+    "options": [
+      "help",
+      "interview",
+      "mountain",
+      "room"
+    ],
+    "correctAnswer": "interview",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_049",
+    "type": "quiz",
+    "question": "This __________school has students from many countries and teachers from abroad.",
+    "options": [
+      "boarding",
+      "international",
+      "swimming",
+      "mountain"
+    ],
+    "correctAnswer": "international",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_050",
+    "type": "quiz",
+    "question": "I always __________ my homework with my older brother.",
+    "options": [
+      "help",
+      "remember",
+      "share",
+      "interview"
+    ],
+    "correctAnswer": "share",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_051",
+    "type": "quiz",
+    "question": "There is a beautiful __________ near our school. We go hiking there.",
+    "options": [
+      "swimming pool",
+      "boarding school",
+      "mountain",
+      "interview"
+    ],
+    "correctAnswer": "mountain",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_052",
+    "type": "quiz",
+    "question": "Students at a __________ school sleep and study in the same place.",
+    "options": [
+      "swimming",
+      "boarding",
+      "green",
+      "lower"
+    ],
+    "correctAnswer": "boarding",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_053",
+    "type": "quiz",
+    "question": "Can you help me __________ my English homework?",
+    "options": [
+      "in",
+      "with",
+      "for",
+      "to"
+    ],
+    "correctAnswer": "with",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_054",
+    "type": "quiz",
+    "question": "Students must listen __________ the teacher in class.",
+    "options": [
+      "with",
+      "to",
+      "for",
+      "at"
+    ],
+    "correctAnswer": "to",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_055",
+    "type": "quiz",
+    "question": "Can you __________ me find the computer room?",
+    "options": [
+      "interview",
+      "help",
+      "swimming",
+      "green"
+    ],
+    "correctAnswer": "help",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_056",
+    "type": "quiz",
+    "question": "We usually __________ a break between two lessons.",
+    "options": [
+      "do",
+      "take",
+      "make",
+      "go"
+    ],
+    "correctAnswer": "take",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_057",
+    "type": "quiz",
+    "question": "I need to __________ my homework before dinner.",
+    "options": [
+      "make",
+      "take",
+      "build",
+      "do"
+    ],
+    "correctAnswer": "do",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_058",
+    "type": "quiz",
+    "question": "I want to __________ the art club because I love painting.",
+    "options": [
+      "play",
+      "go",
+      "do",
+      "join"
+    ],
+    "correctAnswer": "join",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_059",
+    "type": "quiz",
+    "question": "I want to __________ part in the school music club.",
+    "options": [
+      "take",
+      "make",
+      "go",
+      "play"
+    ],
+    "correctAnswer": "take",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_060",
+    "type": "quiz",
+    "question": "My friends and I would like __________ a school project together.",
+    "options": [
+      "doing",
+      "to do",
+      "do",
+      "did"
+    ],
+    "correctAnswer": "to do",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_061",
+    "type": "quiz",
+    "question": "The room is quiet and __________ enough for us to study.",
+    "options": [
+      "comfort",
+      "comfortable",
+      "comfortably",
+      "comforting"
+    ],
+    "correctAnswer": "comfortable",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_062",
+    "type": "quiz",
+    "question": "Our new teacher is very __________. She always supports us when we need.",
+    "options": [
+      "help",
+      "helping",
+      "helpful",
+      "helpfully"
+    ],
+    "correctAnswer": "helpful",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_063",
+    "type": "quiz",
+    "question": "I always __________ my uniform before going to school.",
+    "options": [
+      "do",
+      "have",
+      "wear",
+      "play"
+    ],
+    "correctAnswer": "wear",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_064",
+    "type": "quiz",
+    "question": "We always __________ exercise before dinner to stay healthy.",
+    "options": [
+      "make",
+      "play",
+      "have",
+      "do"
+    ],
+    "correctAnswer": "do",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_065",
+    "type": "quiz",
+    "question": "I think biology is an interesting __________.",
+    "options": [
+      "activity",
+      "calculator",
+      "compass",
+      "subject"
+    ],
+    "correctAnswer": "subject",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_066",
+    "type": "quiz",
+    "question": "I always __________ my calculator to Maths class.",
+    "options": [
+      "wear",
+      "bring",
+      "play",
+      "help"
+    ],
+    "correctAnswer": "bring",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_067",
+    "type": "quiz",
+    "question": "Our teacher gives us a lot of __________ after school.",
+    "options": [
+      "homeworks",
+      "homeworking",
+      "works",
+      "homework"
+    ],
+    "correctAnswer": "homework",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_068",
+    "type": "quiz",
+    "question": "They are good at __________ lessons in groups.",
+    "options": [
+      "do",
+      "does",
+      "doing",
+      "did"
+    ],
+    "correctAnswer": "doing",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_069",
+    "type": "quiz",
+    "question": "I __________ history because I love learning about the past.",
+    "options": [
+      "study",
+      "do",
+      "play",
+      "wear"
+    ],
+    "correctAnswer": "study",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_070",
+    "type": "quiz",
+    "question": "Our teacher lets us __________ the biology lab on Fridays.",
+    "options": [
+      "visit",
+      "to visit",
+      "visiting",
+      "visits"
+    ],
+    "correctAnswer": "visit",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_071",
+    "type": "quiz",
+    "question": "Mai always looks __________ in her new uniform.",
+    "options": [
+      "smart",
+      "smartly",
+      "intelligent",
+      "smartness"
+    ],
+    "correctAnswer": "smart",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_072",
+    "type": "quiz",
+    "question": "We have many fun __________ in the new school year.",
+    "options": [
+      "active",
+      "acted",
+      "activities",
+      "action"
+    ],
+    "correctAnswer": "activities",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_073",
+    "type": "quiz",
+    "question": "Tom doesn't like __________ history books.",
+    "options": [
+      "reads",
+      "to reading",
+      "to read",
+      "read"
+    ],
+    "correctAnswer": "to read",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_074",
+    "type": "quiz",
+    "question": "My teacher gives very __________ explanations, so I understand the lessons easily.",
+    "options": [
+      "help",
+      "helpful",
+      "helping",
+      "helpless"
+    ],
+    "correctAnswer": "helpful",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_075",
+    "type": "quiz",
+    "question": "Our teacher let us __________ a small science experiment.",
+    "options": [
+      "doing",
+      "do",
+      "to do",
+      "done"
+    ],
+    "correctAnswer": "do",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_076",
+    "type": "quiz",
+    "question": "We always do __________ before going to bed.",
+    "options": [
+      "lessons",
+      "subjects",
+      "homework",
+      "uniform"
+    ],
+    "correctAnswer": "homework",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_077",
+    "type": "quiz",
+    "question": "My best friend and I always have __________ together.",
+    "options": [
+      "a subject",
+      "a compass",
+      "school lunch",
+      "a calculator"
+    ],
+    "correctAnswer": "school lunch",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_078",
+    "type": "quiz",
+    "question": "The calculator was a great help with my math homework. (help)",
+    "options": [
+      "support",
+      "friends",
+      "activity",
+      "classmate"
+    ],
+    "correctAnswer": "support",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) CLOSEST in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_079",
+    "type": "quiz",
+    "question": "He will remember a time when things were much simpler, but things have changed significantly since then. (remember)",
+    "options": [
+      "forget",
+      "recall",
+      "come",
+      "call"
+    ],
+    "correctAnswer": "recall",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) CLOSEST in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_080",
+    "type": "quiz",
+    "question": "In this unit, students will learn everything about cellular respiration, one of the most important biochemical processes for life on Earth. ( learn) ​​​​​​​",
+    "options": [
+      "prepare",
+      "use",
+      "club",
+      "field"
+    ],
+    "correctAnswer": "prepare",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) CLOSEST in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_081",
+    "type": "quiz",
+    "question": "They would share their fries with each other at the burger joint. ( share)",
+    "options": [
+      "hand up",
+      "hand in",
+      "hand",
+      "hand out"
+    ],
+    "correctAnswer": "hand out",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) CLOSEST in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_082",
+    "type": "quiz",
+    "question": "We would sit in class and just listen for the bell. ( listen)",
+    "options": [
+      "hear",
+      "heart",
+      "speak",
+      "early"
+    ],
+    "correctAnswer": "hear",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) CLOSEST in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_083",
+    "type": "quiz",
+    "question": "The boring movie had a slow plot that just went on forever. ( boring)",
+    "options": [
+      "great",
+      "watch",
+      "interesting",
+      "weary"
+    ],
+    "correctAnswer": "interesting",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_084",
+    "type": "quiz",
+    "question": "During his visit, the Personal Representative was struck by the great activity in the streets of the city. ( activity)",
+    "options": [
+      "silence",
+      "drama",
+      "motion",
+      "equipment"
+    ],
+    "correctAnswer": "silence",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_085",
+    "type": "quiz",
+    "question": "I always knew you would be successful because you were always a smart kid. ( smart)",
+    "options": [
+      "cute",
+      "foolish",
+      "ready",
+      "knock"
+    ],
+    "correctAnswer": "foolish",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_086",
+    "type": "quiz",
+    "question": "And to prove her obedience, the girl left her mum's arms to put on her dress. (put on)",
+    "options": [
+      "throw on",
+      "dress in",
+      "take off",
+      "look at"
+    ],
+    "correctAnswer": "take off",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_087",
+    "type": "quiz",
+    "question": "I enjoy getting together with friends on a Friday night. (enjoy)",
+    "options": [
+      "care",
+      "drink",
+      "look",
+      "hate"
+    ],
+    "correctAnswer": "hate",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_088",
+    "type": "quiz",
+    "question": "The first _______ we have on Monday is Music.",
+    "options": [
+      "lesson",
+      "homework",
+      "study",
+      "table"
+    ],
+    "correctAnswer": "lesson",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_089",
+    "type": "quiz",
+    "question": "During ________ we often play many games in the playground.",
+    "options": [
+      "break time",
+      "gym time",
+      "class time",
+      "we time"
+    ],
+    "correctAnswer": "break time",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_090",
+    "type": "quiz",
+    "question": "John goes to a / an ________ school. His classmates are from many countries.",
+    "options": [
+      "boarding",
+      "overseas",
+      "international",
+      "subject"
+    ],
+    "correctAnswer": "international",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_091",
+    "type": "quiz",
+    "question": "________ is my favourite subject. I like learning about how light and sound work among many other things.",
+    "options": [
+      "Maths",
+      "Physics",
+      "Computer science",
+      "Music"
+    ],
+    "correctAnswer": "Physics",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_092",
+    "type": "quiz",
+    "question": "He is the ________ of two books on French history.",
+    "options": [
+      "author",
+      "people",
+      "actress",
+      "classmate"
+    ],
+    "correctAnswer": "author",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_093",
+    "type": "quiz",
+    "question": "A ________ can also contain a variety of other stationery such as a sharpener, pens, glue sticks, erasers, and scissors.",
+    "options": [
+      "phone",
+      "book",
+      "pencil",
+      "pencil case"
+    ],
+    "correctAnswer": "pencil case",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_094",
+    "type": "quiz",
+    "question": "\"Where did you park the car?\" - \"I can't ________ .\"",
+    "options": [
+      "actor",
+      "remember",
+      "share",
+      "sign up"
+    ],
+    "correctAnswer": "remember",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_095",
+    "type": "quiz",
+    "question": "An electric cable accidentally falls into a ________, causing five swimmers intense pain.",
+    "options": [
+      "swim",
+      "swimming pool",
+      "house",
+      "school"
+    ],
+    "correctAnswer": "swimming pool",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_096",
+    "type": "quiz",
+    "question": "My favourite subjects at school were History and ________.",
+    "options": [
+      "Geography",
+      "friendly",
+      "indoor",
+      "international"
+    ],
+    "correctAnswer": "Geography",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_097",
+    "type": "quiz",
+    "question": "Please ________ before entering.",
+    "options": [
+      "question",
+      "lock",
+      "knock",
+      "book"
+    ],
+    "correctAnswer": "knock",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_098",
+    "type": "quiz",
+    "question": "If you draw or write in pencil, you can always rub out your mistakes with a (an) ________.",
+    "options": [
+      "crayon",
+      "marker",
+      "exciting",
+      "eraser"
+    ],
+    "correctAnswer": "eraser",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_099",
+    "type": "quiz",
+    "question": "She's ________ for evening classes at the community college.",
+    "options": [
+      "signed up",
+      "handed in",
+      "filled in",
+      "crossed out"
+    ],
+    "correctAnswer": "signed up",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_100",
+    "type": "quiz",
+    "question": "Judy has never been very ________, but she tries hard.",
+    "options": [
+      "clever",
+      "sing",
+      "entering",
+      "student"
+    ],
+    "correctAnswer": "clever",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_101",
+    "type": "quiz",
+    "question": "I enjoy ________ pursuits, like hiking and riding.",
+    "options": [
+      "quests",
+      "indoor",
+      "home",
+      "outdoor"
+    ],
+    "correctAnswer": "outdoor",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_102",
+    "type": "quiz",
+    "question": "She's the highest-paid ________ in Hollywood.",
+    "options": [
+      "learn",
+      "actress",
+      "actor",
+      "act"
+    ],
+    "correctAnswer": "actress",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_103",
+    "type": "quiz",
+    "question": "My parents often ____ early.",
+    "options": [
+      "get up",
+      "got up",
+      "gets up",
+      "getting up"
+    ],
+    "correctAnswer": "get up",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_104",
+    "type": "quiz",
+    "question": "We ____ a new house.",
+    "options": [
+      "have",
+      "has",
+      "having",
+      "had'd"
+    ],
+    "correctAnswer": "have",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_105",
+    "type": "quiz",
+    "question": "____ it have a balcony?",
+    "options": [
+      "Done",
+      "Do",
+      "Does",
+      "Doing"
+    ],
+    "correctAnswer": "Does",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_106",
+    "type": "quiz",
+    "question": "Betty and Daisy ____ near here.",
+    "options": [
+      "don’t live",
+      "aren't live",
+      "doesn’t live",
+      "isn't live"
+    ],
+    "correctAnswer": "don’t live",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_107",
+    "type": "quiz",
+    "question": "Do you often do homework in the evening? - No, ______ . I often do homework in the afternoon.",
+    "options": [
+      "I do",
+      "I don't",
+      "I am",
+      "I am not"
+    ],
+    "correctAnswer": "I don't",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_108",
+    "type": "quiz",
+    "question": "Our teacher always ________ us lots of homework.",
+    "options": [
+      "gives",
+      "give",
+      "giving",
+      "to give"
+    ],
+    "correctAnswer": "gives",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_109",
+    "type": "quiz",
+    "question": "We ________ to go to the concert.",
+    "options": [
+      "do want",
+      "don't want",
+      "doesn't want",
+      "don't wants"
+    ],
+    "correctAnswer": "don't want",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_110",
+    "type": "quiz",
+    "question": "People _______ English in Jamaica.",
+    "options": [
+      "speak",
+      "speaks",
+      "speaking",
+      "to speak"
+    ],
+    "correctAnswer": "speak",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_111",
+    "type": "quiz",
+    "question": "Let's _______ back to our practice hill, the one that is wide, not very steep and has a nice run-out at the bottom.",
+    "options": [
+      "going",
+      "go",
+      "goes",
+      "to go"
+    ],
+    "correctAnswer": "go",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_112",
+    "type": "quiz",
+    "question": "The earth _______ around the Sun.",
+    "options": [
+      "moving",
+      "move",
+      "moves",
+      "moved"
+    ],
+    "correctAnswer": "moves",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_113",
+    "type": "quiz",
+    "question": "I ______ football and tennis.",
+    "options": [
+      "likes",
+      "like",
+      "liking",
+      "to like"
+    ],
+    "correctAnswer": "like",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_114",
+    "type": "quiz",
+    "question": "I ______ to bed at 11 p.m.",
+    "options": [
+      "usually go",
+      "goes usually",
+      "go usually",
+      "usually goess"
+    ],
+    "correctAnswer": "usually go",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_115",
+    "type": "quiz",
+    "question": "Jack and John ______ at 8.00.",
+    "options": [
+      "gets up",
+      "getting up",
+      "are get up",
+      "get up"
+    ],
+    "correctAnswer": "get up",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_116",
+    "type": "quiz",
+    "question": "Does he ______ French?",
+    "options": [
+      "speaks",
+      "speaking",
+      "speak",
+      "to speak"
+    ],
+    "correctAnswer": "speak",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_117",
+    "type": "quiz",
+    "question": "He _______ lunch in a restaurant.",
+    "options": [
+      "never has",
+      "have never",
+      "never have",
+      "has never"
+    ],
+    "correctAnswer": "never has",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_118",
+    "type": "quiz",
+    "question": "They _______ a nice house.",
+    "options": [
+      "has",
+      "have",
+      "having",
+      "to have"
+    ],
+    "correctAnswer": "have",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_119",
+    "type": "quiz",
+    "question": "He ______ drive a big car.",
+    "options": [
+      "do",
+      "don't",
+      "doesn't",
+      "don’t"
+    ],
+    "correctAnswer": "doesn't",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_120",
+    "type": "quiz",
+    "question": "She ______ in a big house.",
+    "options": [
+      "lives",
+      "live",
+      "living",
+      "to live"
+    ],
+    "correctAnswer": "lives",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_121",
+    "type": "quiz",
+    "question": "He ______ tea and coffee.",
+    "options": [
+      "drink",
+      "drinks",
+      "to drink",
+      "drinking"
+    ],
+    "correctAnswer": "drinks",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_122",
+    "type": "quiz",
+    "question": "We ______ English at the International school.",
+    "options": [
+      "study",
+      "to study",
+      "studies",
+      "studying"
+    ],
+    "correctAnswer": "study",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_123",
+    "type": "quiz",
+    "question": "They ______ hamburgers.",
+    "options": [
+      "aren't like",
+      "doesn't like",
+      "don't like",
+      "isn't like"
+    ],
+    "correctAnswer": "don't like",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_124",
+    "type": "quiz",
+    "question": "The bus _______ at 8.30.",
+    "options": [
+      "leaves",
+      "leave",
+      "leaving",
+      "to leave"
+    ],
+    "correctAnswer": "leaves",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_125",
+    "type": "quiz",
+    "question": "He _______ lunch in a restaurant.",
+    "options": [
+      "never has",
+      "have never",
+      "never have",
+      "has never"
+    ],
+    "correctAnswer": "never has",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_126",
+    "type": "quiz",
+    "question": "They _______ a nice house.",
+    "options": [
+      "has",
+      "have",
+      "having",
+      "to have"
+    ],
+    "correctAnswer": "have",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_127",
+    "type": "quiz",
+    "question": "The shops _______ at 9.00.",
+    "options": [
+      "opens",
+      "opening",
+      "open",
+      "to open"
+    ],
+    "correctAnswer": "open",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_128",
+    "type": "quiz",
+    "question": "I _______ a student.",
+    "options": [
+      "am",
+      "is",
+      "be",
+      "are"
+    ],
+    "correctAnswer": "am",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_129",
+    "type": "quiz",
+    "question": "She _______ from England.",
+    "options": [
+      "being",
+      "are",
+      "is",
+      "am"
+    ],
+    "correctAnswer": "is",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_130",
+    "type": "quiz",
+    "question": "They _______ to do the shopping together.",
+    "options": [
+      "want",
+      "to want",
+      "wants",
+      "wants to"
+    ],
+    "correctAnswer": "want",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_131",
+    "type": "quiz",
+    "question": "Jack _______ singing very much.",
+    "options": [
+      "to like",
+      "liking",
+      "like",
+      "likes"
+    ],
+    "correctAnswer": "likes",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_132",
+    "type": "quiz",
+    "question": "Mai ________ do the dishes.",
+    "options": [
+      "do",
+      "don't",
+      "does",
+      "doesn't"
+    ],
+    "correctAnswer": "doesn't",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_133",
+    "type": "quiz",
+    "question": "We _______ breakfast at 6:30 a.m.",
+    "options": [
+      "have usually",
+      "usually have",
+      "has usually",
+      "usually has"
+    ],
+    "correctAnswer": "usually have",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_134",
+    "type": "quiz",
+    "question": "_______ she your aunt?",
+    "options": [
+      "Are",
+      "Is",
+      "Have",
+      "Has"
+    ],
+    "correctAnswer": "Is",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_135",
+    "type": "quiz",
+    "question": "He _______ any housework.",
+    "options": [
+      "don't do",
+      "do",
+      "doesn't",
+      "doesn't do"
+    ],
+    "correctAnswer": "doesn't do",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_136",
+    "type": "quiz",
+    "question": "Jim _______ my brother.",
+    "options": [
+      "not is",
+      "is not",
+      "are not",
+      "not are"
+    ],
+    "correctAnswer": "is not",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_137",
+    "type": "quiz",
+    "question": "My grandparents ________ in an apartment in Da Nang city.",
+    "options": [
+      "lives",
+      "live",
+      "living",
+      "to live"
+    ],
+    "correctAnswer": "live",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_138",
+    "type": "quiz",
+    "question": "_______ they your friends?",
+    "options": [
+      "Do",
+      "Does",
+      "Are",
+      "Is"
+    ],
+    "correctAnswer": "Are",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_139",
+    "type": "quiz",
+    "question": "Their children ________ in the room. They are in the garden.",
+    "options": [
+      "are",
+      "aren't",
+      "is",
+      "isn't"
+    ],
+    "correctAnswer": "aren't",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_140",
+    "type": "quiz",
+    "question": "I _______ a doctor. I am a nurse.",
+    "options": [
+      "am",
+      "not am",
+      "am not",
+      "is not"
+    ],
+    "correctAnswer": "am not",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_141",
+    "type": "quiz",
+    "question": "There _______ a pool and a yard in my house.",
+    "options": [
+      "is",
+      "are",
+      "has",
+      "have"
+    ],
+    "correctAnswer": "is",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_142",
+    "type": "quiz",
+    "question": "________ your sister clean the house?",
+    "options": [
+      "Is",
+      "Are",
+      "Do",
+      "Does"
+    ],
+    "correctAnswer": "Does",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_143",
+    "type": "quiz",
+    "question": "My father usually ________ dinner at weekends.",
+    "options": [
+      "makes",
+      "to make",
+      "make",
+      "making"
+    ],
+    "correctAnswer": "makes",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_144",
+    "type": "quiz",
+    "question": "Lisa and Kate _______ the same age.",
+    "options": [
+      "is",
+      "are",
+      "am",
+      "be"
+    ],
+    "correctAnswer": "are",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_145",
+    "type": "quiz",
+    "question": "There _______ three bedrooms and two bathrooms.",
+    "options": [
+      "have",
+      "has",
+      "are",
+      "is"
+    ],
+    "correctAnswer": "are",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_146",
+    "type": "quiz",
+    "question": "The house _______ very old.",
+    "options": [
+      "looks",
+      "looking",
+      "to look",
+      "look"
+    ],
+    "correctAnswer": "looks",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_147",
+    "type": "quiz",
+    "question": "Quan and his classmates often _________ football at school.",
+    "options": [
+      "to play",
+      "plays",
+      "play",
+      "playing"
+    ],
+    "correctAnswer": "play",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_148",
+    "type": "quiz",
+    "question": "Are you a teacher?",
+    "options": [
+      "Yes, you are.",
+      "Yes, I am.",
+      "Yes, I is.",
+      "Yes, I are."
+    ],
+    "correctAnswer": "Yes, I am.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_149",
+    "type": "quiz",
+    "question": "Is she beautiful?",
+    "options": [
+      "Yes, she are.",
+      "Yes, she am.",
+      "Yes, she is.",
+      "Yes, she is not."
+    ],
+    "correctAnswer": "Yes, she is.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_150",
+    "type": "quiz",
+    "question": "Does your grandfather do the laundry?",
+    "options": [
+      "No, he doesn't.",
+      "No, he not does.",
+      "No, he isn't.",
+      "No, he don't."
+    ],
+    "correctAnswer": "No, he doesn't.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_151",
+    "type": "quiz",
+    "question": "Does Mr. Phong love his students?",
+    "options": [
+      "Yes, he does.",
+      "Yes, he is.",
+      "Yes, she does.",
+      "Yes, she is."
+    ],
+    "correctAnswer": "Yes, he does.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_152",
+    "type": "quiz",
+    "question": "Do they stay at home today?",
+    "options": [
+      "Yes, they are.",
+      "Yes, they do.",
+      "Yes, they does.",
+      "Yes, they is."
+    ],
+    "correctAnswer": "Yes, they do.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_153",
+    "type": "quiz",
+    "question": "Do you and your brother have lunch at school?",
+    "options": [
+      "Yes, I do.",
+      "Yes, he do.",
+      "Yes, we do.",
+      "Yes, they do."
+    ],
+    "correctAnswer": "Yes, we do.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_154",
+    "type": "quiz",
+    "question": "Does your house have a balcony?",
+    "options": [
+      "No, it doesn't.",
+      "No, it don't.",
+      "No, it isn't.",
+      "No, it aren't."
+    ],
+    "correctAnswer": "No, it doesn't.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_155",
+    "type": "quiz",
+    "question": "Are Jack and Linda from Canada?",
+    "options": [
+      "No, he isn't.",
+      "No, they aren't.",
+      "No, she isn't.",
+      "No, we aren't."
+    ],
+    "correctAnswer": "No, they aren't.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_156",
+    "type": "quiz",
+    "question": "Does Miss Nhung live in Hanoi?",
+    "options": [
+      "No, he isn't.",
+      "No, she isn't.",
+      "No, he doesn't.",
+      "No, she doesn't."
+    ],
+    "correctAnswer": "No, she doesn't.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_157",
+    "type": "quiz",
+    "question": "Do your family live in a small flat in countryside?",
+    "options": [
+      "Yes, we are.",
+      "Yes, we do.",
+      "Yes, they are.",
+      "Yes, they do."
+    ],
+    "correctAnswer": "Yes, we do.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_158",
+    "type": "quiz",
+    "question": "I __________ go to bed before 10 p.m because I have a lot of homework.",
+    "options": [
+      "usually",
+      "never",
+      "always",
+      "frequently"
+    ],
+    "correctAnswer": "never",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_159",
+    "type": "quiz",
+    "question": "She __________ helps her mother with the housework. She’s very lazy.",
+    "options": [
+      "helps always",
+      "helps often",
+      "never helps",
+      "usually helps"
+    ],
+    "correctAnswer": "never helps",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_160",
+    "type": "quiz",
+    "question": "My friends __________ camping on weekends. It depends on the weather.",
+    "options": [
+      "go sometimes",
+      "sometimes go",
+      "never go",
+      "go never"
+    ],
+    "correctAnswer": "sometimes go",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_161",
+    "type": "quiz",
+    "question": "__________ do you go to the cinema?",
+    "options": [
+      "How usually",
+      "How often",
+      "How many",
+      "How long"
+    ],
+    "correctAnswer": "How often",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_162",
+    "type": "quiz",
+    "question": "They __________ have lunch together at school. They eat with different groups.",
+    "options": [
+      "always",
+      "often",
+      "rarely",
+      "usually"
+    ],
+    "correctAnswer": "rarely",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_163",
+    "type": "quiz",
+    "question": "They _______________ junk food.",
+    "options": [
+      "occasionally eating",
+      "occasionally eats",
+      "eat occasionally",
+      "occasionally eat"
+    ],
+    "correctAnswer": "occasionally eat",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_164",
+    "type": "quiz",
+    "question": "When _______________? - It _______________ at half pass seven.",
+    "options": [
+      "does the film start – starts",
+      "do the film start – start",
+      "does the film start - start",
+      "the film starts – starts"
+    ],
+    "correctAnswer": "does the film start – starts",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_165",
+    "type": "quiz",
+    "question": "She _______________ Facebook at school.",
+    "options": [
+      "seldom check",
+      "checks seldom",
+      "seldom checks",
+      "check seldom"
+    ],
+    "correctAnswer": "seldom checks",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_166",
+    "type": "quiz",
+    "question": "What time _______________? - It _______________ at a quarter to ten.",
+    "options": [
+      "the bus leaves - leaves",
+      "does the bus leave – leaves",
+      "does the bus leave - leave",
+      "the bus leaves – leave"
+    ],
+    "correctAnswer": "does the bus leave – leaves",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_167",
+    "type": "quiz",
+    "question": "Susan _______________ bad tempered.",
+    "options": [
+      "usually aren’t",
+      "is usually not",
+      "isn’t usually",
+      "usually isn’t"
+    ],
+    "correctAnswer": "isn’t usually",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_168",
+    "type": "quiz",
+    "question": "When _______________ literature? - I _______________ it at 9:15 a.m.",
+    "options": [
+      "do you have – have",
+      "do you have – has",
+      "you have - have",
+      "have you – have"
+    ],
+    "correctAnswer": "do you have – have",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_169",
+    "type": "quiz",
+    "question": "_______________ after a meal? - No, I _______________.",
+    "options": [
+      "Are sometimes you sleepy - am not",
+      "Are you sometimes sleepy - am not",
+      "Are you sleepy sometimes - are not",
+      "You are sometimes sleepy - am not"
+    ],
+    "correctAnswer": "Are you sometimes sleepy - am not",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_170",
+    "type": "quiz",
+    "question": "_______________ next week? - Yes, it _______________.",
+    "options": [
+      "Does the exhibition start – do",
+      "The exhibition starts – does",
+      "Do the exhibition start - does",
+      "Does the exhibition start – does"
+    ],
+    "correctAnswer": "Does the exhibition start – does",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_171",
+    "type": "quiz",
+    "question": "He _______________ the truth.",
+    "options": [
+      "doesn’t always tell",
+      "does always not tell",
+      "always doesn’t tell",
+      "doesn’t tell always"
+    ],
+    "correctAnswer": "doesn’t always tell",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_172",
+    "type": "quiz",
+    "question": "When _______________ ? ​​​​​​​It _______ at 10.30 p.m.",
+    "options": [
+      "does the game show finish – finishes",
+      "does the game show finish - finish",
+      "do the game show finish – finishes",
+      "do the game show finishes - finish"
+    ],
+    "correctAnswer": "does the game show finish – finishes",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_173",
+    "type": "quiz",
+    "question": "__________ he work at the hospital?",
+    "options": [
+      "Do",
+      "Is",
+      "Does",
+      "Has"
+    ],
+    "correctAnswer": "Does",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_174",
+    "type": "quiz",
+    "question": "My parents __________ coffee in the morning.",
+    "options": [
+      "always drink",
+      "drink always",
+      "drinks always",
+      "are always drink"
+    ],
+    "correctAnswer": "always drink",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_175",
+    "type": "quiz",
+    "question": "She __________ to music at night.",
+    "options": [
+      "not listens",
+      "doesn’t listening",
+      "doesn’t listen",
+      "don't listen"
+    ],
+    "correctAnswer": "doesn’t listen",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_176",
+    "type": "quiz",
+    "question": "He __________ eats fast food because he wants to stay healthy.",
+    "options": [
+      "usually",
+      "always",
+      "never",
+      "often"
+    ],
+    "correctAnswer": "never",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_177",
+    "type": "quiz",
+    "question": "I __________ breakfast at 6 a.m.",
+    "options": [
+      "am usually eat",
+      "eat usually",
+      "usually eat",
+      "do usually eat"
+    ],
+    "correctAnswer": "usually eat",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_178",
+    "type": "quiz",
+    "question": "She __________ late for class.",
+    "options": [
+      "is never",
+      "never is",
+      "are never",
+      "is not never"
+    ],
+    "correctAnswer": "is never",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_179",
+    "type": "quiz",
+    "question": "__________ your father read the newspaper every morning?",
+    "options": [
+      "Do",
+      "Is",
+      "Has",
+      "Does"
+    ],
+    "correctAnswer": "Does",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_180",
+    "type": "quiz",
+    "question": "My brother __________ football every weekend.",
+    "options": [
+      "play",
+      "plays",
+      "playing",
+      "played"
+    ],
+    "correctAnswer": "plays",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_181",
+    "type": "quiz",
+    "question": "The news __________ at 7 p.m every evening.",
+    "options": [
+      "start",
+      "starting",
+      "starts",
+      "are starting"
+    ],
+    "correctAnswer": "starts",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_182",
+    "type": "quiz",
+    "question": "My sister __________ to bed at 10 p.m.",
+    "options": [
+      "always goes",
+      "go always",
+      "is always go",
+      "goes always"
+    ],
+    "correctAnswer": "always goes",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_183",
+    "type": "error-finding",
+    "question": "What time does Mai has English class ?",
+    "options": [
+      "What time",
+      "does",
+      "has English",
+      "class"
+    ],
+    "correctAnswer": "has English",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_184",
+    "type": "error-finding",
+    "question": "When time do you usually get up every day ?",
+    "options": [
+      "every day",
+      "When",
+      "do",
+      "get up"
+    ],
+    "correctAnswer": "When",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_185",
+    "type": "error-finding",
+    "question": "Does your mother and Mrs. Lanh work here? Yes, they do .",
+    "options": [
+      "Does",
+      "Mrs. Lanh",
+      "work",
+      "they do"
+    ],
+    "correctAnswer": "Does",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_186",
+    "type": "error-finding",
+    "question": "I swim usually at the weekend",
+    "options": [
+      "swim",
+      "usually",
+      "at",
+      "the weekend"
+    ],
+    "correctAnswer": "usually",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_187",
+    "type": "error-finding",
+    "question": "I and Lan ride s a bik e to school every day",
+    "options": [
+      "rides",
+      "a bike",
+      "to school",
+      "every day"
+    ],
+    "correctAnswer": "rides",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_188",
+    "type": "error-finding",
+    "question": "My mom don’t usually go to work on Saturday",
+    "options": [
+      "My mom",
+      "don’t",
+      "go to work",
+      "on Saturday"
+    ],
+    "correctAnswer": "don’t",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_189",
+    "type": "error-finding",
+    "question": "I am often playing football on Saturdays .",
+    "options": [
+      "am often playing",
+      "football",
+      "on",
+      "Saturdays"
+    ],
+    "correctAnswer": "am often playing",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_190",
+    "type": "error-finding",
+    "question": "My children doesn’t like reading .",
+    "options": [
+      "my",
+      "children",
+      "doesn’t",
+      "like reading"
+    ],
+    "correctAnswer": "doesn’t",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_191",
+    "type": "error-finding",
+    "question": "Ann gets up at 6 o’clock and is having breakfast every day.",
+    "options": [
+      "gets up",
+      "at 6 o’clock",
+      "is having",
+      "every day"
+    ],
+    "correctAnswer": "is having",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "My New School",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_197",
+    "type": "quiz",
+    "question": "We live in a small __________ in the city.",
+    "options": [
+      "country house",
+      "flat",
+      "hall",
+      "cooker"
+    ],
+    "correctAnswer": "flat",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_198",
+    "type": "quiz",
+    "question": "My grandparents live in a big __________ in the countryside.",
+    "options": [
+      "town house",
+      "fridge",
+      "country house",
+      "sink"
+    ],
+    "correctAnswer": "country house",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_199",
+    "type": "quiz",
+    "question": "We will __________ to a new house next week.",
+    "options": [
+      "move",
+      "fridge",
+      "cooker",
+      "help"
+    ],
+    "correctAnswer": "move",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_200",
+    "type": "quiz",
+    "question": "The __________ is full of clean plates and bowls.",
+    "options": [
+      "dishwasher",
+      "cupboard",
+      "cooker",
+      "chest"
+    ],
+    "correctAnswer": "cupboard",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_201",
+    "type": "quiz",
+    "question": "We keep the food in the __________.",
+    "options": [
+      "sink",
+      "cupboard",
+      "cooker",
+      "fridge"
+    ],
+    "correctAnswer": "fridge",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_202",
+    "type": "quiz",
+    "question": "The __________ washes all the dirty dishes for us.",
+    "options": [
+      "fridge",
+      "dishwasher",
+      "cooker",
+      "hall"
+    ],
+    "correctAnswer": "dishwasher",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_203",
+    "type": "quiz",
+    "question": "My mom cooks dinner with the __________.",
+    "options": [
+      "cooker",
+      "sink",
+      "fridge",
+      "cupboard"
+    ],
+    "correctAnswer": "cooker",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_204",
+    "type": "quiz",
+    "question": "There is a big __________ in the middle of the house.",
+    "options": [
+      "chest",
+      "cupboard",
+      "fridge",
+      "hall"
+    ],
+    "correctAnswer": "hall",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_205",
+    "type": "quiz",
+    "question": "She puts her clothes in the __________.",
+    "options": [
+      "sink",
+      "chest of drawers",
+      "cooker",
+      "fridge"
+    ],
+    "correctAnswer": "chest of drawers",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_206",
+    "type": "quiz",
+    "question": "Please wash your hands in the __________.",
+    "options": [
+      "cupboard",
+      "cooker",
+      "sink",
+      "fridge"
+    ],
+    "correctAnswer": "sink",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_207",
+    "type": "quiz",
+    "question": "That new __________ has four floors and a garage.",
+    "options": [
+      "town house",
+      "cupboard",
+      "cooker",
+      "hall"
+    ],
+    "correctAnswer": "town house",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_208",
+    "type": "quiz",
+    "question": "The __________ in our kitchen is full of plates.",
+    "options": [
+      "cooker",
+      "dishwasher",
+      "hall",
+      "cupboard"
+    ],
+    "correctAnswer": "cupboard",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_209",
+    "type": "quiz",
+    "question": "There __________ a fridge and a sink in the kitchen.",
+    "options": [
+      "is",
+      "are",
+      "be",
+      "have"
+    ],
+    "correctAnswer": "is",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_210",
+    "type": "quiz",
+    "question": "I live __________ a town house with my parents.",
+    "options": [
+      "in",
+      "on",
+      "to",
+      "at"
+    ],
+    "correctAnswer": "in",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_211",
+    "type": "quiz",
+    "question": "There are many books __________ the cupboard.",
+    "options": [
+      "on",
+      "of",
+      "in",
+      "to"
+    ],
+    "correctAnswer": "in",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_212",
+    "type": "quiz",
+    "question": "She has a __________ in her country house.",
+    "options": [
+      "big kitchen",
+      "kitchen big",
+      "big",
+      "kitchens"
+    ],
+    "correctAnswer": "big kitchen",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_213",
+    "type": "quiz",
+    "question": "The bed is _______ the wardrobe.",
+    "options": [
+      "under",
+      "next to",
+      "on",
+      "in"
+    ],
+    "correctAnswer": "next to",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_214",
+    "type": "quiz",
+    "question": "There is a big _______ in her room. She puts her clothes in it.",
+    "options": [
+      "sink",
+      "wardrobe",
+      "sofa",
+      "shelf"
+    ],
+    "correctAnswer": "wardrobe",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_215",
+    "type": "quiz",
+    "question": "This shop is very big. It’s a _______.",
+    "options": [
+      "school",
+      "department store",
+      "hospital",
+      "park"
+    ],
+    "correctAnswer": "department store",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_216",
+    "type": "quiz",
+    "question": "This is a _______ picture. It has a cat with three eyes!",
+    "options": [
+      "brown",
+      "crazy",
+      "happy",
+      "clean"
+    ],
+    "correctAnswer": "crazy",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_217",
+    "type": "quiz",
+    "question": "I like this flat _______ it has a big kitchen.",
+    "options": [
+      "when",
+      "should",
+      "because",
+      "is"
+    ],
+    "correctAnswer": "because",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_218",
+    "type": "quiz",
+    "question": "Look! My sister _______ the wardrobe.",
+    "options": [
+      "clean",
+      "cleaned",
+      "is cleaning",
+      "cleaning"
+    ],
+    "correctAnswer": "is cleaning",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_219",
+    "type": "quiz",
+    "question": "You _______ the fridge door.",
+    "options": [
+      "are close",
+      "should to close",
+      "shoulds close",
+      "should close"
+    ],
+    "correctAnswer": "should close",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_220",
+    "type": "quiz",
+    "question": "We listen to music _______ we clean the hall.",
+    "options": [
+      "when",
+      "because",
+      "should",
+      "to"
+    ],
+    "correctAnswer": "when",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_221",
+    "type": "quiz",
+    "question": "They _______ dinner in the kitchen now.",
+    "options": [
+      "has",
+      "have",
+      "are having",
+      "had"
+    ],
+    "correctAnswer": "are having",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_222",
+    "type": "quiz",
+    "question": "My uncle's __________ is surrounded by fields and trees.",
+    "options": [
+      "flat",
+      "country house",
+      "cupboard",
+      "cooker"
+    ],
+    "correctAnswer": "country house",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_223",
+    "type": "quiz",
+    "question": "There __________ two cupboards and a big fridge in the kitchen.",
+    "options": [
+      "is",
+      "are",
+      "was",
+      "be"
+    ],
+    "correctAnswer": "are",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_224",
+    "type": "quiz",
+    "question": "We don’t need to wash the dishes because we have a __________.",
+    "options": [
+      "chest of drawers",
+      "dishwasher",
+      "cooker",
+      "carpet"
+    ],
+    "correctAnswer": "dishwasher",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_225",
+    "type": "quiz",
+    "question": "My clothes are in the __________ next to the bed.",
+    "options": [
+      "cooker",
+      "chest of drawers",
+      "sink",
+      "oven"
+    ],
+    "correctAnswer": "chest of drawers",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_226",
+    "type": "quiz",
+    "question": "Our __________ is full of nice chairs and a big sofa.",
+    "options": [
+      "bathroom",
+      "living room",
+      "sink",
+      "attic"
+    ],
+    "correctAnswer": "living room",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_227",
+    "type": "quiz",
+    "question": "There are some dishes in the __________ after the meal. Please clean them.",
+    "options": [
+      "cooker",
+      "cupboard",
+      "sink",
+      "drawer"
+    ],
+    "correctAnswer": "sink",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_228",
+    "type": "quiz",
+    "question": "The __________ is at the entrance and leads to all rooms in the house.",
+    "options": [
+      "cooker",
+      "hall",
+      "sofa",
+      "garage"
+    ],
+    "correctAnswer": "hall",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_229",
+    "type": "quiz",
+    "question": "I usually help my mum __________ the housework at the weekend.",
+    "options": [
+      "do",
+      "make",
+      "get",
+      "go"
+    ],
+    "correctAnswer": "do",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_230",
+    "type": "quiz",
+    "question": "My parents want to buy some new __________ for the dining room.",
+    "options": [
+      "furniture",
+      "equipments",
+      "furnitures",
+      "machines"
+    ],
+    "correctAnswer": "furniture",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_231",
+    "type": "quiz",
+    "question": "We keep the bowls and plates in the kitchen __________.",
+    "options": [
+      "cupboard",
+      "fridge",
+      "cooker",
+      "carpet"
+    ],
+    "correctAnswer": "cupboard",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_232",
+    "type": "quiz",
+    "question": "That house is very __________. I want to live there!",
+    "options": [
+      "beauty",
+      "beautifully",
+      "beautiful",
+      "beautify"
+    ],
+    "correctAnswer": "beautiful",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_233",
+    "type": "quiz",
+    "question": "They bought a lot of new __________ for their flat.",
+    "options": [
+      "furnish",
+      "furniture",
+      "furnitures",
+      "furnishing"
+    ],
+    "correctAnswer": "furniture",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_234",
+    "type": "quiz",
+    "question": "My grandparents have a country house in the countryside. (a country house)",
+    "options": [
+      "rural house",
+      "small house",
+      "big house",
+      "private house"
+    ],
+    "correctAnswer": "rural house",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the word(s) CLOSEST in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_235",
+    "type": "quiz",
+    "question": "Some people think my fashion sense is crazy , but I like it. (crazy)",
+    "options": [
+      "beloved",
+      "favourite",
+      "helpful",
+      "insane"
+    ],
+    "correctAnswer": "insane",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the word(s) CLOSEST in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_236",
+    "type": "quiz",
+    "question": "I placed the chair in front of the table. (in front of)",
+    "options": [
+      "on",
+      "inside",
+      "next to",
+      "behind"
+    ],
+    "correctAnswer": "behind",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_237",
+    "type": "quiz",
+    "question": "Her hair style was so strange that everyone looked at her. (strange)",
+    "options": [
+      "normal",
+      "luxurious",
+      "interesting",
+      "lovely"
+    ],
+    "correctAnswer": "normal",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_238",
+    "type": "quiz",
+    "question": "She lives in a large town house with a garden. (town house)",
+    "options": [
+      "in front of",
+      "city house",
+      "big house",
+      "country house"
+    ],
+    "correctAnswer": "country house",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_239",
+    "type": "quiz",
+    "question": "My school bag is _______ the desk and the bed.",
+    "options": [
+      "next to",
+      "on",
+      "between",
+      "in front"
+    ],
+    "correctAnswer": "between",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_240",
+    "type": "quiz",
+    "question": "My brother is sitting _______ the TV. He is watching cartoons.",
+    "options": [
+      "between",
+      "in front of",
+      "behind",
+      "next"
+    ],
+    "correctAnswer": "in front of",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_241",
+    "type": "quiz",
+    "question": "The books are on the _______ next to the window.",
+    "options": [
+      "wardrobe",
+      "kitchen",
+      "shelf",
+      "sofa"
+    ],
+    "correctAnswer": "shelf",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_242",
+    "type": "quiz",
+    "question": "There’s something _______ about this house. It looks scary.",
+    "options": [
+      "next",
+      "behind",
+      "shelf",
+      "strange"
+    ],
+    "correctAnswer": "strange",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_243",
+    "type": "quiz",
+    "question": "We buy new furniture from the _______ in the city.",
+    "options": [
+      "department store",
+      "wardrobe",
+      "sofa",
+      "room"
+    ],
+    "correctAnswer": "department store",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_244",
+    "type": "quiz",
+    "question": "That pink _______ in your bedroom is really big!",
+    "options": [
+      "next",
+      "country house",
+      "between",
+      "wardrobe"
+    ],
+    "correctAnswer": "wardrobe",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_245",
+    "type": "quiz",
+    "question": "My little brother is a bit _______. He sleeps with the lights on.",
+    "options": [
+      "shelf",
+      "between",
+      "smart",
+      "crazy"
+    ],
+    "correctAnswer": "crazy",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_246",
+    "type": "quiz",
+    "question": "Can I _______ in the grandma's house in this summer?",
+    "options": [
+      "next",
+      "wardrobe",
+      "stay",
+      "department"
+    ],
+    "correctAnswer": "stay",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_247",
+    "type": "quiz",
+    "question": "There’s a big shelf _______ the wardrobe. It has some books on it.",
+    "options": [
+      "between",
+      "next to",
+      "under",
+      "stay"
+    ],
+    "correctAnswer": "next to",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_248",
+    "type": "quiz",
+    "question": "She wants to move to a country house _______ it's quiet and nice.",
+    "options": [
+      "when",
+      "because",
+      "should",
+      "so"
+    ],
+    "correctAnswer": "because",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_249",
+    "type": "quiz",
+    "question": "Look! They _______ the chest of drawers into the bedroom.",
+    "options": [
+      "move",
+      "are moving",
+      "moved",
+      "moving"
+    ],
+    "correctAnswer": "are moving",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_250",
+    "type": "quiz",
+    "question": "You _______ the dishwasher next to the sink. It will be easier to wash up.",
+    "options": [
+      "put",
+      "puts",
+      "should put",
+      "should to put"
+    ],
+    "correctAnswer": "should put",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_251",
+    "type": "quiz",
+    "question": "You should stay here ______ you visit Hanoi.",
+    "options": [
+      "when",
+      "because",
+      "should",
+      "next"
+    ],
+    "correctAnswer": "when",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_252",
+    "type": "quiz",
+    "question": "He _______ all the furniture to his new town house now.",
+    "options": [
+      "is moving",
+      "moves",
+      "moved",
+      "moving"
+    ],
+    "correctAnswer": "is moving",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_253",
+    "type": "quiz",
+    "question": "My brother usually helps my mum _______ the furniture.",
+    "options": [
+      "water",
+      "cook",
+      "clean",
+      "move"
+    ],
+    "correctAnswer": "clean",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_254",
+    "type": "quiz",
+    "question": "We have a big _______ in the kitchen to keep our food fresh.",
+    "options": [
+      "wardrobe",
+      "fridge",
+      "shelf",
+      "cooker"
+    ],
+    "correctAnswer": "fridge",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_255",
+    "type": "quiz",
+    "question": "My new house is very _______. I love it.",
+    "options": [
+      "beauty",
+      "beautifully",
+      "beautify",
+      "beautiful"
+    ],
+    "correctAnswer": "beautiful",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_256",
+    "type": "quiz",
+    "question": "My grandma is very _______. She always helps me clean the house.",
+    "options": [
+      "helpful",
+      "help",
+      "helpless",
+      "helping"
+    ],
+    "correctAnswer": "helpful",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_257",
+    "type": "quiz",
+    "question": "What is a \"chest of drawers\"?",
+    "options": [
+      "A piece of furniture with drawers for clothes storage",
+      "A type of chair",
+      "A storage cabinet with shelves",
+      "A table for dining"
+    ],
+    "correctAnswer": "A piece of furniture with drawers for clothes storage",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_258",
+    "type": "quiz",
+    "question": "What does \"cooker\" refer to?",
+    "options": [
+      "A small oven",
+      "A refrigerator",
+      "A kitchen sink",
+      "A stove for cooking"
+    ],
+    "correctAnswer": "A stove for cooking",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_259",
+    "type": "quiz",
+    "question": "What is a \"country house\"?",
+    "options": [
+      "A house located in a rural area",
+      "An apartment in the city",
+      "A house made of bricks",
+      "A house with a swimming pool"
+    ],
+    "correctAnswer": "A house located in a rural area",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_260",
+    "type": "quiz",
+    "question": "How would you define \"crazy\"?",
+    "options": [
+      "Boring",
+      "Normal",
+      "Beautiful",
+      "Strange"
+    ],
+    "correctAnswer": "Strange",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_261",
+    "type": "quiz",
+    "question": "What does a \"cupboard\" typically hold?",
+    "options": [
+      "Books",
+      "Shoes",
+      "Dishes/clothes",
+      "Plants"
+    ],
+    "correctAnswer": "Dishes/clothes",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_262",
+    "type": "quiz",
+    "question": "You're acting strangely . Did you just win the lottery, perhaps? (strangely)",
+    "options": [
+      "middle",
+      "unusual",
+      "stilt",
+      "kitchen"
+    ],
+    "correctAnswer": "unusual",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) CLOSEST in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_263",
+    "type": "quiz",
+    "question": "Please stick to the topic at hand and avoid veering off on a tangent. (topic)",
+    "options": [
+      "nothing",
+      "poster",
+      "theme",
+      "villa"
+    ],
+    "correctAnswer": "theme",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) CLOSEST in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_264",
+    "type": "quiz",
+    "question": "My finger traces the seven stars, outlining the shape of a ladle. (shape)",
+    "options": [
+      "sink",
+      "form",
+      "reality",
+      "cooker"
+    ],
+    "correctAnswer": "form",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) CLOSEST in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_265",
+    "type": "quiz",
+    "question": "He sensed a stew of emotions bubbling beneath her cool exterior. (cool)",
+    "options": [
+      "level",
+      "crazy",
+      "bathroom",
+      "coldish"
+    ],
+    "correctAnswer": "coldish",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) CLOSEST in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_266",
+    "type": "quiz",
+    "question": "What had started as a pilgrimage would turn into an inquiry into the meaning of true religion. (true)",
+    "options": [
+      "right",
+      "false",
+      "fake",
+      "kennel"
+    ],
+    "correctAnswer": "right",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) CLOSEST in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_267",
+    "type": "quiz",
+    "question": "He walked around the room to find her sitting on the ground behind her bed. (behind)",
+    "options": [
+      "right",
+      "left",
+      "in front of",
+      "at"
+    ],
+    "correctAnswer": "in front of",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_268",
+    "type": "quiz",
+    "question": "It may be necessary to ask a neighbour to turn down noisy music. (noisy)",
+    "options": [
+      "quiet",
+      "loud",
+      "night",
+      "notebook"
+    ],
+    "correctAnswer": "quiet",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_269",
+    "type": "quiz",
+    "question": "I have big plans for the future of this website. (big)",
+    "options": [
+      "grand",
+      "large",
+      "small",
+      "window"
+    ],
+    "correctAnswer": "small",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_270",
+    "type": "quiz",
+    "question": "He stood back for a moment to admire his clean car once he had finished washing it. (clean)",
+    "options": [
+      "washed",
+      "taking",
+      "cooker",
+      "dirty"
+    ],
+    "correctAnswer": "dirty",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_271",
+    "type": "quiz",
+    "question": "Wales may be a near neighbor, but it has traits and trends that set it well apart from Ireland and neighboring England. (near)",
+    "options": [
+      "beside",
+      "clear",
+      "far",
+      "party"
+    ],
+    "correctAnswer": "far",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the word(s) OPPOSITE in meaning to the underlined part.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_272",
+    "type": "quiz",
+    "question": "We had a drink on the hotel ______.",
+    "options": [
+      "balcony",
+      "elevator",
+      "basement",
+      "reception"
+    ],
+    "correctAnswer": "balcony",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_273",
+    "type": "quiz",
+    "question": "He likes to have breakfast in ______ on a Saturday morning.",
+    "options": [
+      "chair",
+      "bed",
+      "cupboard",
+      "month"
+    ],
+    "correctAnswer": "bed",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_274",
+    "type": "quiz",
+    "question": "The town lies halfway ______ Rome and Florence.",
+    "options": [
+      "farther",
+      "between",
+      "among",
+      "left"
+    ],
+    "correctAnswer": "between",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_275",
+    "type": "quiz",
+    "question": "New York is a ______ for the arts.",
+    "options": [
+      "visitor",
+      "player",
+      "painter",
+      "center"
+    ],
+    "correctAnswer": "center",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_276",
+    "type": "quiz",
+    "question": "Wellington is the capital ______ of New Zealand.",
+    "options": [
+      "city",
+      "government",
+      "many",
+      "the"
+    ],
+    "correctAnswer": "city",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_277",
+    "type": "quiz",
+    "question": "I found these apples going mouldy in the ______.",
+    "options": [
+      "cupboard",
+      "lonely",
+      "far",
+      "near"
+    ],
+    "correctAnswer": "cupboard",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_278",
+    "type": "quiz",
+    "question": "We had some friends over for ______ on Saturday.",
+    "options": [
+      "making",
+      "sleep",
+      "small",
+      "dinner"
+    ],
+    "correctAnswer": "dinner",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_279",
+    "type": "quiz",
+    "question": "I bought a new table ______.",
+    "options": [
+      "lamp",
+      "cooker",
+      "fridge",
+      "wardobe"
+    ],
+    "correctAnswer": "lamp",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_280",
+    "type": "quiz",
+    "question": "I'm going ______ this afternoon.",
+    "options": [
+      "are",
+      "close",
+      "shopping",
+      "open"
+    ],
+    "correctAnswer": "shopping",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_281",
+    "type": "quiz",
+    "question": "The children played in the school ______.",
+    "options": [
+      "big",
+      "yard",
+      "there",
+      "roof"
+    ],
+    "correctAnswer": "yard",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_282",
+    "type": "quiz",
+    "question": "I met Charles while I was in ______.",
+    "options": [
+      "town",
+      "clock",
+      "going",
+      "people"
+    ],
+    "correctAnswer": "town",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_283",
+    "type": "quiz",
+    "question": "The sun rises in the ______.",
+    "options": [
+      "East",
+      "West",
+      "North",
+      "moon"
+    ],
+    "correctAnswer": "East",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_284",
+    "type": "quiz",
+    "question": "Jeans are an indispensable part of most people's ______.",
+    "options": [
+      "toilet",
+      "wardrobe",
+      "kitchen",
+      "bed"
+    ],
+    "correctAnswer": "wardrobe",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_285",
+    "type": "quiz",
+    "question": "Did you put the car in the ______?",
+    "options": [
+      "meal",
+      "still",
+      "lake",
+      "garage"
+    ],
+    "correctAnswer": "garage",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_286",
+    "type": "quiz",
+    "question": "Don't forget to put the milk back in the ______.",
+    "options": [
+      "garage",
+      "fridge",
+      "keep",
+      "smell"
+    ],
+    "correctAnswer": "fridge",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_287",
+    "type": "quiz",
+    "question": "We usually eat breakfast in the ______.",
+    "options": [
+      "space",
+      "basement",
+      "kitchen",
+      "walls"
+    ],
+    "correctAnswer": "kitchen",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_288",
+    "type": "quiz",
+    "question": "Through the trees we could see a beautiful ______.",
+    "options": [
+      "country house",
+      "these",
+      "often",
+      "walls"
+    ],
+    "correctAnswer": "country house",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_289",
+    "type": "quiz",
+    "question": "Have you washed the ______ ?",
+    "options": [
+      "weather",
+      "sky",
+      "want",
+      "dishes"
+    ],
+    "correctAnswer": "dishes",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_290",
+    "type": "quiz",
+    "question": "John has a sister, Jane. John is _____",
+    "options": [
+      "Jane's brother",
+      "John's brother",
+      "Jane brother",
+      "Jane's sister"
+    ],
+    "correctAnswer": "Jane's brother",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_291",
+    "type": "quiz",
+    "question": "The dog that is barking belongs to Ben. It is ______",
+    "options": [
+      "Ben dogs'",
+      "Ben's dog",
+      "dog's Ben",
+      "Ben dog"
+    ],
+    "correctAnswer": "Ben's dog",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_292",
+    "type": "quiz",
+    "question": "The boy has a toy. It's the _____",
+    "options": [
+      "toy's boy",
+      "toy boy",
+      "boy toy",
+      "boy's toy"
+    ],
+    "correctAnswer": "boy's toy",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_293",
+    "type": "quiz",
+    "question": "These bikes belong to my brothers. These are ______",
+    "options": [
+      "bikes my brothers",
+      "bike's my brothers",
+      "my brothers' bikes",
+      "my brothers's bike"
+    ],
+    "correctAnswer": "my brothers' bikes",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_294",
+    "type": "quiz",
+    "question": "Nick has a Russian book. it's ________",
+    "options": [
+      "Russian book's Nick",
+      "Nick's Russian book",
+      "Russian book Nick",
+      "Nick Russian book"
+    ],
+    "correctAnswer": "Nick's Russian book",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_295",
+    "type": "quiz",
+    "question": "_______ boss comes to work at six o’clock every day.",
+    "options": [
+      "Alan’s",
+      "Alans’",
+      "Alan",
+      "’Alans"
+    ],
+    "correctAnswer": "Alan’s",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_296",
+    "type": "quiz",
+    "question": "Charles is my best friend. _______ birthday is on the 6 of May.",
+    "options": [
+      "Charles’",
+      "Charles",
+      "Charles is",
+      "Charle’s"
+    ],
+    "correctAnswer": "Charles’",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_297",
+    "type": "quiz",
+    "question": "The _______ toy ball fell into the water.",
+    "options": [
+      "dog",
+      "dog is",
+      "dog’s",
+      "dogs"
+    ],
+    "correctAnswer": "dog’s",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_298",
+    "type": "quiz",
+    "question": "My _______ house is next to the beach.",
+    "options": [
+      "mother",
+      "mothers’",
+      "’smother",
+      "mother’s"
+    ],
+    "correctAnswer": "mother’s",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_299",
+    "type": "quiz",
+    "question": "______ car was stolen last night.",
+    "options": [
+      "Jason’s",
+      "Jason",
+      "Jasons",
+      "Jasons’"
+    ],
+    "correctAnswer": "Jason’s",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_300",
+    "type": "quiz",
+    "question": "This is my ______.",
+    "options": [
+      "brother book",
+      "brother's book",
+      "book's brother",
+      "book brother"
+    ],
+    "correctAnswer": "brother's book",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Dễ",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_301",
+    "type": "quiz",
+    "question": "Andrea is _______.",
+    "options": [
+      "Linda's brother",
+      "brother's Linda",
+      "Linda' brother",
+      "Linda s brother"
+    ],
+    "correctAnswer": "Linda's brother",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_302",
+    "type": "quiz",
+    "question": "Mai is at ________.",
+    "options": [
+      "house's Ann",
+      "Ann' house",
+      "Anns' house",
+      "Ann's house"
+    ],
+    "correctAnswer": "Ann's house",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_303",
+    "type": "quiz",
+    "question": "I like _______ very much.",
+    "options": [
+      "Nga' voice",
+      "Nga's voice",
+      "voice Nga's",
+      "Nga voice's"
+    ],
+    "correctAnswer": "Nga's voice",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_304",
+    "type": "quiz",
+    "question": "These are _______.",
+    "options": [
+      "men's clothes",
+      "clothes men's",
+      "clothes's men",
+      "men'clothes"
+    ],
+    "correctAnswer": "men's clothes",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_305",
+    "type": "quiz",
+    "question": "_______ never cleans the bathroom. Her father does.",
+    "options": [
+      "Lien' mother",
+      "mother' Lien",
+      "mother's Lien",
+      "Lien's mother"
+    ],
+    "correctAnswer": "Lien's mother",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_306",
+    "type": "quiz",
+    "question": "I'm looking for ________.",
+    "options": [
+      "kids's books",
+      "books kids'",
+      "kids' books",
+      "books kids's"
+    ],
+    "correctAnswer": "kids' books",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_307",
+    "type": "quiz",
+    "question": "The ______ are very beautiful.",
+    "options": [
+      "uniform's girls",
+      "uniform girls's",
+      "girls' uniforms",
+      "girls uniform's"
+    ],
+    "correctAnswer": "girls' uniforms",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_308",
+    "type": "quiz",
+    "question": "This is my ________.",
+    "options": [
+      "children's room",
+      "children' room",
+      "children room's",
+      "children room'"
+    ],
+    "correctAnswer": "children's room",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_309",
+    "type": "quiz",
+    "question": "My ______ isn't very large.",
+    "options": [
+      "aunt's villa",
+      "aunt villa'",
+      "villa's aunt",
+      "villa' aunt"
+    ],
+    "correctAnswer": "aunt's villa",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_310",
+    "type": "quiz",
+    "question": "My ______ is in the garage.",
+    "options": [
+      "car' father",
+      "car's father",
+      "father's car",
+      "father car's"
+    ],
+    "correctAnswer": "father's car",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_311",
+    "type": "quiz",
+    "question": "John has a sister, Jane. John is ________________.",
+    "options": [
+      "Janes brother",
+      "brother’s Jane",
+      "Jane's brother",
+      "brother Jane"
+    ],
+    "correctAnswer": "Jane's brother",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_312",
+    "type": "quiz",
+    "question": "The dog that is barking belongs to Ben. It is ________________.",
+    "options": [
+      "Ben of dog",
+      "Ben dog",
+      "Ben’s dog",
+      "dog Ben’s"
+    ],
+    "correctAnswer": "Ben’s dog",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_313",
+    "type": "quiz",
+    "question": "These bikes belong to my brothers. These are ________________.",
+    "options": [
+      "my brothers' bikes",
+      "my brother bikes",
+      "my brothers bikes",
+      "my brother’s bikes"
+    ],
+    "correctAnswer": "my brothers' bikes",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Trung bình",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_314",
+    "type": "quiz",
+    "question": "This is my mother and father. That house is ________________.",
+    "options": [
+      "my mother and father's",
+      "my mother's and father's",
+      "my mother and father",
+      "my mothers and fathers'"
+    ],
+    "correctAnswer": "my mother and father's",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_315",
+    "type": "quiz",
+    "question": "__________ handwriting is very neat and easy to read.",
+    "options": [
+      "Chris's",
+      "Both \"Chris's\" and \"Chris' \" are correct.",
+      "Chris'",
+      "Chrises"
+    ],
+    "correctAnswer": "Both \"Chris's\" and \"Chris' \" are correct.",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_316",
+    "type": "quiz",
+    "question": "These bikes belong to my brothers. These are ________________.",
+    "options": [
+      "my brothers' bikes",
+      "my brother bikes",
+      "my brothers bikes",
+      "my brother’s bikes"
+    ],
+    "correctAnswer": "my brothers' bikes",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_317",
+    "type": "quiz",
+    "question": "Nick has a Russian book. It's ________________.",
+    "options": [
+      "book’s Nick",
+      "Russian Nick book",
+      "Nick’s Russian book",
+      "Nick Russian’s book"
+    ],
+    "correctAnswer": "Nick’s Russian book",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_318",
+    "type": "quiz",
+    "question": "The house has an attic. It’s the ______.",
+    "options": [
+      "house' attic",
+      "attic's house",
+      "attic of the house",
+      "house of the attic"
+    ],
+    "correctAnswer": "attic of the house",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_319",
+    "type": "quiz",
+    "question": "Mr. Lucas has a villa. It’s ______.",
+    "options": [
+      "the villa to Mr. Lucas",
+      "Mr. Lucas's villa",
+      "the Mr. Lucas villa",
+      "villa's Mr. Lucas"
+    ],
+    "correctAnswer": "Mr. Lucas's villa",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_320",
+    "type": "quiz",
+    "question": "Daisy has a kitty. It’s ______.",
+    "options": [
+      "Daisy's kitty",
+      "Daisy kitty's",
+      "the kitty of Daisy's",
+      "kitty Daisy"
+    ],
+    "correctAnswer": "Daisy's kitty",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_321",
+    "type": "quiz",
+    "question": "My parents live in this flat. It’s ______.",
+    "options": [
+      "my parents flat",
+      "my parents's flat",
+      "my parents' flat",
+      "flat of my parents'"
+    ],
+    "correctAnswer": "my parents' flat",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_322",
+    "type": "quiz",
+    "question": "There is coffee in the cup. It’s the ______.",
+    "options": [
+      "coffee's cup",
+      "cup's coffee",
+      "cup of coffee",
+      "coffee of cup"
+    ],
+    "correctAnswer": "cup of coffee",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_323",
+    "type": "quiz",
+    "question": "The vase has a handle. This is the ______.",
+    "options": [
+      "handle's vase",
+      "handle of the vase",
+      "vase handle's",
+      "vase of the handle"
+    ],
+    "correctAnswer": "handle of the vase",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_324",
+    "type": "quiz",
+    "question": "My cousin has a bike. It’s ______.",
+    "options": [
+      "my cousin bike",
+      "bike of my cousin's",
+      "my cousin's bike",
+      "my cousins bike"
+    ],
+    "correctAnswer": "my cousin's bike",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_325",
+    "type": "quiz",
+    "question": "Emily has a sister, Bella. Bella is ______.",
+    "options": [
+      "Emily sister",
+      "Emily's sister",
+      "sister of Emily's",
+      "the Emily sister"
+    ],
+    "correctAnswer": "Emily's sister",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_326",
+    "type": "quiz",
+    "question": "The trip takes an hour. It’s ______.",
+    "options": [
+      "an hour trip",
+      "a trip of hour",
+      "an hour's trip",
+      "an hour of trip"
+    ],
+    "correctAnswer": "an hour's trip",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_327",
+    "type": "quiz",
+    "question": "The house has a door. This is the ______.",
+    "options": [
+      "door of the house",
+      "house's of door",
+      "door's house",
+      "house door of"
+    ],
+    "correctAnswer": "door of the house",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Choose the correct answer.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_328",
+    "type": "error-finding",
+    "question": "Minh bedroom has a big bookshelf, a desk , a chair and a small bed .",
+    "options": [
+      "Minh",
+      "has",
+      "a desk",
+      "a small bed"
+    ],
+    "correctAnswer": "Minh",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_329",
+    "type": "error-finding",
+    "question": "My teacher ' son usually drives her to work .",
+    "options": [
+      "teacher'",
+      "usually",
+      "drives",
+      "to work"
+    ],
+    "correctAnswer": "teacher'",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_330",
+    "type": "error-finding",
+    "question": "My grandparents live next door to us, so the house next door is our grandparent's .",
+    "options": [
+      "live",
+      "the house",
+      "is",
+      "grandparent's"
+    ],
+    "correctAnswer": "grandparent's",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_331",
+    "type": "error-finding",
+    "question": "Jacket's Jimmy is on the table .",
+    "options": [
+      "Jacket's Jimmy",
+      "is",
+      "on",
+      "table"
+    ],
+    "correctAnswer": "Jacket's Jimmy",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  },
+  {
+    "id": "k6_332",
+    "type": "error-finding",
+    "question": "Women's clothes in this shop is very nice and cheap.",
+    "options": [
+      "Women's clothes",
+      "in",
+      "is",
+      "and"
+    ],
+    "correctAnswer": "is",
+    "funExplanation": "",
+    "seriousExplanation": "",
+    "category": "MY HOUSE",
+    "grade": 6,
+    "difficulty": "Khó",
+    "instruction": "Find the MISTAKE in each sentence.",
+    "imageUrl": ""
+  }
+]

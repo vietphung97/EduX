@@ -30,8 +30,9 @@ import {
 import { DEFAULT_GRADES, DEFAULT_TOPICS_BY_GRADE, LEVEL_CONFIG, WEEKLY_FRAMES, getCurrentProgramWeek } from './constants';
 import { TopicsByGrade, fetchQuestionsFromSheet } from './services/sheets';
 import { fetchK9Questions, getK9Topics } from './services/k9Questions';
-import { fetchK7Questions } from './services/k7Questions';
-import { fetchK8Questions } from './services/k8Questions';
+import { fetchK6Questions, getK6Difficulties } from './services/k6Questions';
+import { fetchK7Questions, getK7Difficulties } from './services/k7Questions';
+import { fetchK8Questions, getK8Difficulties, getK8Topics } from './services/k8Questions';
 import {
   getLeaderboard,
   getLeaderboardByGrade,
@@ -41,6 +42,7 @@ import {
   saveGameHistory as saveGameHistoryToSupabase,
   getGameHistory as getGameHistoryFromSupabase,
   migrateAllUsersGradeXp,
+  recalculateAllUsersXp,
   getUserRank,
   getWeeklyUserRank
 } from './services/supabase';
@@ -48,11 +50,27 @@ import {
 // Export migration function to window for one-time console run
 (window as any).migrateGradeXp = migrateAllUsersGradeXp;
 import { calculateDetailedXp, playSound, getLevelFromXp, generateRoomCode, DIFFICULTY_MULTIPLIERS, XP_PER_QUESTION } from './utils/gameLogic';
-import { checkNewUnlocks } from './utils/frameLogic';
+import { checkNewUnlocks, isFrameUsable } from './utils/frameLogic';
 import { generateQuestions, getExpertAnalysis } from './services/gemini';
 import { sendGameResultToEduso, createEndGameParams } from './utils/edusoApi';
 import { startGame as startMultiplayerGame } from './utils/multiplayerSync';
 import { getPlayerId, clearActiveRoom, checkRejoinableRoom, updateActiveRoomPhase } from './utils/playerSession';
+
+/**
+ * Reset weeklyXp khi tuần chương trình thay đổi.
+ * Mỗi tuần có bộ milestone riêng — không được dùng XP tuần cũ để unlock tuần mới.
+ */
+function normalizeWeeklyXp(profile: UserProfile): UserProfile {
+  const currentWeek = getCurrentProgramWeek();
+  if (currentWeek === null) return profile; // Ngoài chương trình — giữ nguyên
+  if (profile.weeklyXpWeek === currentWeek) return profile; // Cùng tuần — OK
+  if (profile.weeklyXpWeek != null && profile.weeklyXpWeek !== currentWeek) {
+    // Tuần đã đổi → reset weeklyXp
+    return { ...profile, weeklyXp: 0, weeklyXpWeek: currentWeek };
+  }
+  // weeklyXpWeek chưa set (user cũ / load từ Supabase) → giữ weeklyXp, gán tuần
+  return { ...profile, weeklyXpWeek: currentWeek };
+}
 
 const App: React.FC = () => {
   // Navigation & User
@@ -62,6 +80,7 @@ const App: React.FC = () => {
   const gameStartTime = useRef<Date | null>(null);
 
   const [topicsByGrade, setTopicsByGrade] = useState<TopicsByGrade>(DEFAULT_TOPICS_BY_GRADE);
+  const [difficultiesByGrade, setDifficultiesByGrade] = useState<Record<number, Difficulty[]>>({});
   const [grades, setGrades] = useState<number[]>(DEFAULT_GRADES);
   const [isLoadingTopics, setIsLoadingTopics] = useState(true);
 
@@ -188,7 +207,8 @@ const App: React.FC = () => {
         selectedGrade,
         selectedTopics,
         selectedDifficulty,
-        currentFunExplanation
+        currentFunExplanation,
+        savedAt: Date.now()
       };
       localStorage.setItem('arena_x_game_state', JSON.stringify(gameState));
     }
@@ -201,7 +221,7 @@ const App: React.FC = () => {
       const savedUser = localStorage.getItem('arena_x_user');
       let parsedUser = null;
       if (savedUser) {
-        parsedUser = JSON.parse(savedUser);
+        parsedUser = normalizeWeeklyXp(JSON.parse(savedUser));
         setUser(parsedUser);
 
         // Sync với Supabase - merge data từ server nếu có
@@ -209,12 +229,13 @@ const App: React.FC = () => {
           const serverProfile = await getUserProfile(parsedUser.id);
           if (serverProfile) {
             // Server có data - merge với local (server wins cho XP, games, etc.)
-            const mergedUser = {
+            const mergedUser = normalizeWeeklyXp({
               ...parsedUser,
               xp: Math.max(parsedUser.xp, serverProfile.xp),
               totalGames: Math.max(parsedUser.totalGames, serverProfile.totalGames),
               bestStreak: Math.max(parsedUser.bestStreak, serverProfile.bestStreak),
               weeklyXp: Math.max(parsedUser.weeklyXp, serverProfile.weeklyXp),
+              weeklyXpWeek: parsedUser.weeklyXpWeek || serverProfile.weeklyXpWeek,
               level: serverProfile.xp > parsedUser.xp ? serverProfile.level : parsedUser.level,
               topicStats: { ...(serverProfile.topicStats || {}), ...(parsedUser.topicStats || {}) },
               // gradeXp: merge bằng cách lấy max từng grade để không bỏ sót XP từ server
@@ -228,7 +249,7 @@ const App: React.FC = () => {
                 });
                 return merged;
               })(),
-            };
+            });
             setUser(mergedUser);
             localStorage.setItem('arena_x_user', JSON.stringify(mergedUser));
             console.log('Merged user profile from Supabase');
@@ -302,22 +323,89 @@ const App: React.FC = () => {
         try {
           const gameState = JSON.parse(savedGameState);
           if (gameState.currentQuestions && gameState.currentQuestions.length > 0) {
+            const totalQ = gameState.currentQuestions.length;
+
+            // Tính thời gian thực đã trôi qua kể từ lần lưu cuối
+            const elapsedSec = gameState.savedAt
+              ? Math.floor((Date.now() - gameState.savedAt) / 1000)
+              : 0;
+
+            // Tính câu hỏi hiện tại và timeLeft còn lại sau khi trừ elapsed time
+            let idx = gameState.currentIndex || 0;
+            let remainingTime = (gameState.selectedAnswer != null) ? 0 : (gameState.timeLeft || QUESTION_TIME_LIMIT);
+            let elapsed = elapsedSec;
+            const skippedAnswers: typeof gameState.sessionAnswers = [];
+
+            // Trừ thời gian đã trôi: nếu vượt quá timeLeft của câu hiện tại → skip sang câu tiếp
+            // Mỗi câu skip cũng cộng thêm 4s delay (explanation)
+            if (gameState.selectedAnswer != null) {
+              // Đang hiển thị explanation → trừ 4s delay
+              elapsed = Math.max(0, elapsed - 4);
+              idx += 1;
+              remainingTime = QUESTION_TIME_LIMIT;
+            }
+
+            while (elapsed > 0 && idx < totalQ) {
+              if (elapsed >= remainingTime) {
+                // Câu này hết giờ → đánh dấu timeout
+                elapsed -= remainingTime;
+                elapsed -= 4; // 4s explanation delay
+                const q = gameState.currentQuestions[idx];
+                if (q) {
+                  skippedAnswers.push({
+                    questionId: q.id,
+                    selectedOption: '__timeout__',
+                    isCorrect: false
+                  });
+                }
+                idx += 1;
+                remainingTime = QUESTION_TIME_LIMIT;
+              } else {
+                remainingTime -= elapsed;
+                elapsed = 0;
+              }
+            }
+
+            // Nếu đã vượt qua tất cả câu hỏi → set state và chuyển thẳng sang results
+            if (idx >= totalQ) {
+              const allAnswers = [...(gameState.sessionAnswers || []), ...skippedAnswers];
+              setCurrentQuestions(gameState.currentQuestions);
+              setSessionAnswers(allAnswers);
+              setGameScore(gameState.gameScore || 0);
+              setMaxStreak(gameState.maxStreak || 0);
+              setCurrentStreak(0);
+              const restoredGrade = gameState.selectedGrade || 3;
+              setSelectedGrade(restoredGrade);
+              localStorage.setItem('edux_selected_grade', String(restoredGrade));
+              setSelectedTopics(gameState.selectedTopics || []);
+              setSelectedDifficulty(gameState.selectedDifficulty || Difficulty.EASY);
+              setCurrentIndex(totalQ - 1);
+              setSelectedAnswer(null);
+              // Đánh dấu cần trigger game over sau khi state đã set xong
+              setView('game');
+              // Dùng setTimeout để đợi state update, rồi gọi handleGameOver
+              setTimeout(() => {
+                nextQuestionRef.current();
+              }, 100);
+              return;
+            }
+
             setCurrentQuestions(gameState.currentQuestions);
-            setCurrentIndex(gameState.currentIndex || 0);
-            setSelectedAnswer(gameState.selectedAnswer || null);
-            setSessionAnswers(gameState.sessionAnswers || []);
-            setTimeLeft(QUESTION_TIME_LIMIT); // always start fresh timer on restore
+            setCurrentIndex(idx);
+            setSelectedAnswer(null);
+            setCurrentFunExplanation(null);
+            setSessionAnswers([...(gameState.sessionAnswers || []), ...skippedAnswers]);
+            setTimeLeft(remainingTime);
             setGameScore(gameState.gameScore || 0);
-            setCurrentStreak(gameState.currentStreak || 0);
+            setCurrentStreak(0); // Reset streak vì đã skip câu
             setMaxStreak(gameState.maxStreak || 0);
             const restoredGrade = gameState.selectedGrade || 3;
             setSelectedGrade(restoredGrade);
             localStorage.setItem('edux_selected_grade', String(restoredGrade));
             setSelectedTopics(gameState.selectedTopics || []);
             setSelectedDifficulty(gameState.selectedDifficulty || Difficulty.EASY);
-            setCurrentFunExplanation(gameState.currentFunExplanation || null);
             setView('game');
-            console.log('Restored solo game state from localStorage');
+            console.log(`Restored game: skipped ${skippedAnswers.length} questions (${elapsedSec}s elapsed), resuming at Q${idx + 1} with ${remainingTime}s`);
             return;
           }
         } catch (e) {
@@ -335,12 +423,19 @@ const App: React.FC = () => {
     initializeApp();
   }, []);
 
-  // Load topics khi app load — grade 9 luôn từ JSON local
+  // Load topics + difficulties khi app load
   useEffect(() => {
     const loadTopics = async () => {
       setIsLoadingTopics(true);
-      const k9Topics = await getK9Topics();
-      setTopicsByGrade(prev => ({ ...prev, 9: k9Topics }));
+      const [k6Diff, k7Diff, k8Diff, k8Topics, k9Topics] = await Promise.all([
+        getK6Difficulties(),
+        getK7Difficulties(),
+        getK8Difficulties(),
+        getK8Topics(),
+        getK9Topics(),
+      ]);
+      setTopicsByGrade(prev => ({ ...prev, 8: k8Topics, 9: k9Topics }));
+      setDifficultiesByGrade(prev => ({ ...prev, 6: k6Diff, 7: k7Diff, 8: k8Diff }));
       setIsLoadingTopics(false);
     };
     loadTopics();
@@ -352,38 +447,31 @@ const App: React.FC = () => {
     setTimeLeft(QUESTION_TIME_LIMIT); // reset on each new question
   }, [currentIndex, view]);
 
+  // Countdown tick — chỉ giảm timeLeft, không có side effect
   useEffect(() => {
-    let timer: number;
-    if (view === 'game' && !selectedAnswer && timeLeft > 0) {
-      timer = window.setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
-            // Time's up for this question — count as wrong, advance
-            totalTimeSpent.current += QUESTION_TIME_LIMIT;
-            const q = currentQuestions[currentIndex];
-            if (q) {
-              setSelectedAnswer('__timeout__');
-              setSessionAnswers(sa => [...sa, { questionId: q.id, selectedOption: '__timeout__', isCorrect: false }]);
-              setCurrentStreak(0);
-              setCurrentFunExplanation(q.funExplanation);
-              // Auto-advance after delay (4s for reading explanation)
-              setTimeout(() => {
-                if (currentIndex < currentQuestions.length - 1) {
-                  setCurrentIndex(ci => ci + 1);
-                  setSelectedAnswer(null);
-                  setCurrentFunExplanation(null);
-                } else {
-                  handleGameOver();
-                }
-              }, 4000);
-            }
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
-    return () => clearInterval(timer);
+    if (view !== 'game' || selectedAnswer || timeLeft <= 0) return;
+    const timer = window.setTimeout(() => {
+      setTimeLeft(prev => prev - 1);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [view, timeLeft, selectedAnswer]);
+
+  // Handle timeout — khi timeLeft chạm 0 và chưa có answer
+  useEffect(() => {
+    if (view !== 'game' || timeLeft !== 0 || selectedAnswer) return;
+    const q = currentQuestions[currentIndex];
+    if (!q) return;
+
+    totalTimeSpent.current += QUESTION_TIME_LIMIT;
+    setSelectedAnswer('__timeout__');
+    setSessionAnswers(sa => [...sa, { questionId: q.id, selectedOption: '__timeout__', isCorrect: false }]);
+    setCurrentStreak(0);
+    setCurrentFunExplanation(q.funExplanation);
+
+    // Auto-advance after 4s — dùng nextQuestionRef để tránh stale closure
+    autoAdvanceTimer.current = window.setTimeout(() => {
+      nextQuestionRef.current();
+    }, 4000);
   }, [view, timeLeft, selectedAnswer, currentIndex]);
 
   const handleLoginComplete = async (userProfile: UserProfile, edusoData?: EdusoUserData) => {
@@ -400,16 +488,17 @@ const App: React.FC = () => {
     try {
       const serverProfile = await getUserProfile(userProfile.id);
       if (serverProfile && serverProfile.xp > 0) {
-        const mergedUser: UserProfile = {
+        const mergedUser: UserProfile = normalizeWeeklyXp({
           ...userProfile,
           xp: Math.max(userProfile.xp, serverProfile.xp),
           totalGames: Math.max(userProfile.totalGames, serverProfile.totalGames),
           bestStreak: Math.max(userProfile.bestStreak, serverProfile.bestStreak),
           weeklyXp: Math.max(userProfile.weeklyXp, serverProfile.weeklyXp),
+          weeklyXpWeek: userProfile.weeklyXpWeek || serverProfile.weeklyXpWeek,
           level: serverProfile.xp > userProfile.xp ? serverProfile.level : userProfile.level,
           topicStats: { ...(serverProfile.topicStats || {}), ...(userProfile.topicStats || {}) },
           gradeXp: { ...(serverProfile.gradeXp || {}), ...(userProfile.gradeXp || {}) },
-        };
+        });
         // Chỉ cập nhật nếu có sự khác biệt thực sự (tránh re-render thừa)
         if (mergedUser.xp !== userProfile.xp || mergedUser.totalGames !== userProfile.totalGames) {
           setUser(mergedUser);
@@ -432,6 +521,8 @@ const App: React.FC = () => {
 
   const handleEquipFrame = (frameId: string | undefined) => {
     if (!user) return;
+    // Nếu equip (không phải unequip), kiểm tra frame có thể dùng không
+    if (frameId && !isFrameUsable(frameId, user.unlockedFrames || [])) return;
     const updatedUser = { ...user, equippedFrame: frameId };
     setUser(updatedUser);
     localStorage.setItem('arena_x_user', JSON.stringify(updatedUser));
@@ -461,9 +552,12 @@ const App: React.FC = () => {
     const topicsToUse = selectedTopics.length > 0 ? selectedTopics : [topicsByGrade[selectedGrade]?.[0] || 'General English'];
 
     let questions: Question[] = [];
+    const localGrades = [6, 7, 8, 9];
 
-    // K7/K8/K9: ưu tiên dùng bộ câu hỏi local, không cần mạng
-    if (selectedGrade === 7) {
+    // K6/K7/K8/K9: dùng bộ câu hỏi local JSON, không cần mạng
+    if (selectedGrade === 6) {
+      questions = await fetchK6Questions(topicsToUse, selectedDifficulty, 15);
+    } else if (selectedGrade === 7) {
       questions = await fetchK7Questions(topicsToUse, selectedDifficulty, 15);
     } else if (selectedGrade === 8) {
       questions = await fetchK8Questions(topicsToUse, selectedDifficulty, 15);
@@ -471,16 +565,18 @@ const App: React.FC = () => {
       questions = await fetchK9Questions(topicsToUse, selectedDifficulty, 15);
     }
 
-    // Fallback sang Google Sheet nếu chưa đủ câu
-    if (questions.length < 5) {
-      const sheetQuestions = await fetchQuestionsFromSheet(selectedGrade, topicsToUse, selectedDifficulty, 15);
-      if (sheetQuestions.length > questions.length) questions = sheetQuestions;
-    }
-
-    // Fallback cuối cùng sang Gemini AI
-    if (questions.length < 5) {
-      console.log('Không đủ câu hỏi từ Sheet, sử dụng Gemini AI...');
-      questions = await generateQuestions(selectedGrade, topicsToUse, selectedDifficulty);
+    // Các khối dùng local JSON: không fallback sang Sheet/Gemini
+    if (!localGrades.includes(selectedGrade)) {
+      // Fallback sang Google Sheet nếu chưa đủ câu
+      if (questions.length < 5) {
+        const sheetQuestions = await fetchQuestionsFromSheet(selectedGrade, topicsToUse, selectedDifficulty, 15);
+        if (sheetQuestions.length > questions.length) questions = sheetQuestions;
+      }
+      // Fallback cuối cùng sang Gemini AI
+      if (questions.length < 5) {
+        console.log('Không đủ câu hỏi từ Sheet, sử dụng Gemini AI...');
+        questions = await generateQuestions(selectedGrade, topicsToUse, selectedDifficulty);
+      }
     }
 
     if (questions.length > 0) {
@@ -494,6 +590,8 @@ const App: React.FC = () => {
       setSelectedAnswer(null);
       setCurrentFunExplanation(null);
       setSessionAnswers([]);
+      setExpertAdvice(null); // Reset phân tích cũ
+      setGameResults(null);
       gameStartTime.current = new Date(); // Save game start time for Eduso API
       setView('game');
     } else {
@@ -525,13 +623,24 @@ const App: React.FC = () => {
     setSessionAnswers(prev => [...prev, userAnswer]);
 
     if (isCorrect) {
-      // Điểm số thô: dùng XP/câu theo độ khó để hiển thị floating XP
+      // XP/câu theo độ khó
       const xpPerQ = selectedDifficulty === Difficulty.HARD ? 15
         : selectedDifficulty === Difficulty.MEDIUM ? 12 : 10;
-      setGameScore(prev => prev + 10);
+
+      // Streak bonus: cộng ngay vào score
+      const nextStreak = currentStreak + 1;
+      const streakBonus = nextStreak * 5;
+      const prevStreakBonus = currentStreak > 0 ? currentStreak * 5 : 0;
+      // Chỉ cộng thêm phần chênh lệch streak bonus (vì maxStreak*5 đã tính trước đó)
+      const newMaxStreak = Math.max(maxStreak, nextStreak);
+      const oldMaxStreak = maxStreak;
+      const streakXpGain = newMaxStreak * 5 - oldMaxStreak * 5;
+      const totalGain = xpPerQ + streakXpGain;
+
+      setGameScore(prev => prev + totalGain);
       // Floating XP animation
       floatingXpCounter.current += 1;
-      setFloatingXp({ id: floatingXpCounter.current, value: xpPerQ });
+      setFloatingXp({ id: floatingXpCounter.current, value: totalGain });
       setTimeout(() => setFloatingXp(null), 1200);
 
       setCurrentStreak(prev => {
@@ -594,7 +703,7 @@ const App: React.FC = () => {
     // Xóa game state khi kết thúc game
     localStorage.removeItem('arena_x_game_state');
 
-    const correctCount = gameScore / 10;
+    const correctCount = sessionAnswers.filter(a => a.isCorrect).length;
     const xpData = calculateDetailedXp(correctCount, maxStreak, selectedDifficulty);
 
     // Lưu vào history
@@ -651,8 +760,9 @@ const App: React.FC = () => {
     };
 
     setGameResults(result);
+    setExpertAdvice(null); // Reset ngay để không hiện nhận xét lượt cũ
     setView('results');
-    
+
     if (user) {
       const newXp = user.xp + xpData.totalXp;
       
@@ -683,6 +793,7 @@ const App: React.FC = () => {
         ...user,
         xp: newXp,
         weeklyXp: newWeeklyXp,
+        weeklyXpWeek: programWeek || user.weeklyXpWeek,
         level: getLevelFromXp(newXp).level,
         totalGames: user.totalGames + 1,
         bestStreak: Math.max(user.bestStreak, maxStreak),
@@ -743,12 +854,13 @@ const App: React.FC = () => {
     const difficulty = state.roomSettings.difficulty;
 
     let questions: Question[] = [];
-    if (grade === 7) {
+    if (grade === 6) {
+      questions = await fetchK6Questions(topics, difficulty, 15);
+    } else if (grade === 7) {
       questions = await fetchK7Questions(topics, difficulty, 15);
     } else if (grade === 8) {
       questions = await fetchK8Questions(topics, difficulty, 15);
     } else if (grade === 9) {
-      // K9: luôn lấy từ file local, không dùng Google Sheets
       questions = await fetchK9Questions(topics, difficulty, 15);
     } else {
       questions = await fetchQuestionsFromSheet(grade, topics, difficulty, 15);
@@ -770,6 +882,9 @@ const App: React.FC = () => {
   };
 
   const handleMultiplayerGameEnd = (results: MultiplayerResult[], myResult: MultiplayerResult) => {
+    // Clear active room so refresh doesn't rejoin a finished game
+    clearActiveRoom();
+
     // Save to history
     const historyEntry: GameHistory = {
       id: `mp-${Date.now()}`,
@@ -784,7 +899,17 @@ const App: React.FC = () => {
       timeSpent: Math.floor(myResult.timeSpent / 1000),
       score: myResult.score,
       mode: 'multiplayer',
-      roomCode: roomCode
+      roomCode: roomCode,
+      myRank: myResult.rank,
+      totalPlayers: results.length,
+      opponents: results
+        .map(r => ({
+          name: r.playerName,
+          avatar: r.playerAvatar || '',
+          score: r.score,
+          correctCount: r.correctCount,
+          rank: r.rank
+        }))
     };
 
     const updatedHistory = [historyEntry, ...gameHistory].slice(0, 50);
@@ -812,6 +937,7 @@ const App: React.FC = () => {
         ...user,
         xp: newXp,
         weeklyXp: newWeeklyXpMp,
+        weeklyXpWeek: programWeekMp || user.weeklyXpWeek,
         level: getLevelFromXp(newXp).level,
         totalGames: user.totalGames + 1,
         bestStreak: Math.max(user.bestStreak, myResult.maxStreak),
@@ -899,7 +1025,7 @@ const App: React.FC = () => {
                  >
                    <div className="flex justify-between items-center mb-3">
                      <div className="flex items-center gap-2">
-                       <span className="text-xl">{weekFrame.emoji}</span>
+                       <img src={`${(import.meta as any).env?.BASE_URL || '/'}${weekFrame.frameImage}`} alt={weekFrame.name} className="w-8 h-8" />
                        <div>
                          <p className="text-xs font-black uppercase tracking-widest text-white">
                            Tuần {programWeek}: {weekFrame.name}
@@ -913,18 +1039,27 @@ const App: React.FC = () => {
                      {/* Milestone markers */}
                      {milestones.map((m, idx) => {
                        const pct = (m.xp / maxMilestone) * 100;
+                       const isLast = idx === milestones.length - 1;
                        return (
-                         <div key={idx} className="absolute top-1/2 -translate-y-1/2 flex flex-col items-center" style={{ left: `${pct}%`, transform: 'translate(-50%, -50%)' }}>
-                           <div
-                             className="w-5 h-5 rounded-full border-2 flex items-center justify-center text-[9px] z-10"
-                             style={{
-                               background: m.unlocked ? weekFrame.color : '#1e293b',
-                               borderColor: m.unlocked ? weekFrame.color : '#334155',
-                               boxShadow: m.unlocked ? `0 0 8px ${weekFrame.glowColor}` : undefined,
-                             }}
-                           >
-                             {m.unlocked ? '✓' : m.emoji}
-                           </div>
+                         <div key={idx} className="absolute top-1/2 -translate-y-1/2 flex flex-col items-center z-10" style={{ left: `${pct}%`, transform: 'translate(-50%, -50%)' }}>
+                           {isLast ? (
+                             <img
+                               src={`${(import.meta as any).env?.BASE_URL || '/'}${weekFrame.frameImage}`}
+                               alt={weekFrame.name}
+                               className={`w-7 h-7 ${!m.unlocked ? 'grayscale opacity-50' : ''}`}
+                             />
+                           ) : (
+                             <div
+                               className="w-5 h-5 rounded-full border-2 flex items-center justify-center text-[9px]"
+                               style={{
+                                 background: m.unlocked ? weekFrame.color : '#1e293b',
+                                 borderColor: m.unlocked ? weekFrame.color : '#334155',
+                                 boxShadow: m.unlocked ? `0 0 8px ${weekFrame.glowColor}` : undefined,
+                               }}
+                             >
+                               {m.unlocked ? '✓' : `${idx + 1}`}
+                             </div>
+                           )}
                          </div>
                        );
                      })}
@@ -1120,23 +1255,34 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              <div>
-                <div className="flex justify-between items-center mb-4">
-                  <label className="block text-xs font-black uppercase text-slate-500 tracking-widest">Độ khó</label>
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  {Object.values(Difficulty).filter(d => d !== Difficulty.EXPERT).map(d => (
-                    <button
-                      key={d}
-                      onClick={() => setSelectedDifficulty(d)}
-                      className={`py-3 rounded-2xl font-bold transition-all flex flex-col items-center justify-center gap-1 ${selectedDifficulty === d ? 'bg-slate-700 border-2 border-red-600 text-white shadow-lg shadow-red-600/10' : 'bg-slate-800 border border-slate-700 text-slate-400 hover:bg-slate-700'}`}
-                    >
-                      <span className="text-xs">{d}</span>
-                      <span className={`text-[9px] font-black tracking-widest uppercase ${selectedDifficulty === d ? 'text-red-400' : 'text-slate-500'}`}>{XP_PER_QUESTION[d]}XP/câu</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
+              {/* Hiện chọn độ khó nếu grade có nhiều hơn 1 mức */}
+              {(() => {
+                const gradeDiffs = difficultiesByGrade[selectedGrade];
+                const availableDiffs = gradeDiffs && gradeDiffs.length > 1
+                  ? Object.values(Difficulty).filter(d => d !== Difficulty.EXPERT && gradeDiffs.includes(d))
+                  : Object.values(Difficulty).filter(d => d !== Difficulty.EXPERT);
+                const shouldShow = !gradeDiffs || gradeDiffs.length !== 1;
+                if (!shouldShow) return null;
+                return (
+                  <div>
+                    <div className="flex justify-between items-center mb-4">
+                      <label className="block text-xs font-black uppercase text-slate-500 tracking-widest">Độ khó</label>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      {availableDiffs.map(d => (
+                        <button
+                          key={d}
+                          onClick={() => setSelectedDifficulty(d)}
+                          className={`py-3 rounded-2xl font-bold transition-all flex flex-col items-center justify-center gap-1 ${selectedDifficulty === d ? 'bg-slate-700 border-2 border-red-600 text-white shadow-lg shadow-red-600/10' : 'bg-slate-800 border border-slate-700 text-slate-400 hover:bg-slate-700'}`}
+                        >
+                          <span className="text-xs">{d}</span>
+                          <span className={`text-[9px] font-black tracking-widest uppercase ${selectedDifficulty === d ? 'text-red-400' : 'text-slate-500'}`}>{XP_PER_QUESTION[d]}XP/câu</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
 
             <div className="pt-6 border-t border-slate-800 flex gap-4">
@@ -1181,9 +1327,9 @@ const App: React.FC = () => {
                 </div>
               </div>
               <div className="text-center px-2 sm:px-4 border-l border-slate-800 relative">
-                 <p className="text-[8px] sm:text-[10px] font-black uppercase text-slate-500">Điểm</p>
+                 <p className="text-[8px] sm:text-[10px] font-black uppercase text-slate-500">XP</p>
                  <p className="text-lg sm:text-2xl font-black text-white relative">
-                   {gameScore}
+                   {gameScore.toLocaleString()}
                    {/* Floating +XP — starts at score number, floats up */}
                    {floatingXp && (
                      <span
@@ -1247,11 +1393,13 @@ const App: React.FC = () => {
                     return correct ? '✨ TUYỆT VỜI! ✨' : '💔 TIẾC QUÁ...';
                   })()}
                 </div>
+                {currentFunExplanation && currentFunExplanation.trim() !== '' && (
                 <div className="bg-slate-950/50 p-2.5 sm:p-6 rounded-xl sm:rounded-[24px] border border-slate-800/50 w-full max-w-2xl overflow-hidden">
                   <p className="text-slate-200 font-semibold italic text-xs sm:text-lg leading-relaxed break-words">
                     "{currentFunExplanation}"
                   </p>
                 </div>
+                )}
                 <button
                   onClick={nextQuestion}
                   className="px-6 sm:px-14 py-2.5 sm:py-5 bg-red-600/80 text-white font-black rounded-xl sm:rounded-[20px] shadow-2xl shadow-red-600/40 active:scale-95 transition-all uppercase tracking-widest text-xs sm:text-sm opacity-70 hover:opacity-100"
@@ -1330,6 +1478,56 @@ const App: React.FC = () => {
           <HistoryPage
             history={gameHistory}
             onBack={() => setView('home')}
+            onRecalculate={(fixedHistory, xpDiff) => {
+              setGameHistory(fixedHistory);
+              localStorage.setItem('arena_x_history', JSON.stringify(fixedHistory));
+              if (user) {
+                // Tính lại weeklyXp từ các ván trong tuần hiện tại
+                const currentWeek = getCurrentProgramWeek();
+                let recalcWeeklyXp = 0;
+                if (currentWeek) {
+                  const PROGRAM_START = new Date('2026-06-01').getTime();
+                  const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+                  const weekStart = PROGRAM_START + (currentWeek - 1) * msPerWeek;
+                  const weekEnd = weekStart + msPerWeek;
+                  recalcWeeklyXp = fixedHistory
+                    .filter(g => {
+                      const t = new Date(g.playedAt).getTime();
+                      return t >= weekStart && t < weekEnd;
+                    })
+                    .reduce((sum, g) => sum + g.xpEarned, 0);
+                }
+                const updatedUser = {
+                  ...user,
+                  xp: Math.max(0, Math.round(user.xp + xpDiff)),
+                  weeklyXp: recalcWeeklyXp,
+                  weeklyXpWeek: currentWeek || user.weeklyXpWeek,
+                };
+                setUser(updatedUser);
+                localStorage.setItem('arena_x_user', JSON.stringify(updatedUser));
+                upsertUserProfile(updatedUser).catch(console.error);
+              }
+            }}
+            onRecalculateAll={async () => {
+              const currentWeek = getCurrentProgramWeek();
+              const PROGRAM_START = new Date('2026-06-01').getTime();
+              const result = await recalculateAllUsersXp(PROGRAM_START, currentWeek);
+              // Reload current user from Supabase after fix
+              if (user) {
+                const fresh = await getUserProfile(user.id);
+                if (fresh) {
+                  setUser(fresh);
+                  localStorage.setItem('arena_x_user', JSON.stringify(fresh));
+                }
+                // Also reload history
+                const freshHistory = await getGameHistoryFromSupabase(user.id, 50);
+                if (freshHistory.length > 0) {
+                  setGameHistory(freshHistory);
+                  localStorage.setItem('arena_x_history', JSON.stringify(freshHistory));
+                }
+              }
+              return result;
+            }}
           />
         )}
 
@@ -1337,7 +1535,7 @@ const App: React.FC = () => {
           <MultiplayerLobby
             user={user}
             topicsByGrade={topicsByGrade}
-            grades={[9]}
+            grades={grades}
             onStartGame={handleStartMultiplayerGame}
             onBack={() => setView('home')}
           />

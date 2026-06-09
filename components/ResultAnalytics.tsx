@@ -47,7 +47,8 @@ const ResultAnalytics: React.FC<ResultAnalyticsProps> = ({ result, analysis, onC
   const avgTimePerQ = Math.round(result.timeSpent / result.totalQuestions);
   const accuracy = Math.round((result.correctCount / result.totalQuestions) * 100);
 
-  const advice = analysis?.advice || "Cố vấn X đang tổng hợp dữ liệu trận đấu và các trận trước đó để đưa ra lời khuyên lầy lội nhất cho bạn...";
+  const isAnalysisLoading = !analysis;
+  const advice = analysis?.advice || "";
   const strengths = analysis?.strengths ?? [];
   const weaknesses = analysis?.weaknesses ?? [];
   const tips = analysis?.tips ?? [];
@@ -168,8 +169,22 @@ const ResultAnalytics: React.FC<ResultAnalyticsProps> = ({ result, analysis, onC
             <span className="text-xl sm:text-2xl">🤖</span>
           </div>
           <h3 className="text-lg sm:text-2xl font-black uppercase tracking-tighter text-white">CỐ VẤN X</h3>
+          {isAnalysisLoading && (
+            <div className="flex items-center gap-2 ml-auto">
+              <div className="w-4 h-4 border-2 border-red-600/30 border-t-red-600 rounded-full animate-spin" />
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Đang phân tích...</span>
+            </div>
+          )}
         </div>
 
+        {isAnalysisLoading ? (
+          <div className="bg-slate-950/40 border border-slate-800/50 p-6 sm:p-12 rounded-xl sm:rounded-[30px] flex flex-col items-center gap-4">
+            <div className="w-10 h-10 border-4 border-red-600/20 border-t-red-600 rounded-full animate-spin" />
+            <p className="text-slate-400 font-bold text-sm sm:text-base italic">Cố vấn X đang phân tích kết quả trận đấu...</p>
+            <p className="text-slate-600 text-xs">Tổng hợp điểm mạnh, điểm yếu và gợi ý cá nhân</p>
+          </div>
+        ) : (
+        <>
         <div className="bg-slate-950/40 border border-slate-800/50 p-3 sm:p-8 rounded-xl sm:rounded-[30px] relative">
           <div className="absolute -top-3 sm:-top-4 left-3 sm:left-8 bg-slate-900 px-2 sm:px-4 py-0.5 sm:py-1 rounded-full border border-slate-800">
             <span className="text-[8px] sm:text-[10px] font-black text-red-500 uppercase tracking-widest">PHÂN TÍCH CHI TIẾT</span>
@@ -213,6 +228,8 @@ const ResultAnalytics: React.FC<ResultAnalyticsProps> = ({ result, analysis, onC
             )}
           </div>
         </div>
+        </>
+        )}
       </div>
 
       {/* Tips Section */}

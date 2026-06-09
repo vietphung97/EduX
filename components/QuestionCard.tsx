@@ -124,7 +124,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
         {question.imageUrl && (
           <div className="mb-4 sm:mb-6 flex justify-center">
             <div className="rounded-xl sm:rounded-2xl overflow-hidden border-2 sm:border-4 border-slate-700 bg-white max-w-[200px] sm:max-w-sm md:max-w-md">
-              <img src={question.imageUrl} alt="Question context" className="w-full h-auto object-contain" />
+              <img src={question.imageUrl} alt="Question context" className="w-full h-auto object-contain" referrerPolicy="no-referrer" />
             </div>
           </div>
         )}
@@ -143,18 +143,21 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
           </div>
         )}
 
-        <p className="text-base sm:text-xl md:text-2xl font-semibold mb-4 sm:mb-8 text-center leading-relaxed">
-          {!question.instruction && question.type === 'error-finding' && (
-            <span className="text-yellow-400">{"Tìm lỗi sai: "}</span>
-          )}
-          {!question.instruction && question.type === 'image-quiz' && !question.imageUrl && (
-            <span className="text-yellow-400">{"Nhìn hình chọn từ: "}</span>
-          )}
-          {question.question}
-        </p>
+        {/* Ẩn question text nếu trùng với instruction */}
+        {!(question.instruction && question.question === question.instruction) && (
+          <p className="text-base sm:text-xl md:text-2xl font-semibold mb-4 sm:mb-8 text-center leading-relaxed">
+            {!question.instruction && question.type === 'error-finding' && (
+              <span className="text-yellow-400">{"Tìm lỗi sai: "}</span>
+            )}
+            {!question.instruction && question.type === 'image-quiz' && !question.imageUrl && (
+              <span className="text-yellow-400">{"Nhìn hình chọn từ: "}</span>
+            )}
+            {question.question}
+          </p>
+        )}
 
-        <div className="grid grid-cols-1 gap-2 sm:gap-4 sm:grid-cols-2">
-          {question.options.map((option, idx) => {
+        <div className={`grid gap-2 sm:gap-4 ${question.options.length <= 2 ? 'grid-cols-1 max-w-md mx-auto' : 'grid-cols-1 sm:grid-cols-2'}`}>
+          {question.options.filter(opt => opt && opt.trim() !== '').map((option, idx) => {
             const state = getOptionState(option);
             return (
               <button

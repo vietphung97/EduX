@@ -209,10 +209,11 @@ export const getExpertAnalysis = async (result: GameResult, grade: number): Prom
 
   if (result.maxStreak >= 5) strengths.push(`Streak ${result.maxStreak} câu liên tiếp — khả năng tập trung tốt.`);
   if (avgTime <= 15 && accuracy >= 70) strengths.push(`Tốc độ làm bài nhanh (${avgTime}s/câu) với độ chính xác cao.`);
-  if (strongestCat !== 'N/A') strengths.push(`Nổi bật ở chủ đề "${strongestCat}".`);
+  // Chỉ hiện strongest/weakest khi có >= 2 chủ đề khác nhau và tỉ lệ khác nhau
+  if (strongestCat !== 'N/A' && strongestCat !== weakestCat) strengths.push(`Nổi bật ở chủ đề "${strongestCat}".`);
 
   if (accuracy < 60) weaknesses.push(`Độ chính xác tổng thể còn thấp (${accuracy}%) — cần ôn lại từ vựng cơ bản.`);
-  if (weakestCat !== 'N/A') weaknesses.push(`Còn yếu ở chủ đề "${weakestCat}".`);
+  if (weakestCat !== 'N/A' && weakestCat !== strongestCat) weaknesses.push(`Còn yếu ở chủ đề "${weakestCat}".`);
   if (weakestType !== 'N/A' && sortedTypes[0] && sortedTypes[0][1].correct / sortedTypes[0][1].total < 0.5) {
     weaknesses.push(`Dạng bài "${weakestType}" cần luyện thêm.`);
   }
