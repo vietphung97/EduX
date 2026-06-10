@@ -173,6 +173,8 @@ export interface PlayerInfo {
   id: string;
   name: string;
   avatar: string;
+  equippedFrame?: string;
+  unlockedFrames?: string[];
   isHost: boolean;
   isReady: boolean;
   score: number;
@@ -216,6 +218,8 @@ export interface MultiplayerResult {
   playerId: string;
   playerName: string;
   playerAvatar?: string;
+  playerEquippedFrame?: string;
+  playerUnlockedFrames?: string[];
   score: number;
   correctCount: number;
   totalQuestions: number;

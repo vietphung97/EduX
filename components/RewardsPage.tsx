@@ -261,14 +261,6 @@ const RewardsPage: React.FC<RewardsPageProps> = ({ user, onEquipFrame, onSpinRes
 
       {/* ═══ SECTION 3: VÒNG QUAY MAY MẮN ═══ */}
       <div className="px-4 sm:px-0">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight text-white">🎰 Vòng quay may mắn</h3>
-            <p className="text-xs text-slate-500 font-bold mt-0.5">
-              {spinsLeft > 0 ? `Bạn có ${spinsLeft} lượt quay` : 'Hoàn thành frame để nhận lượt quay'}
-            </p>
-          </div>
-        </div>
         <LuckySpin user={user} onSpinResult={handleSpinResult} />
       </div>
 
@@ -297,7 +289,7 @@ const RewardsPage: React.FC<RewardsPageProps> = ({ user, onEquipFrame, onSpinRes
             <div className="flex-1 text-center sm:text-left">
               <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight text-white">📜 Chứng nhận hoàn thành</h3>
               <p className="text-xs text-slate-500 mt-1 mb-4">
-                Hoàn thành tối thiểu 4/8 tuần để nhận chứng nhận
+                Hoàn thành tối thiểu 2/8 tuần để nhận chứng nhận
               </p>
 
               <div className="flex items-center gap-3 mb-3">
@@ -311,19 +303,19 @@ const RewardsPage: React.FC<RewardsPageProps> = ({ user, onEquipFrame, onSpinRes
               </div>
               <p className="text-xs text-slate-400 mb-5">
                 Đã hoàn thành <span className="text-yellow-400 font-bold">{weeksCompleted} tuần</span>
-                {weeksCompleted >= 4 ? ' — Đủ điều kiện nhận chứng nhận!' : ` — Cần thêm ${4 - weeksCompleted} tuần nữa`}
+                {weeksCompleted >= 2 ? ' — Đủ điều kiện nhận chứng nhận!' : ` — Cần thêm ${2 - weeksCompleted} tuần nữa`}
               </p>
 
               <button
                 onClick={() => onNavigate?.('certificate')}
                 className={`px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${
-                  weeksCompleted >= 4
+                  weeksCompleted >= 2
                     ? 'bg-yellow-600 hover:bg-yellow-500 text-white shadow-lg shadow-yellow-600/20'
                     : 'bg-slate-800 text-slate-600 cursor-not-allowed'
                 }`}
-                disabled={weeksCompleted < 4}
+                disabled={weeksCompleted < 2}
               >
-                {weeksCompleted >= 4 ? '📥 Tải chứng nhận' : '🔒 Chưa đủ điều kiện'}
+                {weeksCompleted >= 2 ? '📥 Tải chứng nhận' : '🔒 Chưa đủ điều kiện'}
               </button>
             </div>
           </div>

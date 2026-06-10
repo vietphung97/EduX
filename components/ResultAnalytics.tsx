@@ -88,24 +88,49 @@ const ResultAnalytics: React.FC<ResultAnalyticsProps> = ({ result, analysis, onC
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
         {/* Widget 1: XP Summary with Breakdown */}
         <div className="bg-slate-900/80 border border-slate-800 p-4 sm:p-8 rounded-2xl sm:rounded-[32px] flex flex-col min-h-[200px] sm:min-h-[300px] shadow-xl">
-          <p className="text-[9px] sm:text-[10px] font-black uppercase text-slate-500 tracking-[0.2em] mb-3 sm:mb-4 text-center">TỔNG XP NHẬN ĐƯỢC</p>
-
-          <div className="flex-1 flex flex-col justify-center space-y-2 sm:space-y-3">
-             <div className="flex justify-between items-center py-1.5 sm:py-2 border-b border-slate-800/50">
-                <span className="text-[10px] sm:text-xs font-bold text-slate-400">Câu đúng × XP/câu</span>
-                <span className="text-xs sm:text-sm font-black text-white">+{xpBreakdown.correctXp}</span>
-             </div>
-             <div className="flex justify-between items-center py-1.5 sm:py-2 border-b border-slate-800/50">
-                <span className="text-[10px] sm:text-xs font-bold text-slate-400">Streak cao nhất × 5XP</span>
-                <span className="text-xs sm:text-sm font-black text-orange-400">+{xpBreakdown.streakBonus}</span>
-             </div>
-             {xpBreakdown.rankBonus > 0 && (
-               <div className="flex justify-between items-center py-1.5 sm:py-2 border-b border-slate-800/50">
-                  <span className="text-[10px] sm:text-xs font-bold text-slate-400">Thưởng xếp hạng #1</span>
-                  <span className="text-xs sm:text-sm font-black text-green-500">+{xpBreakdown.rankBonus}</span>
-               </div>
-             )}
+          {/* Header with formula tooltip */}
+          <div className="relative group/xp cursor-help mb-3 sm:mb-4 text-center">
+            <p className="text-[9px] sm:text-[10px] font-black uppercase text-slate-500 tracking-[0.2em] inline-flex items-center gap-1">
+              TỔNG XP NHẬN ĐƯỢC
+              <span className="text-slate-600 group-hover/xp:text-slate-400 transition-colors">ⓘ</span>
+            </p>
+            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-slate-800 border border-slate-700 rounded-xl p-3 text-left opacity-0 group-hover/xp:opacity-100 transition-opacity pointer-events-none z-[60] shadow-xl">
+              <p className="text-white font-bold text-[10px] sm:text-xs leading-relaxed">
+                XP nhận được = (Số câu đúng × XP/câu)<br/>
+                + (Streak cao nhất × 5XP)<br/>
+                + Điểm thưởng xếp hạng
+              </p>
+              <div className="mt-2 pt-2 border-t border-slate-700">
+                <p className="text-[9px] sm:text-[10px] font-bold text-slate-400">
+                  Dễ: <span className="text-green-400">10XP/câu</span> · TB: <span className="text-yellow-400">12XP/câu</span> · Khó: <span className="text-red-400">15XP/câu</span>
+                </p>
+              </div>
+            </div>
           </div>
+
+          {(() => {
+            const xpPerQ = result.correctCount > 0 ? Math.round(xpBreakdown.correctXp / result.correctCount) : 0;
+            return (
+              <div className="flex-1 flex flex-col justify-center space-y-2 sm:space-y-3">
+                <div className="flex justify-between items-center py-1.5 sm:py-2 border-b border-slate-800/50">
+                  <span className="text-[10px] sm:text-xs font-bold text-slate-400">Tổng số câu trả lời đúng</span>
+                  <span className="text-xs sm:text-sm font-black text-white">{result.correctCount}</span>
+                </div>
+                <div className="flex justify-between items-center py-1.5 sm:py-2 border-b border-slate-800/50">
+                  <span className="text-[10px] sm:text-xs font-bold text-slate-400">XP mỗi câu đúng</span>
+                  <span className="text-xs sm:text-sm font-black text-white">{xpPerQ}XP</span>
+                </div>
+                <div className="flex justify-between items-center py-1.5 sm:py-2 border-b border-slate-800/50">
+                  <span className="text-[10px] sm:text-xs font-bold text-slate-400">Streak cao nhất</span>
+                  <span className="text-xs sm:text-sm font-black text-orange-400">{result.maxStreak}</span>
+                </div>
+                <div className="flex justify-between items-center py-1.5 sm:py-2 border-b border-slate-800/50">
+                  <span className="text-[10px] sm:text-xs font-bold text-slate-400">Điểm thưởng xếp hạng thách đấu</span>
+                  <span className="text-xs sm:text-sm font-black text-green-500">{xpBreakdown.rankBonus}XP</span>
+                </div>
+              </div>
+            );
+          })()}
 
           <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t-2 border-slate-800 flex flex-col items-center">
             <p className="text-3xl sm:text-5xl font-black text-yellow-500 tracking-tighter">+{xpBreakdown.totalXp}</p>

@@ -72,6 +72,87 @@ function normalizeWeeklyXp(profile: UserProfile): UserProfile {
   return { ...profile, weeklyXpWeek: currentWeek };
 }
 
+/** ── Leaderboard Components — shield badges + ranked avatar frames ── */
+
+/** Shield-shaped rank badge for top 3, simple circle for 4+ */
+const LbRankBadge: React.FC<{ rank: number; size?: 'sm' | 'md' | 'lg' }> = ({ rank, size = 'md' }) => {
+  const dim = size === 'lg' ? 56 : size === 'md' ? 44 : 36;
+  const cls = size === 'lg' ? 'w-14 h-14' : size === 'md' ? 'w-11 h-11' : 'w-9 h-9';
+
+  if (rank <= 3) {
+    const p = rank === 1
+      ? { g1: '#FFF8DC', g2: '#FFD700', g3: '#B8860B', g4: '#856316', border: '#A07818', text: '#6B4F00', glow: '0 0 12px rgba(255,215,0,0.5)' }
+      : rank === 2
+      ? { g1: '#F1F5F9', g2: '#CBD5E1', g3: '#94A3B8', g4: '#64748B', border: '#78889A', text: '#1E293B', glow: '0 0 10px rgba(148,163,184,0.4)' }
+      : { g1: '#FEF3C7', g2: '#D97706', g3: '#B45309', g4: '#7C2D12', border: '#92400E', text: '#451A03', glow: '0 0 10px rgba(217,119,6,0.4)' };
+
+    return (
+      <div className={`${cls} flex-shrink-0`} style={{ boxShadow: p.glow }}>
+        <svg viewBox="0 0 56 62" className="w-full h-full">
+          <defs>
+            <linearGradient id={`sh${rank}f`} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={p.g1}/><stop offset="40%" stopColor={p.g2}/><stop offset="100%" stopColor={p.g3}/>
+            </linearGradient>
+            <linearGradient id={`sh${rank}b`} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={p.g2}/><stop offset="100%" stopColor={p.g4}/>
+            </linearGradient>
+          </defs>
+          {/* Shield outer */}
+          <path d="M28 2 L52 12 L52 34 Q52 50 28 60 Q4 50 4 34 L4 12 Z" fill={`url(#sh${rank}b)`} stroke={p.border} strokeWidth="1.5"/>
+          {/* Shield inner face */}
+          <path d="M28 6 L48 14 L48 33 Q48 47 28 56 Q8 47 8 33 L8 14 Z" fill={`url(#sh${rank}f)`}/>
+          {/* Top edge shine */}
+          <path d="M14 14 Q28 8 42 14" stroke="white" strokeWidth="1.5" fill="none" opacity="0.4" strokeLinecap="round"/>
+          {/* Inner border detail */}
+          <path d="M28 10 L44 17 L44 32 Q44 44 28 52 Q12 44 12 32 L12 17 Z" fill="none" stroke={p.border} strokeWidth="0.6" opacity="0.4"/>
+          {/* Number */}
+          <text x="28" y="33" textAnchor="middle" dominantBaseline="central" fill={p.text} fontWeight="900" fontSize="22" fontFamily="system-ui, sans-serif">{rank}</text>
+        </svg>
+      </div>
+    );
+  }
+
+  // Rank 4+
+  const fs = size === 'lg' ? 18 : size === 'md' ? 14 : 12;
+  return (
+    <div className={`${cls} rounded-full bg-slate-800 text-slate-400 border-2 border-slate-700 flex items-center justify-center font-black flex-shrink-0`} style={{ fontSize: fs }}>
+      {rank}
+    </div>
+  );
+};
+
+/** Avatar wrapper with rank-colored ornate frame for top 3 */
+const LbRankedAvatar: React.FC<{
+  rank: number; avatar: string; name: string;
+  equippedFrame?: string; unlockedFrames?: string[];
+  size?: 'md' | 'lg';
+}> = ({ rank, avatar, name, equippedFrame, unlockedFrames, size = 'md' }) => {
+  const dim = size === 'lg' ? 72 : 56;
+  const ring = size === 'lg' ? 4 : 3;
+
+  if (rank <= 3) {
+    const ringColor = rank === 1 ? '#FFD700' : rank === 2 ? '#94A3B8' : '#D97706';
+    const glowColor = rank === 1 ? 'rgba(255,215,0,0.35)' : rank === 2 ? 'rgba(148,163,184,0.25)' : 'rgba(217,119,6,0.3)';
+    return (
+      <div className="relative flex-shrink-0" style={{ width: dim + ring * 2, height: dim + ring * 2 }}>
+        {/* Glow ring */}
+        <div className="absolute inset-0 rounded-full" style={{ boxShadow: `0 0 16px ${glowColor}, inset 0 0 8px ${glowColor}`, border: `${ring}px solid ${ringColor}`, borderRadius: '50%' }} />
+        {/* Avatar inside */}
+        <div className="absolute rounded-full overflow-hidden bg-slate-800 flex items-center justify-center" style={{ width: dim, height: dim, top: ring, left: ring }}>
+          {avatar && avatar.startsWith('http') ? (
+            <img src={avatar} alt={name} className="w-full h-full object-cover" />
+          ) : (
+            <span className="text-2xl">{avatar || '?'}</span>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Rank 4+ — use standard AvatarDisplay
+  return <AvatarDisplay avatar={avatar} name={name} equippedFrame={equippedFrame} unlockedFrames={unlockedFrames} size={size === 'lg' ? 'lg' : 'md'} />;
+};
+
 const App: React.FC = () => {
   // Navigation & User
   const [view, setView] = useState<'login' | 'home' | 'solo-config' | 'lobby' | 'game' | 'multiplayer-game' | 'results' | 'leaderboard' | 'profile' | 'history' | 'stats' | 'rewards' | 'certificate' | 'roadmap'>('login');
@@ -189,6 +270,10 @@ const App: React.FC = () => {
         setIsLoadingLeaderboard(false);
       };
       fetchLeaderboard();
+    }
+    // Fetch all users for history frame lookup
+    if (view === 'history' && user && leaderboardData.length === 0) {
+      getLeaderboard(200).then(data => setLeaderboardData(data));
     }
   }, [view, leaderboardGradeFilter, user]);
 
@@ -624,8 +709,7 @@ const App: React.FC = () => {
 
     if (isCorrect) {
       // XP/câu theo độ khó
-      const xpPerQ = selectedDifficulty === Difficulty.HARD ? 15
-        : selectedDifficulty === Difficulty.MEDIUM ? 12 : 10;
+      const xpPerQ = XP_PER_QUESTION[selectedDifficulty] || 10;
 
       // Streak bonus: cộng ngay vào score
       const nextStreak = currentStreak + 1;
@@ -1095,9 +1179,9 @@ const App: React.FC = () => {
                    'bg-slate-800/60 border-slate-700 hover:border-slate-500'
                  }`}
                >
-                 <span className="text-3xl shrink-0">
-                   {myWeeklyRank === 1 ? '👑' : myWeeklyRank <= 3 ? '🏆' : myWeeklyRank <= 10 ? '⭐' : '🎯'}
-                 </span>
+                 <div className="shrink-0">
+                   <LbRankBadge rank={myWeeklyRank} size="lg" />
+                 </div>
                  <div className="flex-1 min-w-0">
                    <p className="font-black text-white text-sm">
                      Thứ hạng tuần này:{' '}
@@ -1106,8 +1190,8 @@ const App: React.FC = () => {
                      </span>
                    </p>
                    <p className="text-xs text-slate-400 truncate">
-                     {myWeeklyRank === 1 ? '🥇 Bạn đang dẫn đầu BXH tuần!' :
-                      myWeeklyRank <= 3 ? '🥈🥉 Top 3 tuần — Xuất sắc!' :
+                     {myWeeklyRank === 1 ? 'Bạn đang dẫn đầu BXH tuần!' :
+                      myWeeklyRank <= 3 ? 'Top 3 tuần — Xuất sắc!' :
                       myWeeklyRank <= 10 ? 'Top 10 — Tiếp tục cố lên!' :
                       `${user.weeklyXp.toLocaleString()} XP tuần này · Bấm để xem BXH`}
                    </p>
@@ -1307,7 +1391,7 @@ const App: React.FC = () => {
           <div className="max-w-4xl mx-auto space-y-3 sm:space-y-6 relative">
             {/* Floating XP + Streak — rendered inside score div below */}
             {/* Game info bar - compact on mobile */}
-            <div className="flex items-center gap-2 sm:gap-4 bg-slate-900/50 p-3 sm:p-6 rounded-2xl sm:rounded-[30px] border border-slate-800 backdrop-blur-md">
+            <div className="flex items-center gap-2 sm:gap-4 bg-slate-900/50 p-3 sm:p-6 rounded-2xl sm:rounded-[30px] border border-slate-800 backdrop-blur-md relative z-10">
               <div className="flex-1 space-y-1 sm:space-y-2 min-w-0">
                 <div className="flex justify-between text-[10px] sm:text-xs font-black uppercase text-slate-500 tracking-tighter">
                   <div className="flex items-center gap-1 sm:gap-2">
@@ -1356,7 +1440,7 @@ const App: React.FC = () => {
                    )}
                  </p>
                  {/* Streak tooltip */}
-                 <div className="absolute bottom-full right-0 mb-2 w-56 bg-slate-800 border border-slate-700 rounded-xl p-3 text-left opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
+                 <div className="absolute top-full right-0 mt-2 w-56 bg-slate-800 border border-slate-700 rounded-xl p-3 text-left opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-[60] shadow-xl">
                    <p className="text-white font-bold text-xs">Trả lời đúng liên tiếp để nhận XP thưởng.</p>
                    <p className="text-yellow-400 font-black text-xs mt-1">STREAK {currentStreak} = {currentStreak}*5XP = {currentStreak * 5}XP</p>
                  </div>
@@ -1422,14 +1506,14 @@ const App: React.FC = () => {
                   myRank <= 10 ? 'bg-blue-600/10 border-blue-600/30' :
                   'bg-slate-800/50 border-slate-700'
                 }`}>
-                  <span className="text-3xl">{myRank === 1 ? '👑' : myRank <= 3 ? '🏆' : myRank <= 10 ? '⭐' : '🎯'}</span>
+                  <LbRankBadge rank={myRank} size="lg" />
                   <div>
                     <p className="font-black text-white text-sm">
                       Thứ hạng tuần này: <span className={myRank <= 3 ? 'text-yellow-400' : 'text-white'}>#{myRank}</span>
                     </p>
                     <p className="text-xs text-slate-400">
-                      {myRank === 1 ? '🥇 BẠN ĐỨNG ĐẦU BẢNG XẾP HẠNG TUẦN NÀY!' :
-                       myRank <= 3 ? '🥈🥉 Top 3 bảng xếp hạng tuần — Xuất sắc!' :
+                      {myRank === 1 ? 'BẠN ĐỨNG ĐẦU BẢNG XẾP HẠNG TUẦN NÀY!' :
+                       myRank <= 3 ? 'Top 3 bảng xếp hạng tuần — Xuất sắc!' :
                        myRank <= 10 ? 'Top 10 bảng xếp hạng tuần — Tiếp tục cố lên!' :
                        'Tiếp tục thi đấu để leo hạng!'}
                     </p>
@@ -1477,6 +1561,8 @@ const App: React.FC = () => {
         {view === 'history' && (
           <HistoryPage
             history={gameHistory}
+            user={user}
+            allUsers={leaderboardData}
             onBack={() => setView('home')}
             onRecalculate={(fixedHistory, xpDiff) => {
               setGameHistory(fixedHistory);
@@ -1565,7 +1651,7 @@ const App: React.FC = () => {
                  onClick={() => setLeaderboardTab('alltime')}
                  className={`px-3 sm:px-5 py-1.5 sm:py-2 rounded-full font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all ${leaderboardTab === 'alltime' ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
                >
-                 🏆 Toàn thời gian
+                 Toàn thời gian
                </button>
                <button
                  onClick={() => setLeaderboardTab('weekly')}
@@ -1636,77 +1722,76 @@ const App: React.FC = () => {
                      </div>
                    ) : (
                      <>
-                       {/* Top 3 Podium */}
-                       {top3.length >= 1 && (
-                         <div className="flex items-end justify-center gap-2 sm:gap-6 pt-2 sm:pt-4 pb-2">
-                           {/* 2nd place */}
-                           {top3[1] && (
-                             <div className="flex flex-col items-center gap-1 sm:gap-2 mb-2">
-                               <AvatarDisplay avatar={top3[1].avatar} name={top3[1].name} equippedFrame={top3[1].equippedFrame} unlockedFrames={top3[1].unlockedFrames} size="sm" />
-                               <p className="text-[10px] sm:text-xs font-black text-white truncate max-w-[60px] sm:max-w-[72px] text-center">{top3[1].name}</p>
-                               <div className="bg-slate-700 rounded-t-xl w-16 sm:w-24 flex flex-col items-center py-2 sm:py-3" style={{ height: '60px' }}>
-                                 <span className="text-lg sm:text-2xl">🥈</span>
-                                 <span className="text-[10px] sm:text-xs font-black text-slate-300">{getDisplayXp(top3[1]).toLocaleString()}</span>
-                               </div>
-                             </div>
-                           )}
-                           {/* 1st place */}
-                           <div className="flex flex-col items-center gap-1 sm:gap-2">
-                             <div className="text-lg sm:text-2xl animate-bounce">👑</div>
-                             <AvatarDisplay avatar={top3[0].avatar} name={top3[0].name} equippedFrame={top3[0].equippedFrame} unlockedFrames={top3[0].unlockedFrames} size="md" />
-                             <p className="text-xs sm:text-sm font-black text-white truncate max-w-[72px] sm:max-w-[88px] text-center">{top3[0].name}</p>
-                             <div className="bg-yellow-500 rounded-t-xl w-20 sm:w-28 flex flex-col items-center py-2 sm:py-3" style={{ height: '80px' }}>
-                               <span className="text-xl sm:text-3xl">🥇</span>
-                               <span className="text-[10px] sm:text-xs font-black text-black">{getDisplayXp(top3[0]).toLocaleString()}</span>
-                             </div>
-                           </div>
-                           {/* 3rd place */}
-                           {top3[2] && (
-                             <div className="flex flex-col items-center gap-1 sm:gap-2 mb-4">
-                               <AvatarDisplay avatar={top3[2].avatar} name={top3[2].name} equippedFrame={top3[2].equippedFrame} unlockedFrames={top3[2].unlockedFrames} size="sm" />
-                               <p className="text-[10px] sm:text-xs font-black text-white truncate max-w-[60px] sm:max-w-[72px] text-center">{top3[2].name}</p>
-                               <div className="bg-amber-700 rounded-t-xl w-16 sm:w-24 flex flex-col items-center py-2 sm:py-3" style={{ height: '48px' }}>
-                                 <span className="text-lg sm:text-2xl">🥉</span>
-                                 <span className="text-[10px] sm:text-xs font-black text-amber-100">{getDisplayXp(top3[2]).toLocaleString()}</span>
-                               </div>
-                             </div>
-                           )}
+                       {/* Unified Leaderboard List */}
+                       <div className="bg-slate-900/80 border border-slate-800 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl backdrop-blur-sm">
+                         {/* Column header */}
+                         <div className="flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-3 border-b border-slate-700/60 bg-slate-800/40">
+                           <span className="w-9 sm:w-11 text-center text-[10px] sm:text-xs font-black text-slate-500 uppercase tracking-wider">Hạng</span>
+                           <span className="flex-1 text-[10px] sm:text-xs font-black text-slate-500 uppercase tracking-wider pl-1">Thí sinh</span>
+                           <span className="text-[10px] sm:text-xs font-black text-slate-500 uppercase tracking-wider text-right">XP {isWeekly ? 'Tuần' : 'Tích lũy'}</span>
                          </div>
-                       )}
 
-                       {/* Rank list from 4th onwards */}
-                       {rest.length > 0 && (
-                         <div className="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-[32px] overflow-hidden shadow-2xl">
-                           {rest.map((p, i) => {
-                             const isMe = p.id === user.id;
-                             const levelConfig = LEVEL_CONFIG.find(c => c.level === p.level);
-                             const displayXp = getDisplayXp(p);
-                             const displayRank = isMe && myRank > 0 ? myRank : i + 4;
-                             return (
-                               <div key={p.id} className={`flex items-center gap-2 sm:gap-4 p-3 sm:p-4 border-b border-slate-800 last:border-0 ${isMe ? 'bg-red-600/5' : ''}`}>
-                                 <div className="w-7 h-7 rounded-full bg-slate-800 text-slate-500 flex items-center justify-center font-black text-xs flex-shrink-0">{displayRank}</div>
-                                 <div className="flex-1 flex items-center gap-2 sm:gap-3 min-w-0">
-                                   <AvatarDisplay avatar={p.avatar} name={p.name} equippedFrame={p.equippedFrame} unlockedFrames={p.unlockedFrames} size="sm" />
-                                   <div className="min-w-0">
-                                     <p className="font-black text-sm truncate">{p.name}{isMe ? ' (Tôi)' : ''}</p>
-                                     <p className="text-[9px] font-black uppercase text-red-500">{p.level}</p>
+                         {combinedData.map((p, i) => {
+                           const isMe = p.id === user.id;
+                           const levelConfig = LEVEL_CONFIG.find(c => c.level === p.level);
+                           const displayXp = getDisplayXp(p);
+                           const displayRank = isMe && myRank > 0 ? myRank : i + 1;
+                           const isTop3 = displayRank <= 3;
+
+                           return (
+                             <div
+                               key={p.id}
+                               className={`flex items-center gap-3 sm:gap-4 px-4 sm:px-6 border-b border-slate-800/60 last:border-0 transition-colors ${
+                                 isMe ? 'bg-red-600/8 border-l-2 border-l-red-500' : ''
+                               } ${isTop3 ? 'py-4 sm:py-5' : 'py-3 sm:py-4'}`}
+                             >
+                               {/* Rank badge */}
+                               <LbRankBadge rank={displayRank} size={isTop3 ? 'md' : 'sm'} />
+
+                               {/* Avatar + Info */}
+                               <div className="flex-1 flex items-center gap-3 sm:gap-4 min-w-0">
+                                 <LbRankedAvatar
+                                   rank={displayRank}
+                                   avatar={p.avatar}
+                                   name={p.name}
+                                   equippedFrame={p.equippedFrame}
+                                   unlockedFrames={p.unlockedFrames}
+                                   size={isTop3 ? 'lg' : 'md'}
+                                 />
+                                 <div className="min-w-0">
+                                   <p className={`font-black truncate ${isTop3 ? 'text-sm sm:text-base text-white' : 'text-sm text-slate-200'}`}>
+                                     {p.name}{isMe ? ' (Tôi)' : ''}
+                                   </p>
+                                   <div className="flex items-center gap-1.5 mt-0.5">
+                                     {levelConfig && (
+                                       <span className="text-[9px] sm:text-[10px] font-black uppercase" style={{ color: levelConfig.color }}>
+                                         {levelConfig.title}
+                                       </span>
+                                     )}
+                                     <span className="text-[9px] sm:text-[10px] font-bold text-slate-600">LV.{p.level}</span>
                                    </div>
-                                 </div>
-                                 {!isGradeFilter && !isWeekly && (
-                                   <div className="text-center w-10 hidden sm:block flex-shrink-0">
-                                     <p className="font-black text-slate-300">{p.grade}</p>
-                                     <p className="text-[8px] font-black text-slate-500 uppercase">KHỐI</p>
-                                   </div>
-                                 )}
-                                 <div className="text-right flex-shrink-0">
-                                   <p className="font-mono text-sm font-black text-white">{displayXp.toLocaleString()}</p>
-                                   <p className="text-[8px] font-black text-slate-500 uppercase">{isWeekly ? 'XP TUẦN' : 'XP'}</p>
                                  </div>
                                </div>
-                             );
-                           })}
-                         </div>
-                       )}
+
+                               {/* Grade (optional) */}
+                               {!isGradeFilter && !isWeekly && (
+                                 <div className="text-center w-10 hidden sm:block flex-shrink-0">
+                                   <p className="font-black text-slate-400 text-sm">{p.grade}</p>
+                                   <p className="text-[7px] font-black text-slate-600 uppercase">Khối</p>
+                                 </div>
+                               )}
+
+                               {/* XP */}
+                               <div className="text-right flex-shrink-0">
+                                 <p className={`font-mono font-black ${isTop3 ? 'text-sm sm:text-base text-white' : 'text-sm text-slate-300'}`}>
+                                   {displayXp.toLocaleString()}
+                                 </p>
+                                 <p className="text-[7px] sm:text-[8px] font-black text-slate-600 uppercase">{isWeekly ? 'XP Tuần' : 'XP'}</p>
+                               </div>
+                             </div>
+                           );
+                         })}
+                       </div>
 
                        {/* My rank banner if not in top 20 */}
                        {myRank > 20 && (
@@ -1807,9 +1892,7 @@ const App: React.FC = () => {
                 myWeeklyRank <= 10 ? 'bg-blue-600/20 border border-blue-600/40' :
                 'bg-slate-800 border border-slate-700'
               }`}>
-                <span className="text-2xl">
-                  {myWeeklyRank === 1 ? '👑' : myWeeklyRank <= 3 ? '🏆' : myWeeklyRank <= 10 ? '⭐' : '🎯'}
-                </span>
+                <LbRankBadge rank={myWeeklyRank} size="lg" />
                 <div>
                   <p className="font-black text-white text-lg leading-none">#{myWeeklyRank}</p>
                   <p className="text-[10px] text-slate-400 font-bold">
@@ -1830,9 +1913,7 @@ const App: React.FC = () => {
                         isMe ? 'bg-red-600/10 border border-red-600/30' : 'bg-slate-800/60'
                       }`}
                     >
-                      <span className="text-lg w-7 text-center shrink-0">
-                        {rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`}
-                      </span>
+                      <LbRankBadge rank={rank} size="sm" />
                       <AvatarDisplay
                         avatar={p.avatar}
                         name={p.name}

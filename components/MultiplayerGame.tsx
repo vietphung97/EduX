@@ -11,13 +11,61 @@ import {
   PlayerInfo
 } from '../types';
 import { useMultiplayerGame } from '../hooks/useMultiplayerGame';
-import { DIFFICULTY_MULTIPLIERS } from '../utils/gameLogic';
+import { DIFFICULTY_MULTIPLIERS, XP_PER_QUESTION } from '../utils/gameLogic';
 import { getPlayerId } from '../utils/playerSession';
 import QuestionCard from './QuestionCard';
 import AvatarDisplay from './AvatarDisplay';
 
 // Icon constants to avoid JSX literal unicode escape issues
-const ICON = { check: '✓', timer: '⏱', fire: '🔥', crown: '👑', trophy: '🏆' };
+const ICON = {
+  check: '✓', timer: '⏱', fire: '\u{1F525}', crown: '\u{1F451}', trophy: '\u{1F3C6}',
+  silver: '\u{1F948}', bronze: '\u{1F949}', gamepad: '\u{1F3AE}', sparkle: '\u{2728}',
+  done: '\u{2705}'
+};
+
+/** SVG Icon components — no emoji, consistent rendering */
+const IconTarget: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
+  </svg>
+);
+const IconStar: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+  </svg>
+);
+const IconFlame: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 23c-3.866 0-7-3.134-7-7 0-2.812 1.882-5.258 3.168-6.612A1 1 0 019.8 9.6c.268.4.563.913.82 1.508C11.4 8.4 12 6.6 12 4a1 1 0 011.64-.768C16.028 5.15 19 8.75 19 16c0 3.866-3.134 7-7 7z"/>
+  </svg>
+);
+const IconClock: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+  </svg>
+);
+const IconCheck: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+);
+
+/** Fancy rank badge — circular with gradient + glow */
+const RankBadge: React.FC<{ rank: number; size?: 'sm' | 'md' | 'lg' }> = ({ rank, size = 'md' }) => {
+  const sz = size === 'lg' ? 'w-11 h-11 text-base' : size === 'md' ? 'w-9 h-9 text-sm' : 'w-7 h-7 text-[11px]';
+  const config = rank === 1
+    ? { bg: 'bg-gradient-to-b from-yellow-400 to-yellow-600', text: 'text-yellow-950', ring: 'ring-yellow-400/50', shadow: 'shadow-yellow-500/40' }
+    : rank === 2
+    ? { bg: 'bg-gradient-to-b from-slate-300 to-slate-500', text: 'text-slate-900', ring: 'ring-slate-300/50', shadow: 'shadow-slate-400/30' }
+    : rank === 3
+    ? { bg: 'bg-gradient-to-b from-amber-500 to-amber-800', text: 'text-amber-100', ring: 'ring-amber-500/40', shadow: 'shadow-amber-600/30' }
+    : { bg: 'bg-slate-700', text: 'text-slate-400', ring: 'ring-slate-600/30', shadow: '' };
+  return (
+    <div className={`${sz} rounded-full ${config.bg} ${config.text} ring-2 ${config.ring} shadow-lg ${config.shadow} flex items-center justify-center font-black flex-shrink-0`}>
+      {rank}
+    </div>
+  );
+};
 
 interface MultiplayerGameProps {
   user: UserProfile;
@@ -139,19 +187,28 @@ const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
   if (showResults || gamePhase === 'completed') {
     return (
       <MultiplayerResults
-        results={finalResults.length > 0 ? finalResults : rankings.map(r => ({
-          rank: r.rank,
-          playerId: r.player.id,
-          playerName: r.player.name,
-          playerAvatar: r.player.avatar,
-          score: r.player.score,
-          correctCount: r.player.correctCount,
-          totalQuestions: gameState?.questions.length || questions.length,
-          maxStreak: r.player.maxStreak,
-          timeSpent: r.timeSpent,
-          xpEarned: 0
-        }))}
+        results={finalResults.length > 0 ? finalResults : rankings.map(r => {
+          const diff = gameState?.roomSettings?.difficulty || 'Trung bình';
+          const xpPerQ = XP_PER_QUESTION[diff] || 10;
+          const baseXp = r.player.correctCount * xpPerQ + r.player.maxStreak * 5;
+          const rankBonus = r.rank === 1 ? 100 : 0;
+          return {
+            rank: r.rank,
+            playerId: r.player.id,
+            playerName: r.player.name,
+            playerAvatar: r.player.avatar,
+            playerEquippedFrame: r.player.equippedFrame,
+            playerUnlockedFrames: r.player.unlockedFrames,
+            score: r.player.score + rankBonus,
+            correctCount: r.player.correctCount,
+            totalQuestions: gameState?.questions.length || questions.length,
+            maxStreak: r.player.maxStreak,
+            timeSpent: r.timeSpent,
+            xpEarned: baseXp + rankBonus
+          };
+        })}
         myPlayerId={playerId}
+        user={user}
         onLeave={onLeave}
       />
     );
@@ -192,6 +249,7 @@ const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
         <MultiplayerResults
           results={finalResults}
           myPlayerId={playerId}
+          user={user}
           onLeave={onLeave}
         />
       );
@@ -218,7 +276,7 @@ const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
         </div>
       )}
       {/* Game Header */}
-      <div className="flex items-center gap-4 bg-slate-900/50 p-4 rounded-[30px] border border-slate-800 backdrop-blur-md">
+      <div className="flex items-center gap-4 bg-slate-900/50 p-4 rounded-[30px] border border-slate-800 backdrop-blur-md relative z-10">
         {/* Timer & Progress */}
         <div className="flex-1 space-y-2">
           <div className="flex justify-between text-xs font-black uppercase text-slate-500 tracking-tighter">
@@ -267,29 +325,49 @@ const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
             <div className="space-y-4">
               {/* My stats summary */}
               <div className="bg-slate-900 border border-slate-800 p-8 rounded-[40px] text-center">
-                <div className="text-5xl mb-3">{'✅'}</div>
+                <div className="text-5xl mb-3">{ICON.done}</div>
                 <h3 className="text-2xl font-black mb-1">Ho{'à'}n th{'à'}nh!</h3>
                 <p className="text-slate-400 text-sm">{'Đ'}ang ch{'ờ'} ng{'ườ'}i ch{'ơ'}i kh{'á'}c ho{'à'}n th{'à'}nh...</p>
-                <div className="mt-5 flex justify-center gap-6">
-                  <div className="text-center">
-                    <p className="text-3xl font-black text-green-500">{myPlayer?.correctCount || 0}<span className="text-lg text-slate-500">/{gameState?.questions.length || questions.length}</span></p>
-                    <p className="text-xs text-slate-500 font-bold">{'Đú'}ng</p>
+                <div className="mt-5 flex justify-center gap-4 sm:gap-6">
+                  <div className="flex items-center gap-2 bg-slate-800/60 px-3 py-2 rounded-2xl">
+                    <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+                      <IconTarget className="w-4 h-4 text-green-400" />
+                    </div>
+                    <div>
+                      <p className="text-xl font-black text-green-400 leading-tight">{myPlayer?.correctCount || 0}</p>
+                      <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wide">{'Đú'}ng</p>
+                    </div>
                   </div>
-                  <div className="text-center">
-                    <p className="text-3xl font-black text-blue-500">{(myPlayer?.score || 0).toLocaleString()}</p>
-                    <p className="text-xs text-slate-500 font-bold">XP</p>
+                  <div className="flex items-center gap-2 bg-slate-800/60 px-3 py-2 rounded-2xl">
+                    <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
+                      <IconStar className="w-4 h-4 text-blue-400" />
+                    </div>
+                    <div>
+                      <p className="text-xl font-black text-blue-400 leading-tight">{(myPlayer?.score || 0).toLocaleString()}</p>
+                      <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wide">{'Đi'}{'ể'}m</p>
+                    </div>
                   </div>
-                  <div className="text-center">
-                    <p className="text-3xl font-black text-yellow-500">{myPlayer?.maxStreak || 0}</p>
-                    <p className="text-xs text-slate-500 font-bold">Chu{'ỗ'}i max</p>
+                  <div className="flex items-center gap-2 bg-slate-800/60 px-3 py-2 rounded-2xl">
+                    <div className="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center">
+                      <IconFlame className="w-4 h-4 text-orange-400" />
+                    </div>
+                    <div>
+                      <p className="text-xl font-black text-orange-400 leading-tight">{myPlayer?.maxStreak || 0}</p>
+                      <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wide">Streak</p>
+                    </div>
                   </div>
-                  <div className="text-center">
-                    <p className="text-3xl font-black text-purple-400">
-                      {myPlayer?.finishedAt && gameState?.startedAt
-                        ? `${Math.floor((myPlayer.finishedAt - gameState.startedAt) / 1000)}s`
-                        : '--'}
-                    </p>
-                    <p className="text-xs text-slate-500 font-bold">Th{'ờ'}i gian</p>
+                  <div className="flex items-center gap-2 bg-slate-800/60 px-3 py-2 rounded-2xl">
+                    <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
+                      <IconClock className="w-4 h-4 text-purple-400" />
+                    </div>
+                    <div>
+                      <p className="text-xl font-black text-purple-400 leading-tight">
+                        {myPlayer?.finishedAt && gameState?.startedAt
+                          ? `${Math.floor((myPlayer.finishedAt - gameState.startedAt) / 1000)}s`
+                          : '--'}
+                      </p>
+                      <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wide">Th{'ờ'}i gian</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -297,7 +375,7 @@ const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
               {/* Temporary leaderboard */}
               <div className="bg-slate-900 border border-slate-800 rounded-[30px] overflow-hidden">
                 <div className="px-5 py-3 border-b border-slate-800 bg-slate-800/50 flex items-center justify-between">
-                  <h4 className="font-black text-sm">{ICON.trophy} B{'Ả'}NG X{'Ế'}P H{'Ạ'}NG T{'Ạ'}M TH{'Ọ'}I</h4>
+                  <h4 className="font-black text-sm">{ICON.trophy} B{'Ả'}NG X{'Ế'}P H{'Ạ'}NG T{'Ạ'}M TH{'Ờ'}I</h4>
                   <span className="text-[10px] font-bold text-yellow-500 bg-yellow-500/10 px-2 py-0.5 rounded-full uppercase tracking-wider">
                     {'Đ'}ang ch{'ờ'} k{'ế'}t qu{'ả'}
                   </span>
@@ -311,44 +389,65 @@ const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
                     const timeSpent = p.finishedAt && gameState?.startedAt
                       ? Math.floor((p.finishedAt - gameState.startedAt) / 1000)
                       : null;
+                    // For current user, prefer local user prop (always fresh) over KV data
+                    const pFrame = isMe ? user.equippedFrame : p.equippedFrame;
+                    const pFrames = isMe ? user.unlockedFrames : p.unlockedFrames;
 
                     return (
                       <div
                         key={p.id}
-                        className={`flex items-center gap-3 px-4 py-4 ${isMe ? 'bg-blue-600/10' : ''}`}
+                        className={`flex items-center gap-3 px-4 py-5 ${isMe ? 'bg-blue-600/10' : ''}`}
                       >
                         {/* Rank badge */}
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-black flex-shrink-0 ${
-                          index === 0 ? 'bg-yellow-500 text-black' :
-                          index === 1 ? 'bg-slate-400 text-black' :
-                          index === 2 ? 'bg-amber-700 text-white' :
-                          'bg-slate-700 text-slate-400'
-                        }`}>
-                          {item.rank}
-                        </div>
+                        <RankBadge rank={item.rank} size="lg" />
 
-                        {/* Avatar */}
-                        <AvatarDisplay avatar={p.avatar} name={p.name} size="md" />
+                        {/* Avatar — bigger with frame */}
+                        <AvatarDisplay avatar={p.avatar} name={p.name} equippedFrame={pFrame} unlockedFrames={pFrames} size="lg" />
 
                         {/* Player info */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <span className="font-bold text-sm truncate">{p.name}</span>
+                            <span className="font-bold text-base truncate">{p.name}</span>
                             {isMe && <span className="text-[9px] font-black bg-blue-600 text-white px-1.5 py-0.5 rounded">B{'ạ'}n</span>}
                           </div>
-                          <div className="flex items-center gap-3 text-[11px] text-slate-500 mt-0.5">
-                            <span>{ICON.check} {p.correctCount}/{totalQ}</span>
-                            <span>{ICON.fire} {p.maxStreak}</span>
-                            {timeSpent !== null && <span>{ICON.timer} {timeSpent}s</span>}
+                          <div className="flex items-center gap-3 text-[11px] text-slate-500 mt-1">
+                            <span className="inline-flex items-center gap-1"><IconTarget className="w-3.5 h-3.5 text-green-400" /> {p.correctCount}/{totalQ}</span>
+                            <span className="inline-flex items-center gap-1"><IconFlame className="w-3.5 h-3.5 text-orange-400" /> {p.maxStreak}</span>
+                            {timeSpent !== null && <span className="inline-flex items-center gap-1"><IconClock className="w-3.5 h-3.5 text-purple-400" /> {timeSpent}s</span>}
                           </div>
                         </div>
 
-                        {/* Score + Status */}
-                        <div className="text-right flex-shrink-0">
-                          <p className="text-lg font-black">{p.score}</p>
+                        {/* Score + Status with XP breakdown tooltip */}
+                        <div className="text-right flex-shrink-0 relative group/score cursor-help">
+                          <p className="text-xl font-black">{p.score}</p>
                           <p className={`text-[10px] font-bold ${isPlayerFinished ? 'text-green-500' : 'text-yellow-500'}`}>
-                            {isPlayerFinished ? `Hoàn thành` : `${p.currentQuestionIndex}/${totalQ}`}
+                            {isPlayerFinished ? `Hoàn thành` : `Đang chơi...`}
                           </p>
+                          {/* XP breakdown tooltip */}
+                          {(() => {
+                            const pStreakBonus = p.maxStreak * 5;
+                            const pCorrectXp = p.score - pStreakBonus;
+                            const pXpPerQ = p.correctCount > 0 ? Math.round(pCorrectXp / p.correctCount) : 0;
+                            return (
+                              <div className="absolute bottom-full right-0 mb-2 w-56 bg-slate-800 border border-slate-700 rounded-xl p-3 text-left opacity-0 group-hover/score:opacity-100 transition-opacity pointer-events-none z-[60] shadow-xl">
+                                <p className="text-white font-bold text-[10px] mb-2">{'Chi tiết XP'}</p>
+                                <div className="space-y-1">
+                                  <div className="flex justify-between text-[10px]">
+                                    <span className="text-slate-400">{'Câu đúng'}</span>
+                                    <span className="text-white font-black">{p.correctCount} {'×'} {pXpPerQ}XP = {pCorrectXp}XP</span>
+                                  </div>
+                                  <div className="flex justify-between text-[10px]">
+                                    <span className="text-slate-400">{'Streak bonus'}</span>
+                                    <span className="text-orange-400 font-black">{p.maxStreak} {'×'} 5XP = {pStreakBonus}XP</span>
+                                  </div>
+                                  <div className="flex justify-between text-[10px] pt-1 border-t border-slate-700">
+                                    <span className="text-slate-400 font-bold">{'Tổng'}</span>
+                                    <span className="text-yellow-400 font-black">{p.score}XP</span>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })()}
                         </div>
                       </div>
                     );
@@ -411,46 +510,51 @@ const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
           )}
         </div>
 
-        {/* Live Leaderboard */}
-        <div className="lg:col-span-1">
-          <div className="bg-slate-900 border border-slate-800 rounded-[20px] overflow-hidden sticky top-4">
-            <div className="px-4 py-3 border-b border-slate-800 bg-slate-800/50">
-              <h4 className="font-black text-sm text-center">{ICON.trophy} B{'Ả'}NG X{'Ế'}P H{'Ạ'}NG</h4>
-            </div>
-            <div className="divide-y divide-slate-800/50">
-              {rankings.slice(0, 6).map((item, index) => (
-                <div
-                  key={item.player.id}
-                  className={`flex items-center gap-2 px-3 py-2.5 ${
-                    item.player.id === playerId ? 'bg-blue-600/10' : ''
-                  }`}
-                >
-                  <span className={`w-5 h-5 flex items-center justify-center text-[10px] font-black rounded-full flex-shrink-0 ${
-                    index === 0 ? 'bg-yellow-500 text-black' :
-                    index === 1 ? 'bg-gray-400 text-black' :
-                    index === 2 ? 'bg-orange-600 text-white' :
-                    'bg-slate-800 text-slate-400'
-                  }`}>
-                    {index + 1}
-                  </span>
-                  <AvatarDisplay avatar={item.player.avatar} name={item.player.name} size="sm" />
-                  <div className="flex-1 min-w-0">
-                    <p className="font-bold text-xs truncate">
-                      {item.player.name}
-                      {item.player.id === playerId && ` (Bạn)`}
-                    </p>
-                  </div>
-                  <div className="text-right flex-shrink-0">
-                    <p className="font-black text-sm">{item.player.score.toLocaleString()}</p>
-                    <p className="text-[9px] text-slate-500">
-                      {item.player.currentQuestionIndex}/{gameState?.questions.length || 0}
-                    </p>
-                  </div>
-                </div>
-              ))}
+        {/* Live Leaderboard — only visible during gameplay, hidden when finished (temp leaderboard shown instead) */}
+        {!hasFinished && (
+          <div className="lg:col-span-1">
+            <div className="bg-slate-900 border border-slate-800 rounded-[20px] overflow-hidden sticky top-4">
+              <div className="px-4 py-3 border-b border-slate-800 bg-slate-800/50">
+                <h4 className="font-black text-sm text-center">{ICON.trophy} B{'Ả'}NG X{'Ế'}P H{'Ạ'}NG</h4>
+              </div>
+              <div className="divide-y divide-slate-800/50">
+                {rankings.slice(0, 6).map((item, index) => {
+                  const p = item.player;
+                  const isMe = p.id === playerId;
+                  const totalQ = gameState?.questions.length || 0;
+                  const isPlayerFinished = p.finishedAt !== undefined;
+                  const sFrame = isMe ? user.equippedFrame : p.equippedFrame;
+                  const sFrames = isMe ? user.unlockedFrames : p.unlockedFrames;
+                  return (
+                    <div
+                      key={p.id}
+                      className={`flex items-center gap-3 px-4 py-3 ${isMe ? 'bg-blue-600/10' : ''}`}
+                    >
+                      <RankBadge rank={index + 1} size="sm" />
+                      <AvatarDisplay avatar={p.avatar} name={p.name} equippedFrame={sFrame} unlockedFrames={sFrames} size="md" />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-bold text-sm truncate">{p.name}</span>
+                          {isMe && <span className="text-[9px] font-black bg-blue-600 text-white px-1.5 py-0.5 rounded">{'Bạn'}</span>}
+                        </div>
+                        <div className="flex items-center gap-2 text-[10px] text-slate-500 mt-0.5">
+                          <span className="inline-flex items-center gap-0.5"><IconTarget className="w-3 h-3 text-green-400" /> {p.correctCount}/{totalQ}</span>
+                          <span className="inline-flex items-center gap-0.5"><IconFlame className="w-3 h-3 text-orange-400" /> {p.maxStreak}</span>
+                        </div>
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        <p className="font-black text-sm">{p.score.toLocaleString()}</p>
+                        <p className={`text-[9px] font-bold ${isPlayerFinished ? 'text-green-500' : 'text-yellow-500'}`}>
+                          {isPlayerFinished ? 'Hoàn thành' : `${p.currentQuestionIndex}/${totalQ}`}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
@@ -461,12 +565,14 @@ const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
 interface MultiplayerResultsProps {
   results: MultiplayerResult[];
   myPlayerId: string;
+  user: UserProfile;
   onLeave: () => void;
 }
 
 const MultiplayerResults: React.FC<MultiplayerResultsProps> = ({
   results,
   myPlayerId,
+  user,
   onLeave
 }) => {
   const [expandedPlayer, setExpandedPlayer] = React.useState<string | null>(null);
@@ -485,7 +591,7 @@ const MultiplayerResults: React.FC<MultiplayerResultsProps> = ({
         ) : (
           <>
             <div className="text-6xl mb-4">
-              {myResult?.rank === 2 ? '🥈' : myResult?.rank === 3 ? '🥉' : '🎮'}
+              {myResult?.rank === 2 ? ICON.silver : myResult?.rank === 3 ? ICON.bronze : ICON.gamepad}
             </div>
             <h1 className="text-4xl font-black mb-2">{`KẾT THÚC!`}</h1>
             <p className="text-slate-400">
@@ -496,30 +602,78 @@ const MultiplayerResults: React.FC<MultiplayerResultsProps> = ({
       </div>
 
       {/* My Stats */}
-      {myResult && (
-        <div className="bg-slate-900 border border-blue-600/30 p-6 rounded-[30px]">
-          <div className="grid grid-cols-4 gap-4 text-center">
-            <div>
-              <p className="text-3xl font-black text-green-500">{myResult.correctCount}</p>
-              <p className="text-xs text-slate-500 font-bold mt-1">{`Trả lời đúng`}</p>
-            </div>
-            <div>
-              <p className="text-3xl font-black text-blue-500">{myResult.score}</p>
-              <p className="text-xs text-slate-500 font-bold mt-1">{`Tổng XP`}</p>
-            </div>
-            <div>
-              <p className="text-3xl font-black text-yellow-500">{myResult.maxStreak}</p>
-              <p className="text-xs text-slate-500 font-bold mt-1">{`Chuỗi max`}</p>
-            </div>
-            <div>
-              <p className="text-3xl font-black text-purple-500">
-                {Math.floor(myResult.timeSpent / 1000)}s
+      {myResult && (() => {
+        const streakBonus = myResult.maxStreak * 5;
+        const correctXp = myResult.score - streakBonus;
+        const xpPerQ = myResult.correctCount > 0 ? Math.round(correctXp / myResult.correctCount) : 0;
+        const rankBonus = myResult.rank === 1 ? 50 : 0;
+        const avgTime = Math.floor(myResult.timeSpent / 1000 / myResult.totalQuestions);
+        const accuracy = myResult.totalQuestions > 0 ? Math.round((myResult.correctCount / myResult.totalQuestions) * 100) : 0;
+        return (
+          <div className="bg-slate-900 border border-blue-600/30 p-4 sm:p-6 rounded-[30px]">
+            {/* Header with formula tooltip */}
+            <div className="relative group/xp cursor-help mb-3 sm:mb-4 text-center">
+              <p className="text-[9px] sm:text-[10px] font-black uppercase text-slate-500 tracking-[0.2em] inline-flex items-center gap-1">
+                {'TỔNG XP NHẬN ĐƯỢC'}
+                <span className="text-slate-600 group-hover/xp:text-slate-400 transition-colors">{'ⓘ'}</span>
               </p>
-              <p className="text-xs text-slate-500 font-bold mt-1">{`Thời gian`}</p>
+              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-slate-800 border border-slate-700 rounded-xl p-3 text-left opacity-0 group-hover/xp:opacity-100 transition-opacity pointer-events-none z-[60] shadow-xl">
+                <p className="text-white font-bold text-[10px] sm:text-xs leading-relaxed">
+                  {'XP nhận được = (Số câu đúng × XP/câu)'}
+                  <br/>
+                  {'+ (Streak cao nhất × 5XP)'}
+                  <br/>
+                  {'+ Điểm thưởng xếp hạng'}
+                </p>
+                <div className="mt-2 pt-2 border-t border-slate-700">
+                  <p className="text-[9px] sm:text-[10px] font-bold text-slate-400">
+                    {'Dễ: '}<span className="text-green-400">{'10XP/câu'}</span>{' · TB: '}<span className="text-yellow-400">{'12XP/câu'}</span>{' · Khó: '}<span className="text-red-400">{'15XP/câu'}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Detailed breakdown */}
+            <div className="space-y-2 sm:space-y-3">
+              <div className="flex justify-between items-center py-1.5 sm:py-2 border-b border-slate-800/50">
+                <span className="text-[10px] sm:text-xs font-bold text-slate-400">{'Tổng số câu trả lời đúng'}</span>
+                <span className="text-xs sm:text-sm font-black text-white">{myResult.correctCount}</span>
+              </div>
+              <div className="flex justify-between items-center py-1.5 sm:py-2 border-b border-slate-800/50">
+                <span className="text-[10px] sm:text-xs font-bold text-slate-400">{'XP mỗi câu đúng'}</span>
+                <span className="text-xs sm:text-sm font-black text-white">{xpPerQ}XP</span>
+              </div>
+              <div className="flex justify-between items-center py-1.5 sm:py-2 border-b border-slate-800/50">
+                <span className="text-[10px] sm:text-xs font-bold text-slate-400">{'Streak cao nhất'}</span>
+                <span className="text-xs sm:text-sm font-black text-orange-400">{myResult.maxStreak}</span>
+              </div>
+              <div className="flex justify-between items-center py-1.5 sm:py-2 border-b border-slate-800/50">
+                <span className="text-[10px] sm:text-xs font-bold text-slate-400">{'Điểm thưởng xếp hạng thách đấu'}</span>
+                <span className="text-xs sm:text-sm font-black text-green-500">{rankBonus}XP</span>
+              </div>
+            </div>
+
+            {/* Total + bottom stats */}
+            <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t-2 border-slate-800 flex flex-col items-center">
+              <p className="text-3xl sm:text-5xl font-black text-yellow-500 tracking-tighter">+{myResult.xpEarned}</p>
+              <div className="grid grid-cols-3 gap-2 sm:gap-4 w-full mt-3 sm:mt-4">
+                <div className="text-center">
+                  <p className="text-[8px] sm:text-[9px] font-black uppercase text-slate-500">{'CHÍNH XÁC'}</p>
+                  <p className="text-xs sm:text-sm font-black text-white">{accuracy}%</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-[8px] sm:text-[9px] font-black uppercase text-slate-500">{'STREAK'}</p>
+                  <p className="text-xs sm:text-sm font-black text-white">{myResult.maxStreak}</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-[8px] sm:text-[9px] font-black uppercase text-slate-500">{'TG/CÂU'}</p>
+                  <p className="text-xs sm:text-sm font-black text-white">{avgTime}s</p>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Full Rankings */}
       <div className="bg-slate-900 border border-slate-800 rounded-[30px] overflow-hidden">
@@ -540,18 +694,15 @@ const MultiplayerResults: React.FC<MultiplayerResultsProps> = ({
                   }`}
                   onClick={() => setExpandedPlayer(isExpanded ? null : result.playerId)}
                 >
-                  {/* Avatar with rank badge */}
-                  <div className="relative flex-shrink-0">
-                    <AvatarDisplay avatar={result.playerAvatar || ''} name={result.playerName} size="md" />
-                    <div className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black border-2 border-slate-900 ${
-                      index === 0 ? 'bg-yellow-500 text-black' :
-                      index === 1 ? 'bg-gray-400 text-black' :
-                      index === 2 ? 'bg-orange-600 text-white' :
-                      'bg-slate-700 text-slate-400'
-                    }`}>
-                      {index === 0 ? ICON.crown : index + 1}
-                    </div>
-                  </div>
+                  {/* Rank badge + Avatar */}
+                  <RankBadge rank={index + 1} />
+                  <AvatarDisplay
+                    avatar={result.playerAvatar || ''}
+                    name={result.playerName}
+                    equippedFrame={result.playerId === myPlayerId ? (user.equippedFrame || result.playerEquippedFrame) : result.playerEquippedFrame}
+                    unlockedFrames={result.playerId === myPlayerId ? (user.unlockedFrames || result.playerUnlockedFrames) : result.playerUnlockedFrames}
+                    size="md"
+                  />
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
@@ -563,9 +714,9 @@ const MultiplayerResults: React.FC<MultiplayerResultsProps> = ({
                       )}
                     </div>
                     <div className="flex gap-3 text-xs text-slate-500 mt-0.5">
-                      <span>{ICON.check} {result.correctCount}/{result.totalQuestions}</span>
-                      <span>{ICON.fire} {result.maxStreak}</span>
-                      <span>{ICON.timer} {Math.floor(result.timeSpent / 1000)}s</span>
+                      <span className="inline-flex items-center gap-1"><IconTarget className="w-3.5 h-3.5 text-green-400" /> {result.correctCount}/{result.totalQuestions}</span>
+                      <span className="inline-flex items-center gap-1"><IconFlame className="w-3.5 h-3.5 text-orange-400" /> {result.maxStreak}</span>
+                      <span className="inline-flex items-center gap-1"><IconClock className="w-3.5 h-3.5 text-purple-400" /> {Math.floor(result.timeSpent / 1000)}s</span>
                     </div>
                   </div>
 

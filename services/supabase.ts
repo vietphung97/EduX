@@ -336,7 +336,7 @@ export async function recalculateAllUsersXp(programStartMs: number, currentWeek:
 export async function getLeaderboard(limit: number = 10): Promise<UserProfile[]> {
   const { data, error } = await supabase
     .from('edux_profiles')
-    .select('id, name, avatar, grade, xp, level, total_games, best_streak, weekly_xp, topic_stats, grade_xp')
+    .select('id, name, avatar, equipped_frame, unlocked_frames, grade, xp, level, total_games, best_streak, weekly_xp, topic_stats, grade_xp')
     .order('xp', { ascending: false })
     .limit(limit);
 
@@ -350,7 +350,7 @@ export async function getLeaderboard(limit: number = 10): Promise<UserProfile[]>
 export async function getWeeklyLeaderboard(limit: number = 10): Promise<UserProfile[]> {
   const { data, error } = await supabase
     .from('edux_profiles')
-    .select('id, name, avatar, grade, xp, level, total_games, best_streak, weekly_xp, topic_stats, grade_xp')
+    .select('id, name, avatar, equipped_frame, unlocked_frames, grade, xp, level, total_games, best_streak, weekly_xp, topic_stats, grade_xp')
     .order('weekly_xp', { ascending: false })
     .limit(limit);
 
@@ -365,7 +365,7 @@ export async function getLeaderboardByGrade(grade: number, limit: number = 10): 
   // Fetch all profiles that have played this grade (have gradeXp for this grade)
   const { data, error } = await supabase
     .from('edux_profiles')
-    .select('id, name, avatar, grade, xp, level, total_games, best_streak, weekly_xp, topic_stats, grade_xp')
+    .select('id, name, avatar, equipped_frame, unlocked_frames, grade, xp, level, total_games, best_streak, weekly_xp, topic_stats, grade_xp')
     .limit(200); // Fetch more to filter client-side
 
   if (error) {

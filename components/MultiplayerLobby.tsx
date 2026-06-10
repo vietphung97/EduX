@@ -122,7 +122,8 @@ const MultiplayerLobby: React.FC<MultiplayerLobbyProps> = ({
           difficulty: selectedDifficulty,
           maxPlayers,
           timeLimit: 300
-        }
+        },
+        { equippedFrame: user.equippedFrame, unlockedFrames: user.unlockedFrames }
       );
 
       if (newRoomCode) {
@@ -164,7 +165,8 @@ const MultiplayerLobby: React.FC<MultiplayerLobbyProps> = ({
         roomCode.toUpperCase(),
         playerId,
         user.name,
-        getPlayerAvatar(user.avatar)
+        getPlayerAvatar(user.avatar),
+        { equippedFrame: user.equippedFrame, unlockedFrames: user.unlockedFrames }
       );
 
       if (result.success) {
@@ -551,6 +553,8 @@ const MultiplayerLobby: React.FC<MultiplayerLobbyProps> = ({
               <AvatarDisplay
                 avatar={player.avatar}
                 name={player.name}
+                equippedFrame={player.equippedFrame}
+                unlockedFrames={player.unlockedFrames}
                 size="md"
               />
               <div className="flex-1 min-w-0">

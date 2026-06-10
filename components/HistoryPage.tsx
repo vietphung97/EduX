@@ -1,21 +1,34 @@
 import React, { useMemo, useState, useRef } from 'react';
-import { GameHistory, Difficulty } from '../types';
+import { GameHistory, Difficulty, UserProfile } from '../types';
 import { XP_PER_QUESTION } from '../utils/gameLogic';
 import AvatarDisplay from './AvatarDisplay';
 
 interface HistoryPageProps {
   history: GameHistory[];
+  user: UserProfile;
+  allUsers: UserProfile[];
   onBack: () => void;
   onRecalculate?: (fixedHistory: GameHistory[], xpDiff: number) => void;
   onRecalculateAll?: () => Promise<{ total: number; fixed: number }>;
 }
 
-const HistoryPage: React.FC<HistoryPageProps> = ({ history, onBack, onRecalculate, onRecalculateAll }) => {
+const HistoryPage: React.FC<HistoryPageProps> = ({ history, user, allUsers, onBack, onRecalculate, onRecalculateAll }) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [showRecalcResult, setShowRecalcResult] = useState<string | null>(null);
   const longPressTimer = useRef<number | null>(null);
   const longPressAllTimer = useRef<number | null>(null);
   const [isRecalculating, setIsRecalculating] = useState(false);
+
+  // Lookup map: player name → frame data (from current leaderboard + current user)
+  const frameByName = useMemo(() => {
+    const map: Record<string, { equippedFrame?: string; unlockedFrames?: string[] }> = {};
+    for (const u of allUsers) {
+      map[u.name] = { equippedFrame: u.equippedFrame, unlockedFrames: u.unlockedFrames };
+    }
+    // Current user always overrides
+    map[user.name] = { equippedFrame: user.equippedFrame, unlockedFrames: user.unlockedFrames };
+    return map;
+  }, [allUsers, user]);
 
   const handleRecalculate = () => {
     if (!onRecalculate) return;
@@ -35,7 +48,7 @@ const HistoryPage: React.FC<HistoryPageProps> = ({ history, onBack, onRecalculat
       if (game.correctCount !== safeCorrect || game.xpEarned !== newXpEarned) {
         fixedCount++;
         totalXpDiff += newXpEarned - game.xpEarned;
-        return { ...game, correctCount: safeCorrect, xpEarned: newXpEarned, score: safeCorrect * xpPerQ };
+        return { ...game, correctCount: safeCorrect, xpEarned: newXpEarned, score: safeCorrect * xpPerQ + game.maxStreak * 5 };
       }
       return game;
     });
@@ -221,7 +234,7 @@ const HistoryPage: React.FC<HistoryPageProps> = ({ history, onBack, onRecalculat
                         <div className="flex items-center gap-1.5 flex-wrap">
                           <span className="font-black text-white text-sm">{'Lớp'} {game.grade}</span>
                           <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase border ${getDifficultyColor(game.difficulty)}`}>
-                            {game.difficulty.split(' ')[0]}
+                            {game.difficulty === 'Trung bình' ? 'TB' : game.difficulty.split(' ')[0]}
                           </span>
                           {game.mode === 'multiplayer' ? (
                             <span className="px-1.5 py-0.5 rounded text-[8px] font-black uppercase border border-blue-500/30 text-blue-400 bg-blue-500/10">
@@ -237,7 +250,7 @@ const HistoryPage: React.FC<HistoryPageProps> = ({ history, onBack, onRecalculat
                               game.myRank === 1 ? 'border-yellow-500/30 text-yellow-400 bg-yellow-500/10' :
                               'border-slate-600/30 text-slate-400 bg-slate-600/10'
                             }`}>
-                              {game.myRank === 1 ? '🏆' : `#${game.myRank}`}/{game.totalPlayers}
+                              {game.myRank}/{game.totalPlayers}
                             </span>
                           )}
                         </div>
@@ -267,61 +280,56 @@ const HistoryPage: React.FC<HistoryPageProps> = ({ history, onBack, onRecalculat
                   </div>
 
                   {/* Desktop Layout */}
-                  <div className="hidden sm:flex items-center gap-6">
-                    <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center font-black text-slate-500">
+                  <div className="hidden sm:flex items-center gap-4">
+                    <div className="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center font-black text-slate-500 text-sm flex-shrink-0">
                       #{idx + 1}
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-3 mb-1">
-                        <span className="font-black text-white">{'Lớp'} {game.grade}</span>
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase border ${getDifficultyColor(game.difficulty)}`}>
-                          {game.difficulty}
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="font-black text-white text-sm">Lớp {game.grade}</span>
+                        <span className={`px-1.5 py-0.5 rounded text-[9px] font-black uppercase border ${getDifficultyColor(game.difficulty)}`}>
+                          {game.difficulty === 'Trung bình' ? 'TB' : game.difficulty.split(' ')[0]}
                         </span>
                         {game.mode === 'multiplayer' ? (
-                          <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase border border-blue-500/30 text-blue-400 bg-blue-500/10">
-                            {'⚔️'} {'Thách đấu'}
+                          <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase border border-blue-500/30 text-blue-400 bg-blue-500/10">
+                            Thách đấu
                           </span>
                         ) : (
-                          <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase border border-slate-600/30 text-slate-400 bg-slate-600/10">
-                            {'Solo'}
+                          <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase border border-slate-600/30 text-slate-400 bg-slate-600/10">
+                            Solo
                           </span>
                         )}
                         {game.myRank && game.totalPlayers && (
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-black border ${
+                          <span className={`px-1.5 py-0.5 rounded text-[9px] font-black border ${
                             game.myRank === 1 ? 'border-yellow-500/30 text-yellow-400 bg-yellow-500/10' :
-                            game.myRank === 2 ? 'border-slate-400/30 text-slate-300 bg-slate-400/10' :
                             'border-slate-600/30 text-slate-400 bg-slate-600/10'
                           }`}>
-                            {game.myRank === 1 ? '🏆' : `#${game.myRank}`}/{game.totalPlayers}
+                            {game.myRank}/{game.totalPlayers}
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-slate-500">
-                        <span>{formatDate(game.playedAt)}</span>
-                        <span className="text-slate-700">{'•'}</span>
-                        <span className="truncate">{game.topics.join(', ')}</span>
-                      </div>
+                      <p className="text-xs text-slate-500 truncate">{formatDate(game.playedAt)} · {game.topics.join(', ')}</p>
                     </div>
 
-                    <div className="flex items-center gap-6 text-center">
+                    <div className="flex items-center gap-5 text-center flex-shrink-0">
                       <div>
-                        <p className="text-lg font-black text-white">{safeCorrectCount}/{game.totalQuestions}</p>
-                        <p className="text-[9px] font-black uppercase text-slate-600">ĐÚNG</p>
+                        <p className="text-base font-black text-white">{safeCorrectCount}/{game.totalQuestions}</p>
+                        <p className="text-[8px] font-black uppercase text-slate-600">Đúng</p>
                       </div>
                       <div>
-                        <p className="text-lg font-black text-yellow-500">+{safeXpEarned}</p>
-                        <p className="text-[9px] font-black uppercase text-slate-600">XP</p>
+                        <p className="text-base font-black text-yellow-500">+{safeXpEarned}</p>
+                        <p className="text-[8px] font-black uppercase text-slate-600">XP</p>
                       </div>
                       <div>
-                        <p className="text-lg font-black text-orange-500">{game.maxStreak}</p>
-                        <p className="text-[9px] font-black uppercase text-slate-600">STREAK</p>
+                        <p className="text-base font-black text-orange-500">{game.maxStreak}</p>
+                        <p className="text-[8px] font-black uppercase text-slate-600">Streak</p>
                       </div>
                       <div>
-                        <p className="text-lg font-black text-blue-500">{formatTime(game.timeSpent)}</p>
-                        <p className="text-[9px] font-black uppercase text-slate-600">THỜI GIAN</p>
+                        <p className="text-base font-black text-blue-500">{formatTime(game.timeSpent)}</p>
+                        <p className="text-[8px] font-black uppercase text-slate-600">Thời gian</p>
                       </div>
-                      <span className="text-slate-600 text-sm ml-2">{isExpanded ? '▲' : '▼'}</span>
+                      <span className="text-slate-600 text-xs">{isExpanded ? '▲' : '▼'}</span>
                     </div>
                   </div>
                 </div>
@@ -357,30 +365,30 @@ const HistoryPage: React.FC<HistoryPageProps> = ({ history, onBack, onRecalculat
                     {game.mode === 'multiplayer' && game.opponents && game.opponents.length > 0 && (
                       <div className="bg-slate-950/60 border border-slate-800/50 rounded-xl p-4 sm:p-5 ml-11 sm:ml-16 mt-3">
                         <p className="text-[9px] sm:text-[10px] font-black uppercase text-slate-500 tracking-widest mb-3">
-                          {'🏆'} {'Bảng xếp hạng'} ({game.totalPlayers} {'người chơi'})
+                          Bảng xếp hạng ({game.totalPlayers} người chơi)
                         </p>
                         <div className="space-y-2">
                           {game.opponents
                             .sort((a, b) => a.rank - b.rank)
                             .map((opp, i) => (
                               <div key={i} className={`flex items-center gap-3 p-2 rounded-lg ${
-                                opp.rank === game.myRank ? 'bg-blue-500/10 border border-blue-500/20' : ''
+                                opp.rank === game.myRank ? 'bg-red-500/10 border border-red-500/20' : ''
                               }`}>
-                                <span className={`w-6 text-center font-black text-sm ${
-                                  opp.rank === 1 ? 'text-yellow-400' :
-                                  opp.rank === 2 ? 'text-slate-300' :
-                                  opp.rank === 3 ? 'text-amber-600' :
-                                  'text-slate-500'
+                                <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 ${
+                                  opp.rank === 1 ? 'bg-yellow-500/20 text-yellow-400 ring-1 ring-yellow-500/40' :
+                                  opp.rank === 2 ? 'bg-slate-400/20 text-slate-300 ring-1 ring-slate-400/40' :
+                                  opp.rank === 3 ? 'bg-amber-600/20 text-amber-500 ring-1 ring-amber-600/40' :
+                                  'bg-slate-800 text-slate-500'
                                 }`}>
-                                  {opp.rank === 1 ? '🥇' : opp.rank === 2 ? '🥈' : opp.rank === 3 ? '🥉' : `#${opp.rank}`}
+                                  {opp.rank}
                                 </span>
-                                <div className="w-8 h-8 flex-shrink-0">
-                                  <AvatarDisplay avatarId={opp.avatar} size="sm" />
+                                <div className="flex-shrink-0">
+                                  <AvatarDisplay avatar={opp.avatar} name={opp.name} equippedFrame={frameByName[opp.name]?.equippedFrame} unlockedFrames={frameByName[opp.name]?.unlockedFrames} size="md" />
                                 </div>
                                 <span className="flex-1 text-xs sm:text-sm font-bold text-white truncate">
                                   {opp.name}
                                   {opp.rank === game.myRank && (
-                                    <span className="text-blue-400 ml-1 text-[10px]">(bạn)</span>
+                                    <span className="text-red-400 ml-1 text-[10px]">(bạn)</span>
                                   )}
                                 </span>
                                 <span className="text-xs font-bold text-green-400">{opp.correctCount}/{game.totalQuestions}</span>

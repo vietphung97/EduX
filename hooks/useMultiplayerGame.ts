@@ -159,6 +159,8 @@ export function useMultiplayerGame({
             playerId: r.player.id,
             playerName: r.player.name,
             playerAvatar: r.player.avatar,
+            playerEquippedFrame: r.player.equippedFrame,
+            playerUnlockedFrames: r.player.unlockedFrames,
             score: r.player.score + rankBonus,
             correctCount: r.player.correctCount,
             totalQuestions: state.questions.length,
@@ -192,10 +194,10 @@ export function useMultiplayerGame({
         if (prev <= 1) {
           if (countdownRef.current) clearInterval(countdownRef.current);
 
-          // Only trigger once
-          if (!transitionTriggered) {
+          // Only host triggers transition to prevent race conditions
+          if (!transitionTriggered && isHost) {
             transitionTriggered = true;
-            console.log('[useMultiplayerGame] Triggering transition to playing');
+            console.log('[useMultiplayerGame] Host triggering transition to playing');
             transitionToPlaying(roomCode).then(result => {
               console.log('[useMultiplayerGame] Transition result:', result);
             }).catch(err => {

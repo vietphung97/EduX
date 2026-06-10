@@ -109,7 +109,8 @@ export async function createRoom(
     difficulty: Difficulty;
     maxPlayers?: number;
     timeLimit?: number;
-  }
+  },
+  frameInfo?: { equippedFrame?: string; unlockedFrames?: string[] }
 ): Promise<string | null> {
   const roomCode = generateRoomCode();
   const key = ROOM_PREFIX + roomCode;
@@ -118,6 +119,8 @@ export async function createRoom(
     id: hostId,
     name: hostName,
     avatar: hostAvatar,
+    equippedFrame: frameInfo?.equippedFrame,
+    unlockedFrames: frameInfo?.unlockedFrames,
     isHost: true,
     isReady: true,
     score: 0,
@@ -198,7 +201,8 @@ export async function joinRoom(
   roomCode: string,
   playerId: string,
   playerName: string,
-  playerAvatar: string
+  playerAvatar: string,
+  frameInfo?: { equippedFrame?: string; unlockedFrames?: string[] }
 ): Promise<{ success: boolean; error?: string }> {
   const state = await getRoomState(roomCode);
 
@@ -227,6 +231,8 @@ export async function joinRoom(
     id: playerId,
     name: playerName,
     avatar: playerAvatar,
+    equippedFrame: frameInfo?.equippedFrame,
+    unlockedFrames: frameInfo?.unlockedFrames,
     isHost: false,
     isReady: false,
     score: 0,
