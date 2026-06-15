@@ -210,6 +210,20 @@ export async function joinRoom(
     return { success: false, error: 'Phòng không tồn tại hoặc đã hết hạn' };
   }
 
+  if (state.gamePhase === 'completed') {
+    return { success: false, error: 'Trận đấu đã kết thúc' };
+  }
+
+  // Người đã có trong phòng → cho join lại bất kể trận đã bắt đầu hay chưa
+  // (fix bug: check "đã bắt đầu" chạy trước nên người chơi cũ không rejoin được).
+  // Lobby sẽ tự chuyển vào màn chơi khi thấy gamePhase countdown/playing.
+  if (state.players[playerId]) {
+    state.players[playerId].lastActivity = Date.now();
+    await updateRoomState(roomCode, { players: state.players });
+    return { success: true };
+  }
+
+  // Người mới thì chỉ vào được khi phòng còn đang chờ
   if (state.gamePhase !== 'waiting') {
     return { success: false, error: 'Trận đấu đã bắt đầu' };
   }
@@ -217,14 +231,6 @@ export async function joinRoom(
   const playerCount = Object.keys(state.players).length;
   if (playerCount >= state.roomSettings.maxPlayers) {
     return { success: false, error: 'Phòng đã đầy' };
-  }
-
-  // Check if player already in room
-  if (state.players[playerId]) {
-    // Update last activity
-    state.players[playerId].lastActivity = Date.now();
-    await updateRoomState(roomCode, { players: state.players });
-    return { success: true };
   }
 
   const newPlayer: PlayerInfo = {
@@ -311,6 +317,13 @@ export async function startGame(
 
   // Only host can start
   if (state.hostId !== hostId) return false;
+
+  // Trận đang đếm ngược/đang chơi thì không cho start lại
+  // (chống reset phòng khi host reload giữa trận)
+  if (state.gamePhase === 'countdown' || state.gamePhase === 'playing') {
+    console.log('Game already in progress, ignoring start request');
+    return false;
+  }
 
   // Check all players ready
   const allReady = Object.values(state.players).every(p => p.isReady);

@@ -11,24 +11,45 @@ import React, { useRef } from 'react';
 import { UserProfile } from '../types';
 import { WEEKLY_FRAMES, getCurrentProgramWeek } from '../constants';
 import { getFrameUnlockCount, getCompletedFrames, getNextMilestone, isFrameUsable } from '../utils/frameLogic';
+import { isAvatarImage, normalizeAvatarUrl } from '../utils/playerSession';
 import AvatarDisplay from './AvatarDisplay';
 import LuckySpin, { SpinPrize } from './LuckySpin';
+
+// ⚠️ TEST: giữ 10s vào card khung avatar để unlock cả 3 mốc (chức năng ẩn cho test).
+// ĐẶT false TRƯỚC KHI CHẠY THẬT!
+const ENABLE_TEST_UNLOCK_HOLD = true;
+const TEST_UNLOCK_HOLD_MS = 10000;
 
 interface RewardsPageProps {
   user: UserProfile;
   onEquipFrame: (frameId: string | undefined) => void;
   onSpinResult?: (prize: SpinPrize, newSpinsUsed: number) => void;
+  /** TEST: unlock toàn bộ mốc của khung (giữ 10s) */
+  onTestUnlockFrame?: (frameId: string) => void;
   onBack: () => void;
   onNavigate?: (view: string) => void;
 }
 
-const RewardsPage: React.FC<RewardsPageProps> = ({ user, onEquipFrame, onSpinResult, onBack, onNavigate }) => {
+const RewardsPage: React.FC<RewardsPageProps> = ({ user, onEquipFrame, onSpinResult, onTestUnlockFrame, onBack, onNavigate }) => {
   const unlockedFrames = user.unlockedFrames || [];
   const equippedFrame = user.equippedFrame;
   const currentWeek = getCurrentProgramWeek();
   const completedFrames = new Set(getCompletedFrames(unlockedFrames));
   const nextMilestone = getNextMilestone(user.weeklyXp, unlockedFrames, currentWeek);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Long-press 10s vào card khung → unlock (TEST)
+  const holdTimerRef = useRef<number | null>(null);
+  const startUnlockHold = (frameId: string) => {
+    if (!ENABLE_TEST_UNLOCK_HOLD || !onTestUnlockFrame) return;
+    holdTimerRef.current = window.setTimeout(() => onTestUnlockFrame(frameId), TEST_UNLOCK_HOLD_MS);
+  };
+  const cancelUnlockHold = () => {
+    if (holdTimerRef.current) {
+      clearTimeout(holdTimerRef.current);
+      holdTimerRef.current = null;
+    }
+  };
 
   const spinsUsedThisWeek =
     (user.lastSpinWeek ?? 0) === (currentWeek ?? 0) ? (user.spinsUsed ?? 0) : 0;
@@ -186,20 +207,27 @@ const RewardsPage: React.FC<RewardsPageProps> = ({ user, onEquipFrame, onSpinRes
             return (
               <div
                 key={frame.id}
-                className={`flex-shrink-0 w-[200px] sm:w-[220px] bg-slate-900 border-2 rounded-[20px] p-4 snap-start transition-all ${
+                className={`flex-shrink-0 w-[200px] sm:w-[220px] bg-slate-900 border-2 rounded-[20px] p-4 snap-start transition-all select-none ${
                   isEquipped ? 'border-opacity-100 shadow-lg' : canUse ? 'border-slate-700' : 'border-slate-800'
                 }`}
                 style={{
                   borderColor: isEquipped ? frame.color : canUse ? frame.color + '60' : undefined,
                   boxShadow: isEquipped ? `0 0 16px ${frame.glowColor}` : undefined,
                 }}
+                // TEST: giữ 10s để unlock khung (ENABLE_TEST_UNLOCK_HOLD)
+                onMouseDown={() => startUnlockHold(frame.id)}
+                onMouseUp={cancelUnlockHold}
+                onMouseLeave={cancelUnlockHold}
+                onTouchStart={() => startUnlockHold(frame.id)}
+                onTouchEnd={cancelUnlockHold}
+                onTouchCancel={cancelUnlockHold}
               >
                 {/* Frame image preview */}
                 <div className="relative w-24 h-24 mx-auto mb-3">
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="w-14 h-14 rounded-full bg-slate-800 flex items-center justify-center overflow-hidden">
-                      {user.avatar && user.avatar.startsWith('http') ? (
-                        <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                      {isAvatarImage(user.avatar) ? (
+                        <img src={normalizeAvatarUrl(user.avatar)} alt={user.name} className="w-full h-full object-cover" />
                       ) : (
                         <span className="text-2xl">{user.avatar || '🎮'}</span>
                       )}
@@ -227,7 +255,7 @@ const RewardsPage: React.FC<RewardsPageProps> = ({ user, onEquipFrame, onSpinRes
                     return (
                       <div key={item.id} className="flex-1">
                         <div className="h-1.5 rounded-full" style={{ background: reached ? frame.color : '#1e293b' }} />
-                        <p className={`text-[8px] text-center mt-0.5 font-bold ${reached ? 'text-slate-400' : 'text-slate-700'}`}>
+                        <p className={`text-[10px] text-center mt-0.5 font-bold ${reached ? 'text-slate-400' : 'text-slate-700'}`}>
                           {item.xpRequired}
                         </p>
                       </div>
@@ -273,15 +301,16 @@ const RewardsPage: React.FC<RewardsPageProps> = ({ user, onEquipFrame, onSpinRes
               <p className="text-4xl mb-2">📜</p>
               <p className="text-xs font-black text-yellow-500 uppercase tracking-widest">Chứng nhận</p>
               <p className="text-[10px] text-slate-500 mt-1">Đấu trường X 2026</p>
-              <div className="mt-3 flex items-center justify-center gap-1">
+              {/* Avatar to, rõ — đặt giữa, tên bên dưới */}
+              <div className="mt-3 flex flex-col items-center gap-1.5">
                 <AvatarDisplay
                   avatar={user.avatar}
                   name={user.name}
                   equippedFrame={equippedFrame}
                   unlockedFrames={unlockedFrames}
-                  size="sm"
+                  size="xl"
                 />
-                <p className="text-xs font-bold text-white truncate">{user.name}</p>
+                <p className="text-sm font-black text-white truncate max-w-full">{user.name}</p>
               </div>
             </div>
 
@@ -289,7 +318,7 @@ const RewardsPage: React.FC<RewardsPageProps> = ({ user, onEquipFrame, onSpinRes
             <div className="flex-1 text-center sm:text-left">
               <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight text-white">📜 Chứng nhận hoàn thành</h3>
               <p className="text-xs text-slate-500 mt-1 mb-4">
-                Hoàn thành tối thiểu 2/8 tuần để nhận chứng nhận
+                Thu thập tối thiểu 2/8 khung avatar để nhận chứng nhận
               </p>
 
               <div className="flex items-center gap-3 mb-3">
@@ -302,8 +331,8 @@ const RewardsPage: React.FC<RewardsPageProps> = ({ user, onEquipFrame, onSpinRes
                 <span className="text-sm font-black text-white">{weeksCompleted}/8</span>
               </div>
               <p className="text-xs text-slate-400 mb-5">
-                Đã hoàn thành <span className="text-yellow-400 font-bold">{weeksCompleted} tuần</span>
-                {weeksCompleted >= 2 ? ' — Đủ điều kiện nhận chứng nhận!' : ` — Cần thêm ${2 - weeksCompleted} tuần nữa`}
+                Đã thu thập <span className="text-yellow-400 font-bold">{weeksCompleted} khung</span>
+                {weeksCompleted >= 2 ? ' — Đủ điều kiện nhận chứng nhận!' : ` — Cần thêm ${2 - weeksCompleted} khung nữa`}
               </p>
 
               <button

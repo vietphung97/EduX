@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { UserProfile, UserLevel, EdusoUserData, StoredUserData } from '../types';
+import { generateAvatarUrl } from '../utils/playerSession';
 import {
   checkEdusoUser,
   getUserData,
@@ -15,6 +16,20 @@ import {
 interface LoginScreenProps {
   onLoginComplete: (user: UserProfile, edusoData?: EdusoUserData) => void;
   existingUser: UserProfile | null;
+}
+
+/**
+ * Đọc profile đã lưu trực tiếp từ localStorage.
+ * Fix bug mất avatar/khung/quà sau reload: prop `existingUser` bị capture stale (null)
+ * trong closure initAuth vì App load profile bất đồng bộ sau khi LoginScreen mount.
+ */
+function getSavedProfile(): UserProfile | null {
+  try {
+    const raw = localStorage.getItem('arena_x_user');
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
 }
 
 const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginComplete, existingUser }) => {
@@ -62,9 +77,12 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginComplete, existingUser
       }
 
       // No Eduso user, check for existing user
-      if (existingUser) {
+      // Đọc từ localStorage thay vì prop để tránh closure stale (prop có thể là null
+      // vì App load profile bất đồng bộ sau khi LoginScreen mount)
+      const savedProfile = existingUser || getSavedProfile();
+      if (savedProfile) {
         // Already have a user, skip login
-        onLoginComplete(existingUser);
+        onLoginComplete(savedProfile);
         return;
       }
 
@@ -91,14 +109,18 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginComplete, existingUser
     addRecentUser(storedData);
 
     // Create or update user profile
-    const userProfile: UserProfile = existingUser ? {
-      ...existingUser,
+    // Dùng localStorage làm fallback vì prop existingUser có thể stale = null
+    // (App load profile bất đồng bộ sau khi LoginScreen mount) — nếu không sẽ
+    // tạo profile mới tinh, mất avatar/unlockedFrames/equippedFrame
+    const baseUser = existingUser || getSavedProfile();
+    const userProfile: UserProfile = baseUser ? {
+      ...baseUser,
       id: edusoData.userId,
       name: userName,
     } : {
       id: edusoData.userId,
       name: userName,
-      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${userName}`,
+      avatar: generateAvatarUrl(userName),
       grade: 6,
       xp: 0,
       level: UserLevel.APPRENTICE,
@@ -133,14 +155,18 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginComplete, existingUser
     switchUser(user);
 
     const userName = user.playerName || user.email || 'User';
-    const userProfile: UserProfile = existingUser ? {
-      ...existingUser,
+    // Chỉ tái sử dụng profile đã lưu nếu đúng cùng user (tránh mang nhầm
+    // avatar/khung/XP của tài khoản khác khi switch user)
+    const saved = getSavedProfile();
+    const baseUser = existingUser || (saved && saved.id === user.userID ? saved : null);
+    const userProfile: UserProfile = baseUser ? {
+      ...baseUser,
       id: user.userID,
       name: userName,
     } : {
       id: user.userID,
       name: userName,
-      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${userName}`,
+      avatar: generateAvatarUrl(userName),
       grade: 6,
       xp: 0,
       level: UserLevel.APPRENTICE,
@@ -177,7 +203,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginComplete, existingUser
     const userProfile: UserProfile = {
       id: newUser.userID,
       name: nicknameInput.trim(),
-      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${nicknameInput}`,
+      avatar: generateAvatarUrl(nicknameInput),
       grade: 6,
       xp: 0,
       level: UserLevel.APPRENTICE,

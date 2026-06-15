@@ -4,7 +4,14 @@ import { Difficulty, UserLevel, WeeklyFrame } from './types';
 // ============ AVATAR FRAME SYSTEM ============
 
 // Ngày khai giảng chương trình hè (Tuần 1 bắt đầu)
-export const PROGRAM_START_DATE = new Date('2026-06-01'); // Tuần 1: 01/07 - 07/07/2026
+// QUAN TRỌNG: dùng offset +07:00 (giờ VN) — KHÔNG dùng `new Date('2026-06-01')`
+// vì JS sẽ parse thành UTC midnight (2026-06-01T00:00:00Z = 07:00 VN), khiến tuần
+// bắt đầu lúc 07:00 sáng thứ Hai thay vì 00:00. Hệ quả: XP chơi từ 00:00–07:00
+// thứ Hai bị tính vào tuần trước, và XP từ 23:00 CN → 07:00 thứ Hai bị dồn nhầm
+// vào tuần đang xem → BXH "tuần này" hiển thị sai (vd: Mon đầu tuần thấy 3,897 XP
+// thay vì 0). Mốc 01/06/2026 đúng là thứ Hai theo lịch VN nên các tuần kế tiếp
+// tự khớp Mon 00:00 → Sun 23:59:59 VN.
+export const PROGRAM_START_DATE = new Date('2026-06-01T00:00:00+07:00'); // Tuần 1: 01/06 - 07/06/2026 (VN)
 
 // XP tuần để mở từng item trong frame
 export const FRAME_XP_MILESTONES = [300, 800, 1300] as const;

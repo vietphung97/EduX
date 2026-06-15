@@ -90,7 +90,7 @@ const ResultAnalytics: React.FC<ResultAnalyticsProps> = ({ result, analysis, onC
         <div className="bg-slate-900/80 border border-slate-800 p-4 sm:p-8 rounded-2xl sm:rounded-[32px] flex flex-col min-h-[200px] sm:min-h-[300px] shadow-xl">
           {/* Header with formula tooltip */}
           <div className="relative group/xp cursor-help mb-3 sm:mb-4 text-center">
-            <p className="text-[9px] sm:text-[10px] font-black uppercase text-slate-500 tracking-[0.2em] inline-flex items-center gap-1">
+            <p className="text-[10px] sm:text-sm font-black uppercase text-slate-500 tracking-[0.2em] inline-flex items-center gap-1">
               TỔNG XP NHẬN ĐƯỢC
               <span className="text-slate-600 group-hover/xp:text-slate-400 transition-colors">ⓘ</span>
             </p>
@@ -101,7 +101,7 @@ const ResultAnalytics: React.FC<ResultAnalyticsProps> = ({ result, analysis, onC
                 + Điểm thưởng xếp hạng
               </p>
               <div className="mt-2 pt-2 border-t border-slate-700">
-                <p className="text-[9px] sm:text-[10px] font-bold text-slate-400">
+                <p className="text-[10px] font-bold text-slate-400">
                   Dễ: <span className="text-green-400">10XP/câu</span> · TB: <span className="text-yellow-400">12XP/câu</span> · Khó: <span className="text-red-400">15XP/câu</span>
                 </p>
               </div>
@@ -112,75 +112,73 @@ const ResultAnalytics: React.FC<ResultAnalyticsProps> = ({ result, analysis, onC
             const xpPerQ = result.correctCount > 0 ? Math.round(xpBreakdown.correctXp / result.correctCount) : 0;
             return (
               <div className="flex-1 flex flex-col justify-center space-y-2 sm:space-y-3">
-                <div className="flex justify-between items-center py-1.5 sm:py-2 border-b border-slate-800/50">
-                  <span className="text-[10px] sm:text-xs font-bold text-slate-400">Tổng số câu trả lời đúng</span>
-                  <span className="text-xs sm:text-sm font-black text-white">{result.correctCount}</span>
+                <div className="flex justify-between items-center gap-3 py-1.5 sm:py-2 border-b border-slate-800/50">
+                  <span className="text-xs sm:text-sm font-bold text-slate-400">Tổng số câu trả lời đúng</span>
+                  <span className="text-sm sm:text-base font-black text-white flex-shrink-0">{result.correctCount}</span>
                 </div>
-                <div className="flex justify-between items-center py-1.5 sm:py-2 border-b border-slate-800/50">
-                  <span className="text-[10px] sm:text-xs font-bold text-slate-400">XP mỗi câu đúng</span>
-                  <span className="text-xs sm:text-sm font-black text-white">{xpPerQ}XP</span>
+                <div className="flex justify-between items-center gap-3 py-1.5 sm:py-2 border-b border-slate-800/50">
+                  <span className="text-xs sm:text-sm font-bold text-slate-400">XP mỗi câu đúng</span>
+                  <span className="text-sm sm:text-base font-black text-white flex-shrink-0">{xpPerQ}XP</span>
                 </div>
-                <div className="flex justify-between items-center py-1.5 sm:py-2 border-b border-slate-800/50">
-                  <span className="text-[10px] sm:text-xs font-bold text-slate-400">Streak cao nhất</span>
-                  <span className="text-xs sm:text-sm font-black text-orange-400">{result.maxStreak}</span>
+                <div className="flex justify-between items-center gap-3 py-1.5 sm:py-2 border-b border-slate-800/50">
+                  <span className="text-xs sm:text-sm font-bold text-slate-400">Streak cao nhất</span>
+                  <span className="text-sm sm:text-base font-black text-orange-400 flex-shrink-0">{result.maxStreak}</span>
                 </div>
-                <div className="flex justify-between items-center py-1.5 sm:py-2 border-b border-slate-800/50">
-                  <span className="text-[10px] sm:text-xs font-bold text-slate-400">Điểm thưởng xếp hạng thách đấu</span>
-                  <span className="text-xs sm:text-sm font-black text-green-500">{xpBreakdown.rankBonus}XP</span>
+                <div className="flex justify-between items-center gap-3 py-1.5 sm:py-2 border-b border-slate-800/50">
+                  <span className="text-xs sm:text-sm font-bold text-slate-400">Điểm thưởng xếp hạng thách đấu</span>
+                  <span className="text-sm sm:text-base font-black text-green-500 flex-shrink-0">{xpBreakdown.rankBonus}XP</span>
                 </div>
               </div>
             );
           })()}
 
           <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t-2 border-slate-800 flex flex-col items-center">
-            <p className="text-3xl sm:text-5xl font-black text-yellow-500 tracking-tighter">+{xpBreakdown.totalXp}</p>
+            <p className="text-4xl sm:text-5xl font-black text-yellow-500 tracking-tighter">+{xpBreakdown.totalXp}</p>
             <div className="grid grid-cols-3 gap-2 sm:gap-4 w-full mt-3 sm:mt-4">
               <div className="text-center">
-                <p className="text-[8px] sm:text-[9px] font-black uppercase text-slate-500">CHÍNH XÁC</p>
-                <p className="text-xs sm:text-sm font-black text-white">{accuracy}%</p>
+                <p className="text-[10px] sm:text-sm font-black uppercase text-slate-500">CHÍNH XÁC</p>
+                <p className="text-sm sm:text-xl font-black text-white">{accuracy}%</p>
               </div>
               <div className="text-center">
-                <p className="text-[8px] sm:text-[9px] font-black uppercase text-slate-500">STREAK</p>
-                <p className="text-xs sm:text-sm font-black text-white">{result.maxStreak}</p>
+                <p className="text-[10px] sm:text-sm font-black uppercase text-slate-500">STREAK</p>
+                <p className="text-sm sm:text-xl font-black text-white">{result.maxStreak}</p>
               </div>
               <div className="text-center">
-                <p className="text-[8px] sm:text-[9px] font-black uppercase text-slate-500">TG/CÂU</p>
-                <p className="text-xs sm:text-sm font-black text-white">{avgTimePerQ}s</p>
+                <p className="text-[10px] sm:text-sm font-black uppercase text-slate-500">TG/CÂU</p>
+                <p className="text-sm sm:text-xl font-black text-white">{avgTimePerQ}s</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Widget 2: Donut Chart */}
-        <div className="bg-slate-900/80 border border-slate-800 p-4 sm:p-8 rounded-2xl sm:rounded-[32px] flex flex-col items-center min-h-[200px] sm:min-h-[300px] shadow-xl">
-          <p className="text-[9px] sm:text-[10px] font-black uppercase text-slate-500 tracking-[0.2em] mb-3 sm:mb-4">TỶ LỆ ĐÚNG/SAI</p>
-          <div className="w-full h-full relative min-h-[120px]">
+        <div className="bg-slate-900/80 border border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-[32px] flex flex-col items-center min-h-[200px] sm:min-h-[260px] shadow-xl">
+          <p className="text-[10px] sm:text-sm font-black uppercase text-slate-500 tracking-[0.2em] mb-3 sm:mb-4">TỶ LỆ ĐÚNG/SAI</p>
+          <div className="w-full flex-1 relative min-h-[120px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={pieData} innerRadius={40} outerRadius={60} paddingAngle={4} dataKey="value" stroke="none">
+                <Pie data={pieData} innerRadius="35%" outerRadius="55%" paddingAngle={4} dataKey="value" stroke="none">
                   {pieData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
                 </Pie>
                 <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: 'none', borderRadius: '12px' }} />
               </PieChart>
             </ResponsiveContainer>
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-slate-800/50 flex items-center justify-center">
-                <span className="text-lg sm:text-xl font-black text-white">{result.correctCount}/{result.totalQuestions}</span>
-              </div>
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+              <span className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{result.correctCount}/{result.totalQuestions}</span>
             </div>
           </div>
         </div>
 
         {/* Widget 3: Category Stats */}
-        <div className="bg-slate-900/80 border border-slate-800 p-4 sm:p-8 rounded-2xl sm:rounded-[32px] flex flex-col min-h-[180px] sm:min-h-[300px] shadow-xl">
-          <p className="text-[9px] sm:text-[10px] font-black uppercase text-slate-500 tracking-[0.2em] mb-3 sm:mb-4">THỐNG KÊ THEO CHỦ ĐỀ</p>
+        <div className="bg-slate-900/80 border border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-[32px] flex flex-col min-h-[180px] sm:min-h-[260px] shadow-xl">
+          <p className="text-[10px] sm:text-sm font-black uppercase text-slate-500 tracking-[0.2em] mb-3 sm:mb-4">THỐNG KÊ THEO CHỦ ĐỀ</p>
           <div className="flex-1 w-full min-h-[100px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={catData} layout="vertical" margin={{ left: -20, right: 10 }}>
+              <BarChart data={catData} layout="vertical" margin={{ left: 0, right: 10 }}>
                 <XAxis type="number" hide domain={[0, 100]} />
-                <YAxis dataKey="name" type="category" tick={{ fill: '#64748b', fontSize: 9, fontWeight: 800 }} axisLine={false} tickLine={false} width={65} />
+                <YAxis dataKey="name" type="category" tick={{ fill: '#cbd5e1', fontSize: 13, fontWeight: 700 }} axisLine={false} tickLine={false} width={120} />
                 <Tooltip cursor={{ fill: '#1e293b' }} contentStyle={{ backgroundColor: '#0f172a', border: 'none', borderRadius: '12px' }} />
-                <Bar dataKey="Tỉlệ" fill="#ef4444" radius={[0, 4, 4, 0]} barSize={14} />
+                <Bar dataKey="Tỉlệ" fill="#ef4444" radius={[0, 6, 6, 0]} barSize={18} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -212,7 +210,7 @@ const ResultAnalytics: React.FC<ResultAnalyticsProps> = ({ result, analysis, onC
         <>
         <div className="bg-slate-950/40 border border-slate-800/50 p-3 sm:p-8 rounded-xl sm:rounded-[30px] relative">
           <div className="absolute -top-3 sm:-top-4 left-3 sm:left-8 bg-slate-900 px-2 sm:px-4 py-0.5 sm:py-1 rounded-full border border-slate-800">
-            <span className="text-[8px] sm:text-[10px] font-black text-red-500 uppercase tracking-widest">PHÂN TÍCH CHI TIẾT</span>
+            <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">PHÂN TÍCH CHI TIẾT</span>
           </div>
           <div
             className="text-slate-200 leading-relaxed text-sm sm:text-lg relative z-10 mt-1 sm:mt-0 prose-invert"
@@ -223,7 +221,7 @@ const ResultAnalytics: React.FC<ResultAnalyticsProps> = ({ result, analysis, onC
         {/* Dynamic Strengths / Weaknesses */}
         <div className="mt-4 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4">
           <div className="flex-1 p-3 sm:p-6 bg-red-600/5 border border-red-600/10 rounded-xl sm:rounded-2xl">
-            <p className="text-[9px] sm:text-[10px] font-black uppercase text-red-500 mb-2 sm:mb-3">ĐIỂM MẠNH</p>
+            <p className="text-[10px] font-black uppercase text-red-500 mb-2 sm:mb-3">ĐIỂM MẠNH</p>
             {strengths.length > 0 ? (
               <ul className="space-y-1.5">
                 {strengths.map((s, i) => (
@@ -238,7 +236,7 @@ const ResultAnalytics: React.FC<ResultAnalyticsProps> = ({ result, analysis, onC
             )}
           </div>
           <div className="flex-1 p-3 sm:p-6 bg-blue-600/5 border border-blue-600/10 rounded-xl sm:rounded-2xl">
-            <p className="text-[9px] sm:text-[10px] font-black uppercase text-blue-500 mb-2 sm:mb-3">ĐIỂM YẾU</p>
+            <p className="text-[10px] font-black uppercase text-blue-500 mb-2 sm:mb-3">ĐIỂM YẾU</p>
             {weaknesses.length > 0 ? (
               <ul className="space-y-1.5">
                 {weaknesses.map((w, i) => (
@@ -266,7 +264,7 @@ const ResultAnalytics: React.FC<ResultAnalyticsProps> = ({ result, analysis, onC
             </div>
             <div>
               <h3 className="text-base sm:text-2xl font-black uppercase tracking-tighter text-white">MẸO GỢI Ý CÁ NHÂN</h3>
-              <p className="text-[9px] sm:text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">Dựa trên kết quả thực tế của bạn</p>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">Dựa trên kết quả thực tế của bạn</p>
             </div>
           </div>
 
@@ -278,7 +276,7 @@ const ResultAnalytics: React.FC<ResultAnalyticsProps> = ({ result, analysis, onC
               >
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-base sm:text-lg">{TIP_ICONS[tip.type] || '💡'}</span>
-                  <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-yellow-500">{tip.label}</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-yellow-500">{tip.label}</p>
                 </div>
                 <div className="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium" dangerouslySetInnerHTML={{ __html: mdToHtml(tip.content) }} />
               </div>
@@ -288,15 +286,15 @@ const ResultAnalytics: React.FC<ResultAnalyticsProps> = ({ result, analysis, onC
           {/* Quick stat bar */}
           <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-slate-800 grid grid-cols-3 gap-2 sm:gap-4">
             <div className="text-center p-2 sm:p-4 bg-slate-950/40 rounded-xl">
-              <p className="text-[8px] sm:text-[10px] font-black uppercase text-slate-500 mb-1">TỔNG THỜI GIAN</p>
+              <p className="text-[10px] font-black uppercase text-slate-500 mb-1">TỔNG THỜI GIAN</p>
               <p className="text-sm sm:text-xl font-black text-white">{result.timeSpent}s</p>
             </div>
             <div className="text-center p-2 sm:p-4 bg-slate-950/40 rounded-xl">
-              <p className="text-[8px] sm:text-[10px] font-black uppercase text-slate-500 mb-1">TB/CÂU</p>
+              <p className="text-[10px] font-black uppercase text-slate-500 mb-1">TB/CÂU</p>
               <p className={`text-sm sm:text-xl font-black ${avgTimePerQ > 25 ? 'text-red-400' : avgTimePerQ < 10 ? 'text-green-400' : 'text-white'}`}>{avgTimePerQ}s</p>
             </div>
             <div className="text-center p-2 sm:p-4 bg-slate-950/40 rounded-xl">
-              <p className="text-[8px] sm:text-[10px] font-black uppercase text-slate-500 mb-1">STREAK TỐT NHẤT</p>
+              <p className="text-[10px] font-black uppercase text-slate-500 mb-1">STREAK TỐT NHẤT</p>
               <p className={`text-sm sm:text-xl font-black ${result.maxStreak >= 5 ? 'text-yellow-400' : 'text-white'}`}>{result.maxStreak} 🔥</p>
             </div>
           </div>
@@ -326,7 +324,7 @@ const ResultAnalytics: React.FC<ResultAnalyticsProps> = ({ result, analysis, onC
                   <div className="flex-1 space-y-2 sm:space-y-4">
                     <div className="flex flex-col sm:flex-row justify-between items-start gap-1 sm:gap-4">
                       <p className="text-sm sm:text-lg font-bold text-slate-100">{q.question}</p>
-                      <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 rounded bg-slate-800 text-[8px] sm:text-[10px] font-black uppercase text-slate-500 tracking-widest whitespace-nowrap">
+                      <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 rounded bg-slate-800 text-[10px] font-black uppercase text-slate-500 tracking-widest whitespace-nowrap">
                         {q.category}
                       </span>
                     </div>
@@ -351,22 +349,25 @@ const ResultAnalytics: React.FC<ResultAnalyticsProps> = ({ result, analysis, onC
                           <div key={opt} className={`px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl border text-xs sm:text-sm ${bgColor} ${textColor} flex items-center justify-between`}>
                             <span>{opt}</span>
                             {isSelected && (
-                              <span className="text-[8px] sm:text-[10px] uppercase font-black ml-1">{isCorrect ? '✓' : '✗'}</span>
+                              <span className="text-[10px] uppercase font-black ml-1">{isCorrect ? '✓' : '✗'}</span>
                             )}
                           </div>
                         );
                       })}
                     </div>
 
-                    <div className="bg-slate-950/80 p-3 sm:p-5 rounded-xl sm:rounded-2xl border border-slate-800/50 shadow-inner">
-                      <div className="flex items-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
-                        <span className="text-blue-500 text-sm sm:text-base">💡</span>
-                        <p className="text-[8px] sm:text-[10px] font-black uppercase text-blue-500 tracking-widest">KIẾN THỨC CỐT LÕI</p>
+                    {/* Ẩn khối nếu không có nội dung (trống/blank) */}
+                    {q.seriousExplanation && q.seriousExplanation.trim() && (
+                      <div className="bg-slate-950/80 p-3 sm:p-5 rounded-xl sm:rounded-2xl border border-slate-800/50 shadow-inner">
+                        <div className="flex items-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
+                          <span className="text-blue-500 text-sm sm:text-base">💡</span>
+                          <p className="text-[10px] font-black uppercase text-blue-500 tracking-widest">KIẾN THỨC CỐT LÕI</p>
+                        </div>
+                        <p className="text-slate-200 text-xs sm:text-sm leading-relaxed font-medium">
+                          {q.seriousExplanation}
+                        </p>
                       </div>
-                      <p className="text-slate-200 text-xs sm:text-sm leading-relaxed font-medium">
-                        {q.seriousExplanation}
-                      </p>
-                    </div>
+                    )}
                   </div>
                 </div>
               </div>

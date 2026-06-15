@@ -103,9 +103,9 @@ const NOTES = [
     color: '#a855f7',
   },
   {
-    emoji: '📋',
+    emoji: '📜',
     title: 'Chứng nhận',
-    desc: 'Hoàn thành đủ yêu cầu của 8 tuần để nhận giấy chứng nhận Huyền thoại Tiếng Anh X.',
+    desc: 'Thu thập tối thiểu 2/8 khung avatar để nhận chứng nhận.',
     color: '#f59e0b',
   },
   {
@@ -126,7 +126,7 @@ const RoadmapPage: React.FC<RoadmapPageProps> = ({ onBack, onGoRewards }) => {
 
       {/* ── HERO ───────────────────────────────────────────────────── */}
       <div className="relative overflow-hidden rounded-[28px] mb-8 mx-4 mt-2"
-        style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)' }}
+        style={{ background: '#030428' }}
       >
         {/* Stars bg */}
         <div className="absolute inset-0 opacity-20 pointer-events-none"
@@ -168,8 +168,7 @@ const RoadmapPage: React.FC<RoadmapPageProps> = ({ onBack, onGoRewards }) => {
               </div>
             </div>
             {/* Hero illustration */}
-            <div className="flex-shrink-0 w-full sm:flex-1 rounded-2xl overflow-hidden opacity-90"
-              style={{ border: '1px solid rgba(255,255,255,0.08)' }}
+            <div className="flex-shrink-0 w-full sm:flex-1 overflow-hidden opacity-90"              
             >
               <img
                 src={`${BASE}roadmap/hero_original.jpg`}
@@ -224,7 +223,7 @@ const RoadmapPage: React.FC<RoadmapPageProps> = ({ onBack, onGoRewards }) => {
                 <img
                   src={`${BASE}roadmap/${step.icon}`}
                   alt={step.title}
-                  style={{ width: 36, height: 36, objectFit: 'contain' }}
+                  style={{ objectFit: 'contain' }}
                 />
               </div>
               <div className="flex-1 min-w-0">
@@ -296,7 +295,7 @@ const RoadmapPage: React.FC<RoadmapPageProps> = ({ onBack, onGoRewards }) => {
                 <div className="relative z-10 flex flex-col h-full p-2.5" style={{ minHeight: 340 }}>
                   {/* Top: week label + titles */}
                   <div className="text-center">
-                    <p className="text-[9px] font-black uppercase tracking-widest mb-1"
+                    <p className="text-[10px] font-black uppercase tracking-widest mb-1"
                       style={{ color: t.accent }}
                     >
                       TUẦN {t.week}
@@ -309,7 +308,7 @@ const RoadmapPage: React.FC<RoadmapPageProps> = ({ onBack, onGoRewards }) => {
                   <div className="flex-1" />
 
                   {/* Bottom: status badge */}
-                  <div className={`text-center py-1.5 rounded-lg text-[8px] font-black uppercase tracking-widest ${
+                  <div className={`text-center py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest ${
                     isCurrent
                       ? 'bg-green-500/30 text-green-400 border border-green-500/30'
                       : isPast
@@ -353,20 +352,20 @@ const RoadmapPage: React.FC<RoadmapPageProps> = ({ onBack, onGoRewards }) => {
                 <div className="relative z-10 flex flex-col h-full p-2.5">
                   {/* Top */}
                   <div>
-                    <p className="text-[9px] font-black uppercase tracking-widest mb-1"
+                    <p className="text-[10px] font-black uppercase tracking-widest mb-1"
                       style={{ color: t.accent }}
                     >
                       TUẦN {t.week}
                     </p>
                     <p className="font-black text-white text-xs leading-tight">{t.en}</p>
-                    <p className="text-[9px] font-bold mt-0.5" style={{ color: t.accent }}>{t.vi}</p>
-                    <p className="text-[7px] text-slate-400 font-bold mt-0.5">{dateRange}</p>
+                    <p className="text-[10px] font-bold mt-0.5" style={{ color: t.accent }}>{t.vi}</p>
+                    <p className="text-[10px] text-slate-400 font-bold mt-0.5">{dateRange}</p>
                   </div>
 
                   <div className="flex-1" />
 
                   {/* Bottom: status */}
-                  <div className={`text-center py-1 rounded-lg text-[8px] font-black uppercase tracking-wider ${
+                  <div className={`text-center py-1 rounded-lg text-[10px] font-black uppercase tracking-wider ${
                     isCurrent
                       ? 'bg-green-500/30 text-green-400 border border-green-500/30'
                       : isPast
@@ -382,30 +381,31 @@ const RoadmapPage: React.FC<RoadmapPageProps> = ({ onBack, onGoRewards }) => {
         </div>
       </div>
 
-      {/* ── LƯU Ý QUAN TRỌNG ───────────────────────────────────────── */}
-      <div className="mx-4 mb-8">
-        <div className="flex items-center gap-2 mb-4">
-          <h3 className="text-sm font-black uppercase tracking-widest text-white">LƯU Ý QUAN TRỌNG</h3>
-          <span className="text-yellow-400 text-sm">✦</span>
-          <div className="flex-1 h-px bg-slate-800" />
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {NOTES.map((note, i) => (
-            <div key={i} className="flex flex-col items-center text-center p-4 bg-slate-900 border border-slate-800 rounded-2xl">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl mb-2"
-                style={{ background: `${note.color}18`, border: `1.5px solid ${note.color}30` }}
-              >{note.emoji}</div>
-              <p className="text-xs font-black text-white mb-1">{note.title}</p>
-              <p className="text-[10px] text-slate-500 leading-relaxed">{note.desc}</p>
-            </div>
-          ))}
+      {/* ── LƯU Ý QUAN TRỌNG (style theo mockup: 1 card lớn, item ngang icon trái) ── */}
+      <div className="mx-4 mb-6">
+        <div className="bg-slate-900/70 border border-slate-800 rounded-[28px] p-6 sm:p-8">
+          <div className="flex items-center gap-2 mb-6">
+            <h3 className="text-base sm:text-lg font-black uppercase tracking-widest text-white">LƯU Ý QUAN TRỌNG</h3>
+            <span className="text-yellow-400">✦</span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">
+            {NOTES.map((note, i) => (
+              <div key={i} className="flex items-start gap-3">
+                <span className="text-3xl sm:text-4xl leading-none shrink-0 drop-shadow-md">{note.emoji}</span>
+                <div className="min-w-0">
+                  <p className="text-sm font-black mb-1.5 text-rose-300">{note.title}</p>
+                  <p className="text-xs text-slate-400 leading-relaxed">{note.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* ── Footer tagline ──────────────────────────────────────────── */}
-      <div className="mx-4 py-4 text-center border border-slate-800 rounded-2xl bg-slate-900/40">
-        <p className="text-xs font-black text-slate-400 uppercase tracking-widest">
-          ⭐ Hãy sẵn sàng chinh phục 8 vùng đất và trở thành Huyền thoại Tiếng Anh X! ⭐
+      {/* ── Footer tagline (không khung, chữ ấm + sao hai bên) ─────────── */}
+      <div className="mx-4 py-5 text-center">
+        <p className="text-sm sm:text-base font-black text-amber-200/90 tracking-wide">
+          🌟 Hãy sẵn sàng chinh phục 8 vùng đất và trở thành Huyền thoại Tiếng Anh X! 🌟
         </p>
       </div>
     </div>

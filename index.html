@@ -8,6 +8,20 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        /* Tăng font-size toàn trang: 16px → 18px (+2). Mọi class text-*/p-*... của
+           Tailwind dùng rem nên tự scale theo tỷ lệ trên toàn bộ app. */
+        html {
+            font-size: 18px;
+        }
+        /* Desktop (≥640px): font tối thiểu 12px — nâng các cỡ hard-code 10/11px.
+           Element đã khai báo sm:text-* riêng thì giữ theo biến thể đó (không đụng).
+           Mobile (<640px) giữ nguyên 10/11px như thiết kế. */
+        @media (min-width: 640px) {
+            .text-\[10px\]:not([class*="sm:text-"]),
+            .text-\[11px\]:not([class*="sm:text-"]) {
+                font-size: 12px;
+            }
+        }
         body {
             font-family: 'Inter', sans-serif;
             background-color: #0f172a; /* Navy Blue */

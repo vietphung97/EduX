@@ -227,40 +227,48 @@ export function clearPlayerSession(): void {
 
 // ============ PLAYER AVATAR ============
 
-const DEFAULT_AVATARS = [
-  'adventurer',
-  'adventurer-neutral',
-  'avataaars',
-  'big-ears',
-  'big-smile',
-  'bottts',
-  'croodles',
-  'fun-emoji',
-  'icons',
-  'identicon',
-  'lorelei',
-  'micah',
-  'miniavs',
-  'open-peeps',
-  'personas',
-  'pixel-art'
-];
+/** Bộ avatar mặc định — nhân vật 3D cắt từ ảnh thiết kế (public/avatars/a1..aN.png) */
+export const LOCAL_AVATAR_COUNT = 83;
+
+export function getLocalAvatarUrl(index: number): string {
+  const n = ((index % LOCAL_AVATAR_COUNT) + LOCAL_AVATAR_COUNT) % LOCAL_AVATAR_COUNT;
+  const base = (import.meta as any).env?.BASE_URL || '/';
+  // Đường dẫn TƯƠNG ĐỐI (không kèm origin) — tránh lỗi khi đổi domain/port
+  return `${base}avatars/a${n + 1}.png`;
+}
+
+/** Avatar là URL ảnh? (http(s) hoặc đường dẫn tương đối bắt đầu bằng '/') */
+export function isAvatarImage(v?: string): boolean {
+  return !!v && (v.startsWith('http') || v.startsWith('/'));
+}
 
 /**
- * Generate avatar URL using DiceBear
+ * Chuẩn hóa avatar cũ đã lưu kèm origin (http://localhost:5555/...)
+ * → đường dẫn tương đối, tránh lỗi origin khi đổi domain.
+ * Chỉ strip origin cho avatar nội bộ (/avatars/); URL ngoài giữ nguyên.
+ */
+export function normalizeAvatarUrl(v: string): string {
+  const m = v.match(/^https?:\/\/[^/]+(\/.+)$/);
+  if (m && m[1].includes('/avatars/')) return m[1];
+  return v;
+}
+
+/**
+ * Generate avatar URL — chọn ổn định theo seed trong bộ avatar mặc định
  */
 export function generateAvatarUrl(seed?: string): string {
-  const style = DEFAULT_AVATARS[Math.floor(Math.random() * DEFAULT_AVATARS.length)];
-  const avatarSeed = seed || getPlayerId();
-  return `https://api.dicebear.com/7.x/${style}/svg?seed=${avatarSeed}`;
+  const s = seed || getPlayerId();
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+  return getLocalAvatarUrl(Math.abs(h));
 }
 
 /**
  * Get player avatar from user profile or generate one
  */
 export function getPlayerAvatar(userAvatar?: string): string {
-  if (userAvatar && userAvatar.startsWith('http')) {
-    return userAvatar;
+  if (userAvatar && isAvatarImage(userAvatar)) {
+    return normalizeAvatarUrl(userAvatar);
   }
   return generateAvatarUrl();
 }

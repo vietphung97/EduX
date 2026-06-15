@@ -108,15 +108,15 @@ const CertificatePage: React.FC<CertificatePageProps> = ({ user, onBack }) => {
             <div className="grid grid-cols-3 gap-3 max-w-sm mx-auto">
               <div className="bg-slate-800/50 p-4 rounded-2xl border border-slate-700/50">
                 <p className="text-2xl font-black text-yellow-400">{user.xp.toLocaleString()}</p>
-                <p className="text-[9px] font-black uppercase text-slate-500 tracking-widest mt-0.5">Tổng XP</p>
+                <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mt-0.5">Tổng XP</p>
               </div>
               <div className="bg-slate-800/50 p-4 rounded-2xl border border-slate-700/50">
                 <p className="text-2xl font-black text-green-400">{user.totalGames}</p>
-                <p className="text-[9px] font-black uppercase text-slate-500 tracking-widest mt-0.5">Trận đấu</p>
+                <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mt-0.5">Trận đấu</p>
               </div>
               <div className="bg-slate-800/50 p-4 rounded-2xl border border-slate-700/50">
                 <p className="text-2xl font-black text-orange-400">{user.bestStreak}🔥</p>
-                <p className="text-[9px] font-black uppercase text-slate-500 tracking-widest mt-0.5">Streak cao nhất</p>
+                <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mt-0.5">Streak cao nhất</p>
               </div>
             </div>
 
@@ -124,12 +124,12 @@ const CertificatePage: React.FC<CertificatePageProps> = ({ user, onBack }) => {
               <span className="text-2xl">{levelConfig.emoji}</span>
               <div className="text-left">
                 <p className="font-black text-white text-sm uppercase">{user.level}</p>
-                <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Cấp độ hiện tại</p>
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Cấp độ hiện tại</p>
               </div>
             </div>
 
             <div>
-              <p className="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-3">
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">
                 KHUNG TUẦN HOÀN THÀNH ({completedWeeks.length}/8)
               </p>
               <div className="flex justify-center gap-2 flex-wrap">
@@ -147,7 +147,7 @@ const CertificatePage: React.FC<CertificatePageProps> = ({ user, onBack }) => {
                     >
                       <span className="text-xl">{frame.emoji}</span>
                       <span
-                        className="text-[8px] font-black uppercase tracking-wider"
+                        className="text-[10px] font-black uppercase tracking-wider"
                         style={done ? { color: frame.color } : { color: '#475569' }}
                       >
                         T{frame.week}
@@ -160,7 +160,7 @@ const CertificatePage: React.FC<CertificatePageProps> = ({ user, onBack }) => {
 
             {unlockedFrames.length > 0 && (
               <div>
-                <p className="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-2">
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">
                   VẬT PHẨM ĐÃ MỜ KHÓA ({unlockedFrames.length} items)
                 </p>
                 <div className="flex justify-center gap-1.5 flex-wrap max-w-xs mx-auto">

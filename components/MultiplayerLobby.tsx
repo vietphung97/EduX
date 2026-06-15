@@ -357,7 +357,7 @@ const MultiplayerLobby: React.FC<MultiplayerLobbyProps> = ({
                   }`}
                 >
                   <span className="text-xs">{d}</span>
-                  <span className={`text-[9px] font-black ${
+                  <span className={`text-[10px] font-black ${
                     selectedDifficulty === d ? 'text-blue-400' : 'text-slate-500'
                   }`}>
                     {XP_PER_QUESTION[d]}XP/câu
@@ -561,12 +561,12 @@ const MultiplayerLobby: React.FC<MultiplayerLobbyProps> = ({
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-black truncate">{player.name}</span>
                   {player.isHost && (
-                    <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-500 text-[9px] font-black rounded uppercase tracking-widest">
+                    <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-500 text-[10px] font-black rounded uppercase tracking-widest">
                       👑 HOST
                     </span>
                   )}
                   {player.id === playerId && (
-                    <span className="px-2 py-0.5 bg-blue-500/20 text-blue-500 text-[9px] font-black rounded uppercase tracking-widest">
+                    <span className="px-2 py-0.5 bg-blue-500/20 text-blue-500 text-[10px] font-black rounded uppercase tracking-widest">
                       Bạn
                     </span>
                   )}

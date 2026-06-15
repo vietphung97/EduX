@@ -7,6 +7,10 @@ import AvatarDisplay from './components/AvatarDisplay';
 const QuestionCard = lazy(() => import('./components/QuestionCard'));
 const ResultAnalytics = lazy(() => import('./components/ResultAnalytics'));
 const ProfilePage = lazy(() => import('./components/ProfilePage'));
+const SpinAdminPage = lazy(() => import('./components/SpinAdminPage'));
+
+/** Hash route ẩn cho trang quản lý vòng quay — chỉ ai biết link mới vào được */
+const SPIN_ADMIN_HASH = '#admin-vongquay';
 const HistoryPage = lazy(() => import('./components/HistoryPage'));
 const MultiplayerLobby = lazy(() => import('./components/MultiplayerLobby'));
 const MultiplayerGame = lazy(() => import('./components/MultiplayerGame'));
@@ -44,17 +48,18 @@ import {
   migrateAllUsersGradeXp,
   recalculateAllUsersXp,
   getUserRank,
-  getWeeklyUserRank
+  getWeeklyUserRank,
+  getUserHistoryStats
 } from './services/supabase';
 
 // Export migration function to window for one-time console run
 (window as any).migrateGradeXp = migrateAllUsersGradeXp;
 import { calculateDetailedXp, playSound, getLevelFromXp, generateRoomCode, DIFFICULTY_MULTIPLIERS, XP_PER_QUESTION } from './utils/gameLogic';
-import { checkNewUnlocks, isFrameUsable } from './utils/frameLogic';
+import { checkNewUnlocks, isFrameUsable, getFrameById } from './utils/frameLogic';
 import { generateQuestions, getExpertAnalysis } from './services/gemini';
 import { sendGameResultToEduso, createEndGameParams } from './utils/edusoApi';
 import { startGame as startMultiplayerGame } from './utils/multiplayerSync';
-import { getPlayerId, clearActiveRoom, checkRejoinableRoom, updateActiveRoomPhase } from './utils/playerSession';
+import { getPlayerId, clearActiveRoom, checkRejoinableRoom, updateActiveRoomPhase, isAvatarImage, normalizeAvatarUrl } from './utils/playerSession';
 
 /**
  * Reset weeklyXp khi tuần chương trình thay đổi.
@@ -72,90 +77,286 @@ function normalizeWeeklyXp(profile: UserProfile): UserProfile {
   return { ...profile, weeklyXpWeek: currentWeek };
 }
 
-/** ── Leaderboard Components — shield badges + ranked avatar frames ── */
+/** ── Leaderboard Components — asset cắt trực tiếp từ ảnh thiết kế gốc (public/lb) ── */
 
-/** Shield-shaped rank badge for top 3, simple circle for 4+ */
-const LbRankBadge: React.FC<{ rank: number; size?: 'sm' | 'md' | 'lg' }> = ({ rank, size = 'md' }) => {
-  const dim = size === 'lg' ? 56 : size === 'md' ? 44 : 36;
-  const cls = size === 'lg' ? 'w-14 h-14' : size === 'md' ? 'w-11 h-11' : 'w-9 h-9';
+const LB_ASSET = ((import.meta as any).env?.BASE_URL || '/') + 'lb/';
 
-  if (rank <= 3) {
-    const p = rank === 1
-      ? { g1: '#FFF8DC', g2: '#FFD700', g3: '#B8860B', g4: '#856316', border: '#A07818', text: '#6B4F00', glow: '0 0 12px rgba(255,215,0,0.5)' }
-      : rank === 2
-      ? { g1: '#F1F5F9', g2: '#CBD5E1', g3: '#94A3B8', g4: '#64748B', border: '#78889A', text: '#1E293B', glow: '0 0 10px rgba(148,163,184,0.4)' }
-      : { g1: '#FEF3C7', g2: '#D97706', g3: '#B45309', g4: '#7C2D12', border: '#92400E', text: '#451A03', glow: '0 0 10px rgba(217,119,6,0.4)' };
+/** Bề rộng card trong ảnh gốc (px nguồn) — dùng để quy đổi % giữ đúng tỉ lệ thiết kế */
+const LB_CARD_W = 3488;
+const LB_BADGE_DIM: Record<string, [number, number]> = {
+  '1': [448, 384], '2': [520, 384], '3': [520, 343], 'n': [520, 384],
+};
+const LB_FRAME_GEO: Record<string, { img: string; w: number; h: number; cx: number; cy: number; r: number }> = {
+  '1': { img: 'frame1.png', w: 679, h: 583, cx: 339.5, cy: 332, r: 216 },
+  '2': { img: 'frame2.png', w: 605, h: 518, cx: 306.6, cy: 284, r: 191 },
+  '3': { img: 'frame3.png', w: 510, h: 510, cx: 255, cy: 269, r: 165 },
+  'n': { img: 'frame_n.png', w: 605, h: 518, cx: 306.6, cy: 284, r: 191 },
+};
+const LB_CARD_STYLE: Record<string, { bg: string; aspect: string; xp: string }> = {
+  '1': { bg: 'card1.jpg', aspect: '3508 / 552', xp: '#FFD700' },
+  '2': { bg: 'card2.jpg', aspect: '3508 / 528', xp: '#F8FAFC' },
+  '3': { bg: 'card3.jpg', aspect: '3508 / 515', xp: '#FB923C' },
+  'n': { bg: 'card_n.jpg', aspect: '3508 / 330', xp: '#CBD5E1' },
+};
 
-    return (
-      <div className={`${cls} flex-shrink-0`} style={{ boxShadow: p.glow }}>
-        <svg viewBox="0 0 56 62" className="w-full h-full">
-          <defs>
-            <linearGradient id={`sh${rank}f`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={p.g1}/><stop offset="40%" stopColor={p.g2}/><stop offset="100%" stopColor={p.g3}/>
-            </linearGradient>
-            <linearGradient id={`sh${rank}b`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={p.g2}/><stop offset="100%" stopColor={p.g4}/>
-            </linearGradient>
-          </defs>
-          {/* Shield outer */}
-          <path d="M28 2 L52 12 L52 34 Q52 50 28 60 Q4 50 4 34 L4 12 Z" fill={`url(#sh${rank}b)`} stroke={p.border} strokeWidth="1.5"/>
-          {/* Shield inner face */}
-          <path d="M28 6 L48 14 L48 33 Q48 47 28 56 Q8 47 8 33 L8 14 Z" fill={`url(#sh${rank}f)`}/>
-          {/* Top edge shine */}
-          <path d="M14 14 Q28 8 42 14" stroke="white" strokeWidth="1.5" fill="none" opacity="0.4" strokeLinecap="round"/>
-          {/* Inner border detail */}
-          <path d="M28 10 L44 17 L44 32 Q44 44 28 52 Q12 44 12 32 L12 17 Z" fill="none" stroke={p.border} strokeWidth="0.6" opacity="0.4"/>
-          {/* Number */}
-          <text x="28" y="33" textAnchor="middle" dominantBaseline="central" fill={p.text} fontWeight="900" fontSize="22" fontFamily="system-ui, sans-serif">{rank}</text>
-        </svg>
-      </div>
-    );
+/** Huy hiệu hạng có cánh — ảnh thật từ thiết kế; hạng 4+ dùng bản xám + số overlay */
+const LbRankBadge: React.FC<{ rank: number; size?: 'sm' | 'md' | 'lg' | 'fluid' }> = ({ rank, size = 'md' }) => {
+  const key = rank >= 1 && rank <= 3 ? String(rank) : 'n';
+  const [bw, bh] = LB_BADGE_DIM[key];
+  const width = size === 'fluid' ? '100%' : size === 'lg' ? 64 : size === 'md' ? 52 : 40;
+  if (rank >= 1 && rank <= 3) {
+    return <img src={`${LB_ASSET}badge${rank}.png`} alt={`Hạng ${rank}`} draggable={false} className="flex-shrink-0 select-none" style={{ width }} />;
   }
-
-  // Rank 4+
-  const fs = size === 'lg' ? 18 : size === 'md' ? 14 : 12;
   return (
-    <div className={`${cls} rounded-full bg-slate-800 text-slate-400 border-2 border-slate-700 flex items-center justify-center font-black flex-shrink-0`} style={{ fontSize: fs }}>
-      {rank}
+    <div className="relative flex-shrink-0 select-none" style={{ width }}>
+      <img src={`${LB_ASSET}badge_n.png`} alt={`Hạng ${rank}`} draggable={false} className="block w-full h-auto" />
+      <svg viewBox={`0 0 ${bw} ${bh}`} className="absolute inset-0 w-full h-full">
+        <text x={bw * 0.487} y={bh * 0.385} textAnchor="middle" dominantBaseline="central" fill="#cbd5e1" fontWeight="900" fontSize={rank > 99 ? 92 : 118} fontFamily="system-ui, sans-serif">{rank}</text>
+      </svg>
     </div>
   );
 };
 
-/** Avatar wrapper with rank-colored ornate frame for top 3 */
+/** Avatar trên BXH — dùng khung avatar người chơi tự trang bị (equippedFrame),
+ *  không dùng khung nguyệt quế cắt từ thiết kế nữa. */
 const LbRankedAvatar: React.FC<{
-  rank: number; avatar: string; name: string;
-  equippedFrame?: string; unlockedFrames?: string[];
-  size?: 'md' | 'lg';
-}> = ({ rank, avatar, name, equippedFrame, unlockedFrames, size = 'md' }) => {
-  const dim = size === 'lg' ? 72 : 56;
-  const ring = size === 'lg' ? 4 : 3;
+  avatar: string;
+  name: string;
+  equippedFrame?: string;
+  unlockedFrames?: string[];
+  fluid?: boolean;
+  px?: number;
+}> = ({ avatar, name, equippedFrame, unlockedFrames, fluid, px }) => {
+  const frame = equippedFrame ? getFrameById(equippedFrame) : null;
+  const showFrame = !!frame && isFrameUsable(frame.id, unlockedFrames || []);
+  const baseUrl = (import.meta as any).env?.BASE_URL || '/';
+  return (
+    <div
+      className="relative flex-shrink-0 select-none"
+      // fluid: lấp đầy parent (parent quyết định kích thước vuông theo chiều cao dòng)
+      style={fluid ? { width: '100%', height: '100%' } : { width: px || 72 }}
+    >
+      {!fluid && <div style={{ paddingTop: '100%' }} />}
+      {/* Avatar tròn ở giữa (~68% như AvatarDisplay để khung ôm khít) */}
+      <div
+        className="absolute rounded-full overflow-hidden bg-slate-800 flex items-center justify-center"
+        style={{ left: '16%', top: '16%', width: '68%', height: '68%' }}
+      >
+        {isAvatarImage(avatar) ? (
+          <img src={normalizeAvatarUrl(avatar)} alt={name} className="w-full h-full object-cover" />
+        ) : (
+          <span style={{ fontSize: '180%' }}>{avatar || '?'}</span>
+        )}
+      </div>
+      {/* Khung của người chơi (nếu có + đủ điều kiện dùng) */}
+      {showFrame && frame && (
+        <img
+          src={`${baseUrl}${frame.frameImage}`}
+          alt={frame.name}
+          draggable={false}
+          className="absolute inset-0 w-full h-full pointer-events-none"
+        />
+      )}
+      {/* Viền mảnh khi không có khung */}
+      {!showFrame && (
+        <div
+          className="absolute rounded-full border-2 border-slate-700"
+          style={{ left: '14%', top: '14%', width: '72%', height: '72%' }}
+        />
+      )}
+    </div>
+  );
+};
 
-  if (rank <= 3) {
-    const ringColor = rank === 1 ? '#FFD700' : rank === 2 ? '#94A3B8' : '#D97706';
-    const glowColor = rank === 1 ? 'rgba(255,215,0,0.35)' : rank === 2 ? 'rgba(148,163,184,0.25)' : 'rgba(217,119,6,0.3)';
-    return (
-      <div className="relative flex-shrink-0" style={{ width: dim + ring * 2, height: dim + ring * 2 }}>
-        {/* Glow ring */}
-        <div className="absolute inset-0 rounded-full" style={{ boxShadow: `0 0 16px ${glowColor}, inset 0 0 8px ${glowColor}`, border: `${ring}px solid ${ringColor}`, borderRadius: '50%' }} />
-        {/* Avatar inside */}
-        <div className="absolute rounded-full overflow-hidden bg-slate-800 flex items-center justify-center" style={{ width: dim, height: dim, top: ring, left: ring }}>
-          {avatar && avatar.startsWith('http') ? (
-            <img src={avatar} alt={name} className="w-full h-full object-cover" />
-          ) : (
-            <span className="text-2xl">{avatar || '?'}</span>
-          )}
+/** Icon + màu cho danh hiệu level */
+const LB_LEVEL_META: Record<string, { icon: string; color: string }> = {
+  'Tập sự': { icon: '⭐', color: '#FB923C' },
+  'Chiến binh': { icon: '🛡️', color: '#60A5FA' },
+  'Bậc thầy': { icon: '👑', color: '#FFD700' },
+  'Tinh Anh': { icon: '🌏', color: '#C084FC' },
+  'Huyền thoại': { icon: '💎', color: '#22D3EE' },
+};
+
+/** Hook: viewport mobile (<640px) — BXH mobile dùng chung 1 kích thước card */
+const useIsMobileViewport = () => {
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 639px)').matches
+  );
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 639px)');
+    const fn = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener('change', fn);
+    return () => mq.removeEventListener('change', fn);
+  }, []);
+  return isMobile;
+};
+
+/** Card thí sinh — nền cắt nguyên bản từ thiết kế (viền, glow, tia sét bake sẵn).
+ *  Desktop: rank 1-3 card lớn, rank 4+ thu nhỏ.
+ *  Mobile: MỌI vị trí dùng chung kích thước như top 3 (số hạng, avatar, chữ to rõ). */
+/** Popup hiện thông tin chi tiết khi click vào avatar trên BXH.
+ *  Avatar phóng to để nhìn rõ hơn, kèm khung, rank badge, tên, danh hiệu, XP. */
+const LbAvatarPopup: React.FC<{
+  profile: UserProfile;
+  rank: number;
+  xp: number;
+  isMe: boolean;
+  xpLabel: string;
+  onClose: () => void;
+}> = ({ profile, rank, xp, isMe, xpLabel, onClose }) => {
+  const meta = LB_LEVEL_META[profile.level] || { icon: '⭐', color: '#FB923C' };
+  const isTop3 = rank >= 1 && rank <= 3;
+  const accentColor = isTop3
+    ? (rank === 1 ? '#FFD700' : rank === 2 ? '#C0D5E8' : '#FF8C42')
+    : '#64748B';
+  // ESC để đóng
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-sm rounded-3xl border border-slate-700/60 bg-gradient-to-b from-slate-900 to-slate-950 p-6 sm:p-8 shadow-2xl"
+        style={{ boxShadow: `0 0 60px ${accentColor}33, 0 20px 60px rgba(0,0,0,0.6)` }}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Nút đóng */}
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-800/80 hover:bg-slate-700 flex items-center justify-center text-slate-300 hover:text-white transition-colors text-lg font-black"
+          aria-label="Đóng"
+        >
+          ×
+        </button>
+
+        {/* Rank badge nhỏ ở góc trên trái */}
+        <div className="absolute -top-3 -left-3 w-16 sm:w-20">
+          <LbRankBadge rank={rank} size="fluid" />
+        </div>
+
+        {/* Avatar lớn ở giữa */}
+        <div className="flex justify-center mb-4 pt-4">
+          <div style={{ width: 200, height: 200 }}>
+            <LbRankedAvatar
+              avatar={profile.avatar}
+              name={profile.name}
+              equippedFrame={profile.equippedFrame}
+              unlockedFrames={profile.unlockedFrames}
+              fluid
+            />
+          </div>
+        </div>
+
+        {/* Tên */}
+        <h2 className="text-center font-black text-white text-xl sm:text-2xl leading-tight px-2 break-words">
+          {profile.name}{isMe ? ' (Tôi)' : ''}
+        </h2>
+
+        {/* Danh hiệu */}
+        <p
+          className="text-center font-black uppercase tracking-widest text-sm mt-2"
+          style={{ color: meta.color }}
+        >
+          {meta.icon} {profile.level}
+        </p>
+
+        {/* Đường phân cách */}
+        <div className="my-4 h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent" />
+
+        {/* Hạng + XP */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="rounded-2xl bg-slate-800/60 border border-slate-700/40 p-3 text-center">
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Hạng</p>
+            <p className="font-mono font-black text-2xl" style={{ color: accentColor }}>#{rank}</p>
+          </div>
+          <div className="rounded-2xl bg-slate-800/60 border border-slate-700/40 p-3 text-center">
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">{xpLabel}</p>
+            <p className="font-mono font-black text-2xl text-amber-400">{xp.toLocaleString()}</p>
+          </div>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
+};
 
-  // Rank 4+ — use standard AvatarDisplay
-  return <AvatarDisplay avatar={avatar} name={name} equippedFrame={equippedFrame} unlockedFrames={unlockedFrames} size={size === 'lg' ? 'lg' : 'md'} />;
+const LbCard: React.FC<{ rank: number; profile: UserProfile; xp: number; isMe: boolean; onAvatarClick?: () => void }> = ({ rank, profile, xp, isMe, onAvatarClick }) => {
+  const isMobile = useIsMobileViewport();
+  const top3 = rank <= 3;
+  const st = LB_CARD_STYLE[top3 ? String(rank) : 'n'];
+  const meta = LB_LEVEL_META[profile.level] || { icon: '⭐', color: '#FB923C' };
+  // Mobile: đồng nhất mọi hạng cùng 1 kích thước (scale 1)
+  const big = top3 || isMobile;
+  const scale = big ? 1 : 0.62;
+  const badgeKey = top3 ? String(rank) : 'n';
+  const badgePct = (LB_BADGE_DIM[badgeKey][0] / LB_CARD_W) * 100 * scale;
+  // Top 3 (và mobile): dùng cùng kích thước khung (679 — lớn nhất) để avatar đều nhau
+  // Rank 4+ desktop: tăng tỷ lệ avatar để nhìn rõ hơn
+  const frameW = big ? 679 : LB_FRAME_GEO['n'].w;
+  const frameScale = big ? 1 : 0.78;
+  const framePct = (frameW / LB_CARD_W) * 100 * frameScale;
+  // Mobile hạng 4+: dùng tỉ lệ card top 3 (mẫu hạng 2) để cao bằng nhau
+  const aspect = !top3 && isMobile ? LB_CARD_STYLE['2'].aspect : st.aspect;
+  return (
+    <div
+      className={`relative w-full ${isMe ? 'ring-2 ring-red-500/60 rounded-lg' : ''}`}
+      style={{ aspectRatio: aspect, backgroundImage: `url(${LB_ASSET}${st.bg})`, backgroundSize: '100% 100%' }}
+    >
+      <div className="absolute inset-0 flex items-center" style={{ paddingLeft: '0.8%', paddingRight: '7.5%' }}>
+        <div className="flex-shrink-0" style={{ width: `${badgePct}%` }}>
+          <LbRankBadge rank={rank} size="fluid" />
+        </div>
+        <div className="flex-shrink-0" style={{ width: '1.2%' }} />
+        {/* Ô avatar: vuông theo CHIỀU CAO dòng (88%) để khung không tràn ra ngoài */}
+        <div className="flex-shrink-0 h-full flex items-center justify-center" style={{ width: `${framePct}%` }}>
+          <div
+            style={{ height: '94%', aspectRatio: '1 / 1', maxWidth: '100%' }}
+            className={onAvatarClick ? 'cursor-pointer transition-transform hover:scale-105 active:scale-95' : ''}
+            onClick={onAvatarClick ? (e) => { e.stopPropagation(); onAvatarClick(); } : undefined}
+            role={onAvatarClick ? 'button' : undefined}
+            aria-label={onAvatarClick ? `Xem chi tiết ${profile.name}` : undefined}
+          >
+            <LbRankedAvatar
+              avatar={profile.avatar}
+              name={profile.name}
+              equippedFrame={profile.equippedFrame}
+              unlockedFrames={profile.unlockedFrames}
+              fluid
+            />
+          </div>
+        </div>
+        <div className="flex-1 min-w-0" style={{ paddingLeft: '2.5%' }}>
+          <p className={`font-black text-white truncate leading-tight ${big ? 'text-sm sm:text-2xl' : 'text-xs sm:text-base'}`}>
+            {profile.name}{isMe ? ' (Tôi)' : ''}
+          </p>
+          <p className={`font-black uppercase tracking-wide ${big ? 'text-[11px] sm:text-sm mt-0.5 sm:mt-1' : 'text-[10px] sm:text-[11px] mt-0.5'}`} style={{ color: meta.color }}>
+            {meta.icon} {profile.level}
+          </p>
+        </div>
+        <div className="text-right flex-shrink-0">
+          <p className={`font-mono font-black leading-none ${big ? 'text-lg sm:text-4xl' : 'text-xs sm:text-lg'}`} style={{ color: st.xp, textShadow: `0 0 14px ${st.xp}55` }}>
+            {xp.toLocaleString()}
+          </p>
+          <p className={`font-black uppercase ${big ? 'text-[10px] sm:text-xs' : 'text-[10px]'} mt-0.5`} style={{ color: st.xp, opacity: 0.75 }}>XP</p>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 const App: React.FC = () => {
+  // Trang quản lý vòng quay (link ẩn, không có trong menu) — render độc lập
+  const [isSpinAdmin] = useState(() => typeof window !== 'undefined' && window.location.hash === SPIN_ADMIN_HASH);
+
   // Navigation & User
   const [view, setView] = useState<'login' | 'home' | 'solo-config' | 'lobby' | 'game' | 'multiplayer-game' | 'results' | 'leaderboard' | 'profile' | 'history' | 'stats' | 'rewards' | 'certificate' | 'roadmap'>('login');
+  // Ref theo dõi view hiện tại cho các callback async (closure cũ không thấy view mới)
+  const viewRef = React.useRef(view);
+  useEffect(() => { viewRef.current = view; }, [view]);
   const [user, setUser] = useState<UserProfile | null>(null);
   const [edusoUser, setEdusoUser] = useState<EdusoUserData | null>(null);
   const gameStartTime = useRef<Date | null>(null);
@@ -218,6 +419,11 @@ const App: React.FC = () => {
   const [weeklyTop5, setWeeklyTop5] = useState<UserProfile[]>([]);
   const [showRankPopup, setShowRankPopup] = useState(false);
 
+  // Popup chi tiết khi click avatar trên BXH
+  const [lbAvatarPopup, setLbAvatarPopup] = useState<{
+    profile: UserProfile; rank: number; xp: number; isMe: boolean; xpLabel: string;
+  } | null>(null);
+
   // Frame unlock popup state
   const [newlyUnlockedItems, setNewlyUnlockedItems] = useState<string[]>([]);
   const [showFrameUnlock, setShowFrameUnlock] = useState(false);
@@ -243,7 +449,12 @@ const App: React.FC = () => {
           getWeeklyLeaderboard(5),
         ]);
         setMyWeeklyRank(rank);
-        setWeeklyTop5(top5);
+        // Hàng của chính mình dùng avatar/khung local (server có thể chưa sync)
+        setWeeklyTop5(top5.map(p =>
+          p.id === user.id
+            ? { ...p, name: user.name, avatar: user.avatar, equippedFrame: user.equippedFrame, unlockedFrames: user.unlockedFrames }
+            : p
+        ));
       };
       fetchWeeklyRank();
     }
@@ -262,10 +473,14 @@ const App: React.FC = () => {
         const weeklyData = await getWeeklyLeaderboard(20);
         setWeeklyLeaderboardData(weeklyData);
 
-        // Fetch actual rank for current user
+        // Fetch actual rank for current user (cả all-time lẫn tuần — mỗi tab dùng rank riêng)
         const gradeFilter = leaderboardGradeFilter === 'all' ? undefined : leaderboardGradeFilter;
-        const rank = await getUserRank(user.id, gradeFilter);
+        const [rank, weeklyRank] = await Promise.all([
+          getUserRank(user.id, gradeFilter),
+          getWeeklyUserRank(user.id),
+        ]);
         setMyRank(rank);
+        setMyWeeklyRank(weeklyRank);
 
         setIsLoadingLeaderboard(false);
       };
@@ -299,6 +514,48 @@ const App: React.FC = () => {
     }
   }, [view, currentQuestions, currentIndex, selectedAnswer, sessionAnswers, timeLeft, gameScore, currentStreak, maxStreak]);
 
+  /**
+   * Đồng bộ XP + số trận của profile = tổng tích lũy từ TOÀN BỘ lịch sử đấu
+   * (server + các trận local chưa sync). Lịch sử là nguồn sự thật;
+   * counter trong profile có thể drift (merge max() nhiều thiết bị, bug cũ).
+   */
+  const reconcileXpWithHistory = async (userId: string) => {
+    try {
+      const serverStats = await getUserHistoryStats(userId);
+      if (!serverStats) return;
+
+      // Cộng thêm các trận chỉ có ở local (chưa sync được lên server)
+      let localHist: GameHistory[] = [];
+      try {
+        localHist = JSON.parse(localStorage.getItem('arena_x_history') || '[]');
+      } catch { /* ignore */ }
+      const localOnly = localHist.filter(g => g && g.id && !serverStats.gameIds.has(g.id));
+      const localOnlyXp = localOnly.reduce((s, g) => s + Math.round(g.xpEarned || 0), 0);
+
+      // Tổng XP = trận đấu (server + local chưa sync) + XP thưởng vòng quay
+      const authoritativeXp = serverStats.totalXp + serverStats.spinXp + localOnlyXp;
+      const authoritativeGames = serverStats.totalGames + localOnly.length;
+      if (authoritativeGames === 0) return; // Chưa có trận nào — không đụng profile
+
+      setUser(prev => {
+        if (!prev || prev.id !== userId) return prev;
+        if (prev.xp === authoritativeXp && prev.totalGames === authoritativeGames) return prev;
+        console.log(`Reconciled XP from history: ${prev.xp} → ${authoritativeXp} (${authoritativeGames} games)`);
+        const fixedUser: UserProfile = {
+          ...prev,
+          xp: authoritativeXp,
+          totalGames: authoritativeGames,
+          level: getLevelFromXp(authoritativeXp).level,
+        };
+        localStorage.setItem('arena_x_user', JSON.stringify(fixedUser));
+        upsertUserProfile(fixedUser).catch(console.error);
+        return fixedUser;
+      });
+    } catch (e) {
+      console.error('Error reconciling XP from history:', e);
+    }
+  };
+
   // Load user, history và khôi phục game state khi app khởi động
   useEffect(() => {
     const initializeApp = async () => {
@@ -322,6 +579,12 @@ const App: React.FC = () => {
               weeklyXp: Math.max(parsedUser.weeklyXp, serverProfile.weeklyXp),
               weeklyXpWeek: parsedUser.weeklyXpWeek || serverProfile.weeklyXpWeek,
               level: serverProfile.xp > parsedUser.xp ? serverProfile.level : parsedUser.level,
+              // Khôi phục khung/quà đã mở: union local + server để không mất mốc nào
+              unlockedFrames: Array.from(new Set([...(parsedUser.unlockedFrames || []), ...(serverProfile.unlockedFrames || [])])),
+              // Avatar/khung: SERVER THẮNG — mọi thay đổi đều upsert ngay nên server
+              // là nguồn chung, đảm bảo đồng nhất giữa điện thoại và máy tính
+              equippedFrame: serverProfile.equippedFrame || parsedUser.equippedFrame,
+              avatar: serverProfile.avatar || parsedUser.avatar,
               topicStats: { ...(serverProfile.topicStats || {}), ...(parsedUser.topicStats || {}) },
               // gradeXp: merge bằng cách lấy max từng grade để không bỏ sót XP từ server
               gradeXp: (() => {
@@ -376,6 +639,11 @@ const App: React.FC = () => {
         } catch (e) {
           console.error('Error syncing history with Supabase:', e);
         }
+
+        // Đồng bộ XP profile = tổng tích lũy từ TOÀN BỘ lịch sử đấu (nguồn sự thật).
+        // Fix bug: XP ở profile lệch với "Tổng XP" trang Lịch sử (counter drift do
+        // merge max() giữa nhiều thiết bị / bug cộng dồn cũ).
+        await reconcileXpWithHistory(parsedUser.id);
       }
 
       // Kiểm tra multiplayer game đang chơi dở (ưu tiên cao hơn solo)
@@ -566,7 +834,12 @@ const App: React.FC = () => {
     if (edusoData) {
       setEdusoUser(edusoData);
     }
-    setView('home');
+    // Chỉ chuyển về home khi đang ở màn login. LoginScreen check Eduso mất ~2s,
+    // trong lúc đó initializeApp có thể đã khôi phục game/phòng đang chơi dở —
+    // không được đè view đó (fix bug: restart khi đang trong phòng bị văng về home).
+    if (viewRef.current === 'login') {
+      setView('home');
+    }
 
     // Sync với Supabase để khôi phục XP trên thiết bị mới / sau khi clear cache
     // Chạy sau khi đã navigate về home để không block UI
@@ -581,11 +854,22 @@ const App: React.FC = () => {
           weeklyXp: Math.max(userProfile.weeklyXp, serverProfile.weeklyXp),
           weeklyXpWeek: userProfile.weeklyXpWeek || serverProfile.weeklyXpWeek,
           level: serverProfile.xp > userProfile.xp ? serverProfile.level : userProfile.level,
+          // Khôi phục khung/quà đã mở từ server (union để không mất mốc nào)
+          unlockedFrames: Array.from(new Set([...(userProfile.unlockedFrames || []), ...(serverProfile.unlockedFrames || [])])),
+          // Avatar/khung: SERVER THẮNG để đồng nhất giữa các thiết bị
+          equippedFrame: serverProfile.equippedFrame || userProfile.equippedFrame,
+          avatar: serverProfile.avatar || userProfile.avatar,
           topicStats: { ...(serverProfile.topicStats || {}), ...(userProfile.topicStats || {}) },
           gradeXp: { ...(serverProfile.gradeXp || {}), ...(userProfile.gradeXp || {}) },
         });
         // Chỉ cập nhật nếu có sự khác biệt thực sự (tránh re-render thừa)
-        if (mergedUser.xp !== userProfile.xp || mergedUser.totalGames !== userProfile.totalGames) {
+        if (
+          mergedUser.xp !== userProfile.xp ||
+          mergedUser.totalGames !== userProfile.totalGames ||
+          mergedUser.avatar !== userProfile.avatar ||
+          mergedUser.equippedFrame !== userProfile.equippedFrame ||
+          (mergedUser.unlockedFrames?.length || 0) !== (userProfile.unlockedFrames?.length || 0)
+        ) {
           setUser(mergedUser);
           localStorage.setItem('arena_x_user', JSON.stringify(mergedUser));
           console.log(`Restored XP from Supabase: ${userProfile.xp} → ${mergedUser.xp}`);
@@ -595,6 +879,9 @@ const App: React.FC = () => {
       // Không block login nếu Supabase lỗi
       console.error('Error syncing profile on login:', e);
     }
+
+    // Đối chiếu XP profile với tổng tích lũy từ lịch sử đấu (nguồn sự thật)
+    reconcileXpWithHistory(userProfile.id);
   };
 
   const handleUpdateAvatar = (newAvatar: string) => {
@@ -602,6 +889,8 @@ const App: React.FC = () => {
     const updatedUser = { ...user, avatar: newAvatar };
     setUser(updatedUser);
     localStorage.setItem('arena_x_user', JSON.stringify(updatedUser));
+    // Sync avatar lên server để khôi phục được sau reload / thiết bị mới
+    upsertUserProfile(updatedUser).catch(console.error);
   };
 
   const handleEquipFrame = (frameId: string | undefined) => {
@@ -614,17 +903,58 @@ const App: React.FC = () => {
     upsertUserProfile(updatedUser).catch(console.error);
   };
 
+  /**
+   * ⚠️ TEST: unlock toàn bộ 3 mốc của một khung (kích hoạt bằng giữ 10s vào card
+   * khung ở trang Quà tặng). Cổng bật/tắt nằm trong RewardsPage (ENABLE_TEST_UNLOCK_HOLD).
+   */
+  const handleTestUnlockFrame = (frameId: string) => {
+    if (!user) return;
+    const frame = WEEKLY_FRAMES.find(f => f.id === frameId);
+    if (!frame) return;
+    const current = new Set(user.unlockedFrames || []);
+    frame.items.forEach(it => current.add(it.id));
+    const updatedUser: UserProfile = { ...user, unlockedFrames: Array.from(current) };
+    setUser(updatedUser);
+    localStorage.setItem('arena_x_user', JSON.stringify(updatedUser));
+    upsertUserProfile(updatedUser).catch(console.error);
+    console.log(`[TEST] Unlocked frame ${frameId}`);
+  };
+
   const handleSpinResult = (prize: import('./components/LuckySpin').SpinPrize, newSpinsUsed: number) => {
     if (!user) return;
     const currentWeek = getCurrentProgramWeek();
-    // Update local state — BE/XP integration sẽ làm sau
+    // Cộng XP thưởng từ vòng quay vào cả tổng XP lẫn XP tuần
+    // (XP tuần dùng để mở khóa avatar frame milestone)
+    const xpBonus = prize.xpBonus || 0;
+    const newXp = user.xp + xpBonus;
+    const newWeeklyXp = user.weeklyXp + xpBonus;
+
+    // Check frame unlock milestones với weeklyXp mới
+    const currentUnlocked = user.unlockedFrames || [];
+    const newUnlocks = checkNewUnlocks(newWeeklyXp, currentUnlocked, currentWeek);
+    const updatedUnlockedFrames = newUnlocks.length > 0
+      ? [...currentUnlocked, ...newUnlocks]
+      : currentUnlocked;
+
     const updatedUser: UserProfile = {
       ...user,
+      xp: newXp,
+      weeklyXp: newWeeklyXp,
+      weeklyXpWeek: currentWeek ?? user.weeklyXpWeek,
+      level: getLevelFromXp(newXp).level,
       spinsUsed: newSpinsUsed,
       lastSpinWeek: currentWeek ?? user.lastSpinWeek,
+      unlockedFrames: updatedUnlockedFrames,
     };
     setUser(updatedUser);
     localStorage.setItem('arena_x_user', JSON.stringify(updatedUser));
+    upsertUserProfile(updatedUser).catch(console.error);
+
+    // XP tuần từ vòng quay có thể chạm mốc mở khung → hiện popup unlock
+    if (newUnlocks.length > 0) {
+      setNewlyUnlockedItems(newUnlocks);
+      setShowFrameUnlock(true);
+    }
   };
 
   const handlePracticeTopic = (topic: string) => {
@@ -1058,6 +1388,15 @@ const App: React.FC = () => {
     setView('home');
   };
 
+  // Trang quản lý vòng quay — link ẩn, render độc lập không qua login/menu
+  if (isSpinAdmin) {
+    return (
+      <Suspense fallback={<div className="min-h-screen bg-slate-950 flex items-center justify-center"><div className="w-8 h-8 border-4 border-red-600/30 border-t-red-600 rounded-full animate-spin" /></div>}>
+        <SpinAdminPage />
+      </Suspense>
+    );
+  }
+
   // Show login screen if no user or view is login
   if (!user || view === 'login') {
     return (
@@ -1075,7 +1414,7 @@ const App: React.FC = () => {
       <main className="container mx-auto px-2 sm:px-4 py-4 sm:py-8 pb-16 md:pb-8">
         <Suspense fallback={<div className="flex items-center justify-center py-24"><div className="w-8 h-8 border-4 border-red-600/30 border-t-red-600 rounded-full animate-spin" /></div>}>
         {view === 'home' && (
-          <div className="max-w-4xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-700">
+          <div className="max-w-5xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-700">
              <div className="text-center space-y-6">
                 <div className="inline-block px-4 py-1.5 bg-red-600/10 border border-red-600/50 rounded-full text-red-500 text-xs font-black uppercase tracking-widest">
                   Đấu trường X
@@ -1101,7 +1440,22 @@ const App: React.FC = () => {
                  unlocked: unlockedFrames.includes(item.id),
                }));
                const maxMilestone = milestones[milestones.length - 1].xp;
-               const progressPct = Math.min(100, (user.weeklyXp / maxMilestone) * 100);
+               // Mốc chia ĐỀU trên thanh (1/3, 2/3, 3/3) cho cân đối;
+               // fill nội suy tuyến tính theo từng đoạn để khớp vị trí mốc
+               const positions = milestones.map((_, i) => ((i + 1) / milestones.length) * 100);
+               const progressPct = (() => {
+                 const xp = user.weeklyXp;
+                 let prevXp = 0;
+                 let prevPos = 0;
+                 for (let i = 0; i < milestones.length; i++) {
+                   if (xp < milestones[i].xp) {
+                     return prevPos + ((xp - prevXp) / (milestones[i].xp - prevXp)) * (positions[i] - prevPos);
+                   }
+                   prevXp = milestones[i].xp;
+                   prevPos = positions[i];
+                 }
+                 return 100;
+               })();
                return (
                  <div
                    className="bg-slate-900 border border-slate-800 rounded-[28px] p-6 cursor-pointer hover:border-purple-700/40 transition-all"
@@ -1120,9 +1474,9 @@ const App: React.FC = () => {
                      <span className="text-[10px] font-black text-purple-400 uppercase tracking-widest">XEM PHẦN THƯỞNG →</span>
                    </div>
                    <div className="relative h-4 bg-slate-800 rounded-full overflow-visible">
-                     {/* Milestone markers */}
+                     {/* Milestone markers — vị trí chia đều, khớp với label bên dưới */}
                      {milestones.map((m, idx) => {
-                       const pct = (m.xp / maxMilestone) * 100;
+                       const pct = positions[idx];
                        const isLast = idx === milestones.length - 1;
                        return (
                          <div key={idx} className="absolute top-1/2 -translate-y-1/2 flex flex-col items-center z-10" style={{ left: `${pct}%`, transform: 'translate(-50%, -50%)' }}>
@@ -1134,7 +1488,7 @@ const App: React.FC = () => {
                              />
                            ) : (
                              <div
-                               className="w-5 h-5 rounded-full border-2 flex items-center justify-center text-[9px]"
+                               className="w-5 h-5 rounded-full border-2 flex items-center justify-center text-[10px]"
                                style={{
                                  background: m.unlocked ? weekFrame.color : '#1e293b',
                                  borderColor: m.unlocked ? weekFrame.color : '#334155',
@@ -1157,9 +1511,14 @@ const App: React.FC = () => {
                        }}
                      />
                    </div>
-                   <div className="flex justify-between mt-4">
+                   {/* Labels đặt thẳng dưới đúng vị trí mốc */}
+                   <div className="relative mt-3 h-4">
                      {milestones.map((m, idx) => (
-                       <span key={idx} className="text-[10px] font-bold" style={{ color: m.unlocked ? weekFrame.color : '#475569' }}>
+                       <span
+                         key={idx}
+                         className="absolute text-[10px] font-bold -translate-x-1/2 whitespace-nowrap"
+                         style={{ left: `${positions[idx]}%`, color: m.unlocked ? weekFrame.color : '#475569' }}
+                       >
                          {m.xp.toLocaleString()}
                        </span>
                      ))}
@@ -1360,7 +1719,7 @@ const App: React.FC = () => {
                           className={`py-3 rounded-2xl font-bold transition-all flex flex-col items-center justify-center gap-1 ${selectedDifficulty === d ? 'bg-slate-700 border-2 border-red-600 text-white shadow-lg shadow-red-600/10' : 'bg-slate-800 border border-slate-700 text-slate-400 hover:bg-slate-700'}`}
                         >
                           <span className="text-xs">{d}</span>
-                          <span className={`text-[9px] font-black tracking-widest uppercase ${selectedDifficulty === d ? 'text-red-400' : 'text-slate-500'}`}>{XP_PER_QUESTION[d]}XP/câu</span>
+                          <span className={`text-[10px] font-black tracking-widest uppercase ${selectedDifficulty === d ? 'text-red-400' : 'text-slate-500'}`}>{XP_PER_QUESTION[d]}XP/câu</span>
                         </button>
                       ))}
                     </div>
@@ -1397,7 +1756,7 @@ const App: React.FC = () => {
                   <div className="flex items-center gap-1 sm:gap-2">
                     <span className="hidden sm:inline">Tiến độ Đấu Trường</span>
                     <span className="sm:hidden">Tiến độ</span>
-                    <span className="px-1.5 sm:px-2 py-0.5 bg-red-600/10 border border-red-600/20 rounded text-[8px] sm:text-[9px] text-red-500 font-black">
+                    <span className="px-1.5 sm:px-2 py-0.5 bg-red-600/10 border border-red-600/20 rounded text-[10px] text-red-500 font-black">
                       {XP_PER_QUESTION[selectedDifficulty]}XP/câu
                     </span>
                   </div>
@@ -1411,7 +1770,7 @@ const App: React.FC = () => {
                 </div>
               </div>
               <div className="text-center px-2 sm:px-4 border-l border-slate-800 relative">
-                 <p className="text-[8px] sm:text-[10px] font-black uppercase text-slate-500">XP</p>
+                 <p className="text-[10px] font-black uppercase text-slate-500">XP</p>
                  <p className="text-lg sm:text-2xl font-black text-white relative">
                    {gameScore.toLocaleString()}
                    {/* Floating +XP — starts at score number, floats up */}
@@ -1426,7 +1785,7 @@ const App: React.FC = () => {
                  </p>
               </div>
               <div className="text-center px-2 sm:px-4 border-l border-slate-800 relative group cursor-help">
-                 <p className="text-[8px] sm:text-[10px] font-black uppercase text-slate-500">Streak</p>
+                 <p className="text-[10px] font-black uppercase text-slate-500">Streak</p>
                  <p className="text-lg sm:text-2xl font-black text-yellow-500 relative">
                    {currentStreak}🔥
                    {/* Floating streak — starts at streak number, floats up */}
@@ -1553,6 +1912,7 @@ const App: React.FC = () => {
             user={user}
             onEquipFrame={handleEquipFrame}
             onSpinResult={handleSpinResult}
+            onTestUnlockFrame={handleTestUnlockFrame}
             onBack={() => setView('profile')}
             onNavigate={(v: string) => setView(v as any)}
           />
@@ -1642,20 +2002,27 @@ const App: React.FC = () => {
         {view === 'leaderboard' && (
           <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6 animate-in fade-in duration-500">
              <div className="text-center">
-               <h2 className="text-lg sm:text-2xl md:text-4xl font-black italic tracking-tighter">BẢNG VÀNG HỆ THỐNG</h2>
+               <div className="flex items-center justify-center gap-2 sm:gap-4">
+                 <img src={`${LB_ASSET}laurel_l.png`} alt="" draggable={false} className="h-8 sm:h-12 w-auto select-none" />
+                 <h2 className="text-lg sm:text-2xl md:text-4xl font-black italic tracking-tighter text-white">BẢNG VÀNG HỆ THỐNG</h2>
+                 <img src={`${LB_ASSET}laurel_r.png`} alt="" draggable={false} className="h-8 sm:h-12 w-auto select-none" />
+               </div>
+               <p className="text-[10px] sm:text-xs font-bold tracking-[0.25em] text-slate-400 uppercase mt-1 sm:mt-2">
+                 {leaderboardTab === 'weekly' ? 'Dựa trên XP tuần này' : 'Dựa trên XP tích lũy toàn thời gian'}
+               </p>
              </div>
 
              {/* All-time / Weekly tabs */}
              <div className="flex gap-2 justify-center">
                <button
                  onClick={() => setLeaderboardTab('alltime')}
-                 className={`px-3 sm:px-5 py-1.5 sm:py-2 rounded-full font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all ${leaderboardTab === 'alltime' ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
+                 className={`px-4 sm:px-5 py-2.5 sm:py-2 rounded-full font-black text-[11px] sm:text-xs uppercase tracking-widest transition-all ${leaderboardTab === 'alltime' ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
                >
                  Toàn thời gian
                </button>
                <button
                  onClick={() => setLeaderboardTab('weekly')}
-                 className={`px-3 sm:px-5 py-1.5 sm:py-2 rounded-full font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all ${leaderboardTab === 'weekly' ? 'bg-amber-500 text-black' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
+                 className={`px-4 sm:px-5 py-2.5 sm:py-2 rounded-full font-black text-[11px] sm:text-xs uppercase tracking-widest transition-all ${leaderboardTab === 'weekly' ? 'bg-amber-500 text-black' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
                >
                  ⚡ Tuần này
                </button>
@@ -1667,7 +2034,7 @@ const App: React.FC = () => {
                  <div className="flex gap-1.5 sm:gap-2 justify-start sm:justify-center min-w-max sm:min-w-0 sm:flex-wrap">
                    <button
                      onClick={() => setLeaderboardGradeFilter('all')}
-                     className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-bold text-xs sm:text-sm transition-all whitespace-nowrap ${leaderboardGradeFilter === 'all' ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
+                     className={`px-4 py-2.5 sm:py-2 rounded-full font-bold text-xs sm:text-sm transition-all whitespace-nowrap ${leaderboardGradeFilter === 'all' ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
                    >
                      Toàn bộ
                    </button>
@@ -1675,7 +2042,7 @@ const App: React.FC = () => {
                      <button
                        key={grade}
                        onClick={() => setLeaderboardGradeFilter(grade)}
-                       className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-bold text-xs sm:text-sm transition-all whitespace-nowrap ${leaderboardGradeFilter === grade ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
+                       className={`px-4 py-2.5 sm:py-2 rounded-full font-bold text-xs sm:text-sm transition-all whitespace-nowrap ${leaderboardGradeFilter === grade ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
                      >
                        Khối {grade}
                      </button>
@@ -1687,7 +2054,15 @@ const App: React.FC = () => {
              {/* Render leaderboard list (shared logic) */}
              {(() => {
                const isWeekly = leaderboardTab === 'weekly';
-               const rawData = isWeekly ? weeklyLeaderboardData : leaderboardData;
+               // Rank của tôi theo đúng tab đang xem (tuần ≠ tích lũy)
+               const myTabRank = isWeekly ? myWeeklyRank : myRank;
+               // Hàng của chính mình luôn dùng avatar/khung từ profile local
+               // (server có thể giữ avatar cũ chưa kịp sync)
+               const rawData = (isWeekly ? weeklyLeaderboardData : leaderboardData).map(p =>
+                 p.id === user.id
+                   ? { ...p, name: user.name, avatar: user.avatar, equippedFrame: user.equippedFrame, unlockedFrames: user.unlockedFrames }
+                   : p
+               );
                const isGradeFilter = !isWeekly && leaderboardGradeFilter !== 'all';
 
                const getDisplayXp = (p: UserProfile) => {
@@ -1722,83 +2097,69 @@ const App: React.FC = () => {
                      </div>
                    ) : (
                      <>
-                       {/* Unified Leaderboard List */}
-                       <div className="bg-slate-900/80 border border-slate-800 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl backdrop-blur-sm">
-                         {/* Column header */}
-                         <div className="flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-3 border-b border-slate-700/60 bg-slate-800/40">
-                           <span className="w-9 sm:w-11 text-center text-[10px] sm:text-xs font-black text-slate-500 uppercase tracking-wider">Hạng</span>
-                           <span className="flex-1 text-[10px] sm:text-xs font-black text-slate-500 uppercase tracking-wider pl-1">Thí sinh</span>
-                           <span className="text-[10px] sm:text-xs font-black text-slate-500 uppercase tracking-wider text-right">XP {isWeekly ? 'Tuần' : 'Tích lũy'}</span>
-                         </div>
+                       {/* Column header */}
+                       <div className="flex items-center px-3 sm:px-6">
+                         <span className="w-[88px] sm:w-[180px] text-[10px] sm:text-xs font-black text-slate-500 uppercase tracking-wider">Hạng</span>
+                         <span className="flex-1 text-center text-[10px] sm:text-xs font-black text-slate-500 uppercase tracking-wider">Thí sinh</span>
+                         <span className="text-[10px] sm:text-xs font-black text-slate-500 uppercase tracking-wider text-right">XP {isWeekly ? 'Tuần' : 'Tích lũy'}</span>
+                       </div>
 
-                         {combinedData.map((p, i) => {
+                       {/* Top 3 — featured cards */}
+                       <div className="space-y-3">
+                         {top3.map((p, i) => {
                            const isMe = p.id === user.id;
-                           const levelConfig = LEVEL_CONFIG.find(c => c.level === p.level);
-                           const displayXp = getDisplayXp(p);
-                           const displayRank = isMe && myRank > 0 ? myRank : i + 1;
-                           const isTop3 = displayRank <= 3;
-
+                           const xpVal = getDisplayXp(p);
+                           const xpLabel = isWeekly ? 'XP Tuần' : 'XP Tích Lũy';
                            return (
-                             <div
+                             <LbCard
                                key={p.id}
-                               className={`flex items-center gap-3 sm:gap-4 px-4 sm:px-6 border-b border-slate-800/60 last:border-0 transition-colors ${
-                                 isMe ? 'bg-red-600/8 border-l-2 border-l-red-500' : ''
-                               } ${isTop3 ? 'py-4 sm:py-5' : 'py-3 sm:py-4'}`}
-                             >
-                               {/* Rank badge */}
-                               <LbRankBadge rank={displayRank} size={isTop3 ? 'md' : 'sm'} />
-
-                               {/* Avatar + Info */}
-                               <div className="flex-1 flex items-center gap-3 sm:gap-4 min-w-0">
-                                 <LbRankedAvatar
-                                   rank={displayRank}
-                                   avatar={p.avatar}
-                                   name={p.name}
-                                   equippedFrame={p.equippedFrame}
-                                   unlockedFrames={p.unlockedFrames}
-                                   size={isTop3 ? 'lg' : 'md'}
-                                 />
-                                 <div className="min-w-0">
-                                   <p className={`font-black truncate ${isTop3 ? 'text-sm sm:text-base text-white' : 'text-sm text-slate-200'}`}>
-                                     {p.name}{isMe ? ' (Tôi)' : ''}
-                                   </p>
-                                   <div className="flex items-center gap-1.5 mt-0.5">
-                                     {levelConfig && (
-                                       <span className="text-[9px] sm:text-[10px] font-black uppercase" style={{ color: levelConfig.color }}>
-                                         {levelConfig.title}
-                                       </span>
-                                     )}
-                                     <span className="text-[9px] sm:text-[10px] font-bold text-slate-600">LV.{p.level}</span>
-                                   </div>
-                                 </div>
-                               </div>
-
-                               {/* Grade (optional) */}
-                               {!isGradeFilter && !isWeekly && (
-                                 <div className="text-center w-10 hidden sm:block flex-shrink-0">
-                                   <p className="font-black text-slate-400 text-sm">{p.grade}</p>
-                                   <p className="text-[7px] font-black text-slate-600 uppercase">Khối</p>
-                                 </div>
-                               )}
-
-                               {/* XP */}
-                               <div className="text-right flex-shrink-0">
-                                 <p className={`font-mono font-black ${isTop3 ? 'text-sm sm:text-base text-white' : 'text-sm text-slate-300'}`}>
-                                   {displayXp.toLocaleString()}
-                                 </p>
-                                 <p className="text-[7px] sm:text-[8px] font-black text-slate-600 uppercase">{isWeekly ? 'XP Tuần' : 'XP'}</p>
-                               </div>
-                             </div>
+                               rank={i + 1}
+                               profile={p}
+                               xp={xpVal}
+                               isMe={isMe}
+                               onAvatarClick={() => setLbAvatarPopup({ profile: p, rank: i + 1, xp: xpVal, isMe, xpLabel })}
+                             />
                            );
                          })}
                        </div>
 
-                       {/* My rank banner if not in top 20 */}
-                       {myRank > 20 && (
-                         <div className="bg-red-600/10 border border-red-600/20 rounded-2xl p-4 text-center">
-                           <p className="text-sm font-black text-red-400">Thứ hạng của bạn: #{myRank}</p>
+                       {/* Rank 4+ — card thu nhỏ cùng phong cách thiết kế */}
+                       {rest.length > 0 && (
+                         <div className="space-y-1.5 sm:space-y-2">
+                           {rest.map((p, i) => {
+                             const isMe = p.id === user.id;
+                             const displayRank = isMe && myTabRank > 0 ? myTabRank : i + 4;
+                             // Mobile: chỉ hiện top 5 + hàng của chính mình (desktop hiện đủ)
+                             const hideOnMobile = displayRank > 5 && !isMe;
+                             const xpVal = getDisplayXp(p);
+                             const xpLabel = isWeekly ? 'XP Tuần' : 'XP Tích Lũy';
+                             return (
+                               <div key={p.id} className={hideOnMobile ? 'hidden sm:block' : ''}>
+                                 <LbCard
+                                   rank={displayRank}
+                                   profile={p}
+                                   xp={xpVal}
+                                   isMe={isMe}
+                                   onAvatarClick={() => setLbAvatarPopup({ profile: p, rank: displayRank, xp: xpVal, isMe, xpLabel })}
+                                 />
+                               </div>
+                             );
+                           })}
                          </div>
                        )}
+
+                       {/* My rank banner if not in top 20 */}
+                       {myTabRank > 20 && (
+                         <div className="bg-red-600/10 border border-red-600/20 rounded-2xl p-4 text-center">
+                           <p className="text-sm font-black text-red-400">Thứ hạng của bạn: #{myTabRank}</p>
+                         </div>
+                       )}
+
+                       {/* Footer note */}
+                       <p className="flex items-center justify-center gap-1.5 text-[10px] sm:text-xs text-slate-500 font-semibold pt-1">
+                         <span className="inline-flex w-3.5 h-3.5 rounded-full border border-slate-600 items-center justify-center text-[10px] font-black">i</span>
+                         XP được cập nhật sau mỗi lượt đấu hạng và thách đấu
+                       </p>
                      </>
                    )}
                  </div>
@@ -1872,6 +2233,18 @@ const App: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Popup chi tiết khi click avatar trên BXH */}
+      {lbAvatarPopup && (
+        <LbAvatarPopup
+          profile={lbAvatarPopup.profile}
+          rank={lbAvatarPopup.rank}
+          xp={lbAvatarPopup.xp}
+          isMe={lbAvatarPopup.isMe}
+          xpLabel={lbAvatarPopup.xpLabel}
+          onClose={() => setLbAvatarPopup(null)}
+        />
       )}
 
       {/* Rank Popup */}

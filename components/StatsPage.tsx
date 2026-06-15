@@ -104,28 +104,28 @@ const StatsPage: React.FC<StatsPageProps> = ({ onBack }) => {
           {/* Top KPIs */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="bg-slate-900 border border-slate-800 p-4 sm:p-6 rounded-2xl text-center">
-              <p className="text-[9px] sm:text-[10px] font-black uppercase text-slate-500 tracking-widest mb-2">NGƯỜI CHƠI</p>
+              <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-2">NGƯỜI CHƠI</p>
               <div className="flex items-baseline justify-center gap-1">
                 <p className="text-2xl sm:text-3xl font-black text-cyan-400">{formatNumber(stats?.activePlayers ?? 0)}</p>
                 <p className="text-base sm:text-lg font-black text-slate-600">/</p>
                 <p className="text-base sm:text-lg font-black text-slate-400">{formatNumber(stats?.totalPlayers ?? 0)}</p>
               </div>
-              <p className="text-[9px] text-slate-600 mt-1 uppercase font-bold">active / tổng tài khoản</p>
+              <p className="text-[10px] text-slate-600 mt-1 uppercase font-bold">active / tổng tài khoản</p>
             </div>
             <div className="bg-slate-900 border border-slate-800 p-4 sm:p-6 rounded-2xl text-center">
-              <p className="text-[9px] sm:text-[10px] font-black uppercase text-slate-500 tracking-widest mb-2">NGƯỜI CHƠI MỚI</p>
+              <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-2">NGƯỜI CHƠI MỚI</p>
               <p className="text-2xl sm:text-3xl font-black text-green-500">{formatNumber(stats?.newPlayers ?? 0)}</p>
-              <p className="text-[9px] text-slate-600 mt-1 uppercase font-bold">{PERIOD_LABELS[period].toLowerCase()}</p>
+              <p className="text-[10px] text-slate-600 mt-1 uppercase font-bold">{PERIOD_LABELS[period].toLowerCase()}</p>
             </div>
             <div className="bg-slate-900 border border-slate-800 p-4 sm:p-6 rounded-2xl text-center">
-              <p className="text-[9px] sm:text-[10px] font-black uppercase text-slate-500 tracking-widest mb-2">TỔNG LƯỢT CHƠI</p>
+              <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-2">TỔNG LƯỢT CHƠI</p>
               <p className="text-2xl sm:text-3xl font-black text-yellow-500">{formatNumber(totalPlays)}</p>
-              <p className="text-[9px] text-slate-600 mt-1 uppercase font-bold">{PERIOD_LABELS[period].toLowerCase()}</p>
+              <p className="text-[10px] text-slate-600 mt-1 uppercase font-bold">{PERIOD_LABELS[period].toLowerCase()}</p>
             </div>
             <div className="bg-slate-900 border border-slate-800 p-4 sm:p-6 rounded-2xl text-center">
-              <p className="text-[9px] sm:text-[10px] font-black uppercase text-slate-500 tracking-widest mb-2">TỔNG XP PHÁT</p>
+              <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-2">TỔNG XP PHÁT</p>
               <p className="text-2xl sm:text-3xl font-black text-purple-500">{formatNumber(stats?.totalXpAwarded ?? 0)}</p>
-              <p className="text-[9px] text-slate-600 mt-1 uppercase font-bold">{PERIOD_LABELS[period].toLowerCase()}</p>
+              <p className="text-[10px] text-slate-600 mt-1 uppercase font-bold">{PERIOD_LABELS[period].toLowerCase()}</p>
             </div>
           </div>
 
@@ -210,7 +210,7 @@ const StatsPage: React.FC<StatsPageProps> = ({ onBack }) => {
 
           {/* Accuracy */}
           <div className="bg-slate-900 border border-slate-800 p-4 sm:p-6 rounded-2xl space-y-2">
-            <p className="text-[9px] sm:text-[10px] font-black uppercase text-slate-500 tracking-widest">Độ chính xác trung bình</p>
+            <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Độ chính xác trung bình</p>
             <p className="text-3xl font-black text-green-400">{stats?.avgAccuracy ?? 0}%</p>
             <p className="text-xs text-slate-600 font-bold">Trên toàn bộ câu trả lời trong kỳ</p>
           </div>

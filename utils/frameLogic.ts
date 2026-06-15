@@ -102,11 +102,16 @@ export function getNextMilestone(
  * Kiểm tra frame có thể sử dụng không.
  * Điều kiện: đạt đủ 3 mốc XP (cả 3 items unlocked) VÀ tuần đó đã đến/qua.
  */
+// ⚠️ TEST: bỏ chặn "tuần chưa đến" để trang bị được khung unlock bằng giữ 10s.
+// ĐẶT false TRƯỚC KHI CHẠY THẬT!
+const TEST_IGNORE_WEEK_GATE = true;
+
 export function isFrameUsable(frameId: string, unlockedFrames: string[]): boolean {
   const frame = WEEKLY_FRAMES.find(f => f.id === frameId);
   if (!frame) return false;
-  const currentWeek = getCurrentProgramWeek();
   const allItemsUnlocked = frame.items.every(item => unlockedFrames.includes(item.id));
+  if (TEST_IGNORE_WEEK_GATE) return allItemsUnlocked;
+  const currentWeek = getCurrentProgramWeek();
   // Tuần đã đến hoặc đã qua (currentWeek >= frame.week), hoặc chương trình đã kết thúc (currentWeek === null nhưng đã qua)
   const weekReached = currentWeek !== null ? currentWeek >= frame.week : true; // null = chương trình kết thúc → tất cả tuần đều "đã qua"
   return allItemsUnlocked && weekReached;

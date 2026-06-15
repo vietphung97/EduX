@@ -6,6 +6,7 @@
 
 import React from 'react';
 import { getFrameById, isFrameUsable } from '../utils/frameLogic';
+import { isAvatarImage, normalizeAvatarUrl } from '../utils/playerSession';
 
 interface AvatarDisplayProps {
   avatar: string;
@@ -20,7 +21,7 @@ const SIZE_MAP = {
   sm: { container: 40, avatar: 28 },
   md: { container: 52, avatar: 36 },
   lg: { container: 84, avatar: 58 },
-  xl: { container: 136, avatar: 94 },
+  xl: { container: 172, avatar: 128 },
 };
 
 const AvatarDisplay: React.FC<AvatarDisplayProps> = ({
@@ -54,8 +55,8 @@ const AvatarDisplay: React.FC<AvatarDisplayProps> = ({
           transform: 'translate(-50%, -50%)',
         }}
       >
-        {avatar && avatar.startsWith('http') ? (
-          <img src={avatar} alt={name} className="w-full h-full object-cover" />
+        {isAvatarImage(avatar) ? (
+          <img src={normalizeAvatarUrl(avatar)} alt={name} className="w-full h-full object-cover" />
         ) : (
           <span className="w-full h-full flex items-center justify-center text-lg">{avatar || '🎮'}</span>
         )}

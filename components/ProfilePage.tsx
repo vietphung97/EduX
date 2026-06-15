@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { UserProfile, UserLevel } from '../types';
 import { LEVEL_CONFIG } from '../constants';
+import { getLocalAvatarUrl, LOCAL_AVATAR_COUNT } from '../utils/playerSession';
 import AvatarDisplay from './AvatarDisplay';
 
 interface ProfilePageProps {
@@ -15,8 +16,7 @@ interface ProfilePageProps {
 
 const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateAvatar, onBack, onPracticeTopic, onViewRewards, onViewCertificate }) => {
   const [isChanging, setIsChanging] = useState(false);
-
-  // Data is already loaded from user props - no need to fetch
+  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
 
   const currentLevelConfig = LEVEL_CONFIG.find(c => user.xp >= c.minXp && user.xp <= c.maxXp) || LEVEL_CONFIG[0];
   const nextLevelConfig = LEVEL_CONFIG[LEVEL_CONFIG.indexOf(currentLevelConfig) + 1];
@@ -28,13 +28,17 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateAvatar, onBack,
     return Math.min(Math.max((currentProgress / range) * 100, 0), 100);
   };
 
-  const generateNewAvatar = () => {
-    const randomSeed = Math.random().toString(36).substring(7);
-    const newAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${randomSeed}`;
-    onUpdateAvatar(newAvatar);
+  const handleSelectAvatar = (index: number) => {
+    onUpdateAvatar(getLocalAvatarUrl(index));
     setIsChanging(true);
+    setShowAvatarPicker(false);
     setTimeout(() => setIsChanging(false), 500);
   };
+
+  const currentAvatarIndex = (() => {
+    const m = (user.avatar || '').match(/avatars\/a(\d+)\.png/);
+    return m ? parseInt(m[1], 10) - 1 : -1;
+  })();
 
   // Explicit typing for topic statistics
   const topicStats = (Object.entries(user.topicStats || {}) as [string, { correct: number; total: number }][])
@@ -64,12 +68,16 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateAvatar, onBack,
       </div>
 
       {/* Hero Stats Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8">
         {/* Profile Card */}
-        <div className="bg-slate-900 border border-slate-800 rounded-[40px] p-8 shadow-2xl relative overflow-hidden">
+        <div className="bg-slate-900 border border-slate-800 rounded-3xl sm:rounded-[40px] p-5 sm:p-8 shadow-2xl relative overflow-hidden">
           <div className="absolute -top-24 -right-24 w-64 h-64 bg-red-600/10 rounded-full blur-3xl" />
           <div className="relative z-10 flex flex-col items-center gap-6">
             <div className={`relative group transition-all ${isChanging ? 'scale-90 opacity-50' : 'scale-100'}`}>
+              {/* Tooltip */}
+              <span className="absolute -bottom-7 left-1/2 -translate-x-1/2 text-[10px] font-black text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none">
+                Đổi ảnh đại diện
+              </span>
               <AvatarDisplay
                 avatar={user.avatar}
                 name={user.name}
@@ -78,11 +86,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateAvatar, onBack,
                 size="xl"
               />
               <button
-                onClick={generateNewAvatar}
-                className="absolute bottom-1 right-1 bg-red-600 hover:bg-red-700 p-2.5 rounded-full shadow-lg transition-all active:scale-90 z-10"
+                onClick={() => setShowAvatarPicker(true)}
+                className="absolute bottom-1 right-1 bg-red-600 hover:bg-red-700 p-1.5 rounded-full shadow-lg transition-all active:scale-90 z-10"
                 title="Đổi ảnh đại diện"
               >
-                <span className="text-lg">🔄</span>
+                <span className="text-lg">🖼️</span>
               </button>
             </div>
 
@@ -92,7 +100,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateAvatar, onBack,
             </div>
 
             <div className="w-full grid grid-cols-1 gap-4">
-              <div className="bg-slate-950/50 p-6 rounded-3xl border border-slate-800 text-center">
+              <div className="bg-slate-950/50 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 text-center">
                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Cấp độ hiện tại</p>
                 <p className="text-2xl font-black text-white flex items-center justify-center gap-2">
                   {currentLevelConfig.emoji} {user.level}
@@ -126,8 +134,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateAvatar, onBack,
         </div>
 
         {/* Rank System Roadmap */}
-        <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-[40px] p-10 shadow-2xl">
-          <div className="flex items-center gap-4 mb-10">
+        <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-3xl sm:rounded-[40px] p-5 sm:p-10 shadow-2xl">
+          <div className="flex items-center gap-4 mb-6 sm:mb-10">
             <div className="bg-red-600/20 p-3 rounded-2xl">
               <span className="text-2xl">🏆</span>
             </div>
@@ -146,7 +154,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateAvatar, onBack,
               return (
                 <div 
                   key={rank.level} 
-                  className={`relative flex items-center gap-6 p-5 rounded-[24px] border-2 transition-all duration-300 ${
+                  className={`relative flex items-center gap-3 sm:gap-6 p-4 sm:p-5 rounded-[24px] border-2 transition-all duration-300 ${
                     isCurrent ? 'bg-red-600/10 border-red-600 shadow-lg shadow-red-900/10 scale-[1.02]' : 
                     isAchieved ? 'bg-slate-800/40 border-slate-700/50 opacity-100' : 
                     'bg-slate-950/50 border-slate-900 opacity-60'
@@ -164,7 +172,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateAvatar, onBack,
                         {rank.level}
                       </h4>
                       {isAchieved && !isCurrent && <span className="text-green-500 text-xs">✓</span>}
-                      {isCurrent && <span className="bg-red-600 text-[9px] px-2 py-0.5 rounded-full font-black uppercase text-white animate-pulse">Hiện tại</span>}
+                      {isCurrent && <span className="bg-red-600 text-[10px] px-2 py-0.5 rounded-full font-black uppercase text-white animate-pulse">Hiện tại</span>}
                     </div>
                     <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">
                       {rank.minXp.toLocaleString()}{rank.maxXp === Infinity ? '+' : ` – ${rank.maxXp.toLocaleString()}`} XP
@@ -192,25 +200,25 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateAvatar, onBack,
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
         {/* Statistics Column */}
         <div className="space-y-8">
-          <div className="bg-slate-900 border border-slate-800 p-10 rounded-[40px] shadow-2xl">
+          <div className="bg-slate-900 border border-slate-800 p-5 sm:p-10 rounded-3xl sm:rounded-[40px] shadow-2xl">
             <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-6">Thống kê chiến đấu</h4>
-            <div className="grid grid-cols-2 gap-6">
-              <div className="bg-slate-950/50 p-6 rounded-3xl border border-slate-800">
+            <div className="grid grid-cols-2 gap-3 sm:gap-6">
+              <div className="bg-slate-950/50 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800">
                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Số trận</p>
                 <p className="text-3xl font-black text-white">{user.totalGames}</p>
               </div>
-              <div className="bg-slate-950/50 p-6 rounded-3xl border border-slate-800">
+              <div className="bg-slate-950/50 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800">
                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Chuỗi cao nhất</p>
                 <p className="text-3xl font-black text-yellow-500">{user.bestStreak}🔥</p>
               </div>
-              <div className="bg-slate-950/50 p-6 rounded-3xl border border-slate-800">
+              <div className="bg-slate-950/50 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800">
                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">XP Tuần</p>
                 <p className="text-3xl font-black text-green-500">+{user.weeklyXp}</p>
               </div>
-              <div className="bg-slate-950/50 p-6 rounded-3xl border border-slate-800">
+              <div className="bg-slate-950/50 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800">
                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Frames</p>
                 <p className="text-3xl font-black text-purple-400">{(user.unlockedFrames || []).length}🏅</p>
               </div>
@@ -235,8 +243,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateAvatar, onBack,
         </div>
 
         {/* Accuracy Column - Updated based on image request */}
-        <div className="bg-slate-900/90 border border-slate-800 rounded-[40px] p-10 shadow-2xl flex flex-col min-h-[500px]">
-            <div className="flex items-center gap-4 mb-10">
+        <div className="bg-slate-900/90 border border-slate-800 rounded-3xl sm:rounded-[40px] p-5 sm:p-10 shadow-2xl flex flex-col min-h-[500px]">
+            <div className="flex items-center gap-4 mb-6 sm:mb-10">
               <div className="bg-[#122c23] p-4 rounded-2xl">
                 <div className="w-8 h-8 bg-white/10 rounded flex items-center justify-center p-1 overflow-hidden">
                    <div className="flex gap-1 h-full items-end">
@@ -261,7 +269,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateAvatar, onBack,
                 </p>
               </div>
             ) : (
-              <div className="space-y-10">
+              <div className="space-y-6 sm:space-y-10">
                 {topicStats.map(([topic, stats]) => {
                   const percentage = stats.total === 0 ? 0 : Math.round((stats.correct / stats.total) * 100);
                   return (
@@ -274,7 +282,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateAvatar, onBack,
                           </p>
                           <button 
                             onClick={() => onPracticeTopic(topic)}
-                            className="bg-slate-800 hover:bg-red-600 text-white text-[10px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest transition-all hover:scale-105"
+                            className="bg-slate-800 hover:bg-red-600 text-white text-[10px] font-black px-3 py-2 rounded-lg uppercase tracking-widest transition-all hover:scale-105"
                           >
                             Luyện tập
                           </button>
@@ -302,6 +310,61 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateAvatar, onBack,
             </div>
         </div>
       </div>
+
+      {/* Avatar Picker Modal */}
+      {showAvatarPicker && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+          onClick={() => setShowAvatarPicker(false)}
+        >
+          <div
+            className="bg-slate-900 border border-slate-700 rounded-3xl p-6 w-full max-w-2xl shadow-2xl"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h3 className="text-xl font-black uppercase tracking-tight text-white">Chọn ảnh đại diện</h3>
+                <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-0.5">{LOCAL_AVATAR_COUNT} ảnh mặc định</p>
+              </div>
+              <button
+                onClick={() => setShowAvatarPicker(false)}
+                className="text-slate-400 hover:text-white text-2xl leading-none transition-colors"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 max-h-[420px] overflow-y-auto pr-1 custom-scrollbar">
+              {Array.from({ length: LOCAL_AVATAR_COUNT }, (_, i) => (
+                /* Dùng padding-top 100% thay aspect-square: Safari iOS không tính
+                   aspect-ratio trên <button> trong grid → ô cao 0, ảnh đè lên nhau */
+                <button
+                  key={i}
+                  onClick={() => handleSelectAvatar(i)}
+                  className={`relative w-full rounded-xl overflow-hidden border-2 transition-all hover:scale-105 active:scale-95 ${
+                    currentAvatarIndex === i
+                      ? 'border-red-500 ring-2 ring-red-500/40'
+                      : 'border-slate-700 hover:border-red-500/60'
+                  }`}
+                  style={{ paddingTop: '100%' }}
+                >
+                  <img
+                    src={getLocalAvatarUrl(i)}
+                    alt={`Avatar ${i + 1}`}
+                    className="absolute inset-0 w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                  {currentAvatarIndex === i && (
+                    <div className="absolute inset-0 bg-red-600/20 flex items-center justify-center">
+                      <span className="text-white text-lg drop-shadow">✓</span>
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,89 +1,159 @@
 /**
  * LuckySpin.tsx
  * Vòng quay may mắn — mỗi frame hoàn chỉnh (3/3 items) = 1 lượt quay / tuần.
- * Prizes sẽ được cập nhật sau; hiện tại chỉ render FE với placeholder prizes.
+ *
+ * Giải thưởng (9 ô):
+ * - 4 thẻ điện thoại 10k/20k/50k/100k — có QUOTA tổng (20/10/2/1 HS), đếm trên
+ *   Supabase (edux_spin_history); hết quota hoặc lỗi mạng → không thể trúng thẻ.
+ * - +50XP / +100XP — cộng thẳng vào XP profile.
+ * - Thêm 1 lượt quay — lượt này không bị trừ.
+ * - 2 ô "hẹn gặp lần sau".
+ * Tỉ lệ & quota đọc từ edux_spin_config (admin chỉnh qua trang quản lý),
+ * fallback giá trị mặc định trong code nếu chưa có bảng.
+ * Trúng thẻ → popup form nhận thưởng (SĐT + nhà mạng) lưu vào edux_spin_history.
  */
 
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { UserProfile } from '../types';
 import { getCurrentProgramWeek } from '../constants';
 import { getCompletedFrames } from '../utils/frameLogic';
+import {
+  getSpinConfig,
+  getSpinWinCounts,
+  saveSpinResult,
+  updateSpinContact,
+} from '../services/supabase';
 
-// ─── Prize config (placeholder — sẽ cập nhật sau) ────────────────────────────
+// ─── Prize config ─────────────────────────────────────────────────────────────
 export interface SpinPrize {
   id: string;
-  label: string;
+  label: string;        // tên đầy đủ (danh sách + popup)
+  wheelLabel: string;   // chữ ngắn trên vòng quay
   emoji: string;
-  color: string;       // hex, dùng cho canvas
+  color: string;
   textColor: string;
-  xpBonus: number;     // 0 = no XP (sẽ implement sau)
+  xpBonus: number;
+  type: 'card' | 'xp' | 'extra' | 'miss';
+  cardValue?: number;   // mệnh giá thẻ (đ)
+  weight: number;       // % mỗi lượt (default — server config ghi đè)
+  quota: number | null; // giới hạn tổng số người trúng (default — server config ghi đè)
 }
 
 export const SPIN_PRIZES: SpinPrize[] = [
-  { id: 'xp100',   label: '+100 XP',        emoji: '⚡', color: '#f59e0b', textColor: '#000', xpBonus: 100 },
-  { id: 'xp200',   label: '+200 XP',        emoji: '🔥', color: '#ef4444', textColor: '#fff', xpBonus: 200 },
-  { id: 'xp50',    label: '+50 XP',         emoji: '✨', color: '#8b5cf6', textColor: '#fff', xpBonus: 50  },
-  { id: 'xp300',   label: '+300 XP',        emoji: '💎', color: '#3b82f6', textColor: '#fff', xpBonus: 300 },
-  { id: 'xp500',   label: '+500 XP',        emoji: '👑', color: '#10b981', textColor: '#fff', xpBonus: 500 },
-  { id: 'miss',    label: 'Hên lần sau!',   emoji: '🎲', color: '#475569', textColor: '#fff', xpBonus: 0   },
-  { id: 'xp150',   label: '+150 XP',        emoji: '🌟', color: '#ec4899', textColor: '#fff', xpBonus: 150 },
-  { id: 'xp80',    label: '+80 XP',         emoji: '🎯', color: '#0ea5e9', textColor: '#fff', xpBonus: 80  },
+  { id: 'card10',  label: 'Thẻ điện thoại 10.000đ',  wheelLabel: 'Thẻ 10K',  emoji: '📱', color: '#10b981', textColor: '#fff', xpBonus: 0,   type: 'card',  cardValue: 10000,  weight: 3,    quota: 20 },
+  { id: 'xp50',    label: '+50 XP',                   wheelLabel: '+50 XP',   emoji: '✨', color: '#8b5cf6', textColor: '#fff', xpBonus: 50,  type: 'xp',    weight: 35,   quota: null },
+  { id: 'miss1',   label: 'Hẹn gặp bạn lần sau!',     wheelLabel: 'Hẹn lần sau', emoji: '👋', color: '#475569', textColor: '#fff', xpBonus: 0, type: 'miss', weight: 12.5, quota: null },
+  { id: 'card20',  label: 'Thẻ điện thoại 20.000đ',  wheelLabel: 'Thẻ 20K',  emoji: '📱', color: '#059669', textColor: '#fff', xpBonus: 0,   type: 'card',  cardValue: 20000,  weight: 1.5,  quota: 10 },
+  { id: 'xp100',   label: '+100 XP',                  wheelLabel: '+100 XP',  emoji: '⚡', color: '#f59e0b', textColor: '#000', xpBonus: 100, type: 'xp',    weight: 25,   quota: null },
+  { id: 'extra',   label: 'Bạn có thêm 1 lượt quay!', wheelLabel: '+1 Lượt',  emoji: '🎟️', color: '#3b82f6', textColor: '#fff', xpBonus: 0,  type: 'extra', weight: 10,   quota: null },
+  { id: 'card50',  label: 'Thẻ điện thoại 50.000đ',  wheelLabel: 'Thẻ 50K',  emoji: '💳', color: '#0d9488', textColor: '#fff', xpBonus: 0,   type: 'card',  cardValue: 50000,  weight: 0.35, quota: 2 },
+  { id: 'miss2',   label: 'Oops, chúc bạn may mắn lần sau!', wheelLabel: 'Oops!', emoji: '🎲', color: '#64748b', textColor: '#fff', xpBonus: 0, type: 'miss', weight: 12.5, quota: null },
+  { id: 'card100', label: 'Thẻ điện thoại 100.000đ', wheelLabel: 'Thẻ 100K', emoji: '💎', color: '#ef4444', textColor: '#fff', xpBonus: 0,   type: 'card',  cardValue: 100000, weight: 0.15, quota: 1 },
 ];
 
-const SEGMENT_COUNT = SPIN_PRIZES.length; // 8
+const SEGMENT_COUNT = SPIN_PRIZES.length; // 9
 const FULL_ANGLE = (2 * Math.PI) / SEGMENT_COUNT;
+const CARRIERS = ['Viettel', 'Vinaphone', 'Mobifone'];
 
-// ─── Canvas drawing ───────────────────────────────────────────────────────────
+// ─── Canvas drawing — style "Game show cổ điển": vành vàng + bóng đèn nhấp nháy,
+//     ô màu rực xen kẽ trắng, tâm là icon quà 🎁 ──────────────────────────────
+const GOLD = '#d4af37';
+const GOLD_RIM = '#b8860b';
+const GOLD_DARK = '#8a6508';
+const BULB_COUNT = 18;
+const RIM_W = 14;
+/** Màu ô theo vị trí: màu đậm xen kẽ trắng kiểu game show (9 ô) */
+const SEG_COLORS = ['#dc2626', '#f8fafc', '#2563eb', '#f8fafc', '#16a34a', '#f8fafc', '#9333ea', '#f8fafc', '#ea580c'];
+
 function drawWheel(
   ctx: CanvasRenderingContext2D,
   cx: number,
   cy: number,
   radius: number,
-  rotation: number
+  rotation: number,
+  bulbPhase: number
 ) {
   ctx.clearRect(0, 0, cx * 2, cy * 2);
+
+  // Vành vàng ngoài
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+  ctx.fillStyle = GOLD_RIM;
+  ctx.fill();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = GOLD;
+  ctx.stroke();
+
+  const rIn = radius - RIM_W;
 
   SPIN_PRIZES.forEach((prize, i) => {
     const startAngle = rotation + i * FULL_ANGLE;
     const endAngle = startAngle + FULL_ANGLE;
+    const segColor = SEG_COLORS[i % SEG_COLORS.length];
 
-    // Slice
     ctx.beginPath();
     ctx.moveTo(cx, cy);
-    ctx.arc(cx, cy, radius, startAngle, endAngle);
+    ctx.arc(cx, cy, rIn, startAngle, endAngle);
     ctx.closePath();
-    ctx.fillStyle = prize.color;
+    ctx.fillStyle = segColor;
     ctx.fill();
-    ctx.strokeStyle = '#0f172a';
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = GOLD_RIM;
+    ctx.lineWidth = 2.5;
     ctx.stroke();
 
-    // Text
     ctx.save();
     ctx.translate(cx, cy);
     ctx.rotate(startAngle + FULL_ANGLE / 2);
     ctx.textAlign = 'right';
-    ctx.fillStyle = prize.textColor;
-    ctx.font = `bold ${Math.max(10, radius * 0.1)}px sans-serif`;
-    ctx.fillText(prize.emoji + ' ' + prize.label, radius * 0.92, 4);
+    // Ô trắng dùng chữ tối, ô màu dùng chữ trắng
+    ctx.fillStyle = segColor === '#f8fafc' ? '#1e293b' : '#ffffff';
+    // Chỉ vẽ CHỮ, không kèm emoji — một số emoji (🎟️ có variation selector)
+    // làm Safari iOS không render cả chuỗi fillText → mất chữ trên vòng quay.
+    // Co font tự động để chữ không tràn vào tâm (bị icon giữa che mất).
+    const text = prize.wheelLabel;
+    const maxTextWidth = rIn * 0.94 - radius * 0.24; // chừa vùng tâm
+    let fontSize = Math.max(13, radius * 0.09);
+    ctx.font = `bold ${fontSize}px sans-serif`;
+    while (ctx.measureText(text).width > maxTextWidth && fontSize > 10) {
+      fontSize -= 0.5;
+      ctx.font = `bold ${fontSize}px sans-serif`;
+    }
+    ctx.fillText(text, rIn * 0.94, 4);
     ctx.restore();
   });
 
-  // Center cap
+  // Bóng đèn nhấp nháy trên vành
+  for (let i = 0; i < BULB_COUNT; i++) {
+    const a = (i / BULB_COUNT) * 2 * Math.PI;
+    const bx = cx + Math.cos(a) * (radius - RIM_W / 2);
+    const by = cy + Math.sin(a) * (radius - RIM_W / 2);
+    const on = (i + bulbPhase) % 2 === 0;
+    ctx.beginPath();
+    ctx.arc(bx, by, 3.6, 0, 2 * Math.PI);
+    if (on) {
+      ctx.shadowColor = '#fde68a';
+      ctx.shadowBlur = 7;
+      ctx.fillStyle = '#fff7cc';
+    } else {
+      ctx.fillStyle = GOLD_DARK;
+    }
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
+  // Tâm: nền đỏ đậm + vành vàng + icon quà (không dùng chữ X)
   ctx.beginPath();
-  ctx.arc(cx, cy, radius * 0.12, 0, 2 * Math.PI);
-  ctx.fillStyle = '#0f172a';
+  ctx.arc(cx, cy, radius * 0.165, 0, 2 * Math.PI);
+  ctx.fillStyle = '#7f1d1d';
   ctx.fill();
-  ctx.strokeStyle = '#475569';
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = GOLD;
   ctx.stroke();
 
-  // Center X logo
-  ctx.fillStyle = '#ef4444';
-  ctx.font = `bold ${radius * 0.1}px sans-serif`;
+  ctx.font = `${radius * 0.17}px sans-serif`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText('X', cx, cy);
+  ctx.fillText('🎁', cx, cy + 1);
 }
 
 // ─── Props ────────────────────────────────────────────────────────────────────
@@ -98,7 +168,6 @@ const LuckySpin: React.FC<LuckySpinProps> = ({ user, onSpinResult }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animFrameRef = useRef<number>(0);
 
-  // rotation state (radians)
   const rotationRef = useRef(0);
   const [displayRotation, setDisplayRotation] = useState(0);
 
@@ -106,12 +175,35 @@ const LuckySpin: React.FC<LuckySpinProps> = ({ user, onSpinResult }) => {
   const [prize, setPrize] = useState<SpinPrize | null>(null);
   const [showResult, setShowResult] = useState(false);
 
+  // Server config (tỉ lệ + quota admin chỉnh) — fallback default trong code
+  const [serverConfig, setServerConfig] = useState<Record<string, { weight: number; quota: number | null; enabled: boolean }> | null>(null);
+  useEffect(() => {
+    getSpinConfig().then(rows => {
+      if (!rows) return;
+      const map: Record<string, { weight: number; quota: number | null; enabled: boolean }> = {};
+      rows.forEach(r => { map[r.prizeId] = { weight: r.weight, quota: r.quota, enabled: r.enabled }; });
+      setServerConfig(map);
+    }).catch(() => { /* dùng default */ });
+  }, []);
+
+  // ── Form nhận thưởng thẻ điện thoại ────────────────────────────────────────
+  const [cardWin, setCardWin] = useState<{ prize: SpinPrize; recordId: string | null } | null>(null);
+  const [formPhone, setFormPhone] = useState('');
+  const [formCarrier, setFormCarrier] = useState('');
+  const [formName, setFormName] = useState('');
+  const [formClass, setFormClass] = useState('');
+  const [formSchool, setFormSchool] = useState('');
+  const [formError, setFormError] = useState('');
+  const [formSubmitting, setFormSubmitting] = useState(false);
+  const [formDone, setFormDone] = useState(false);
+
   // ── Tính số lượt quay còn lại ──────────────────────────────────────────────
   const currentWeek = getCurrentProgramWeek();
   const completedFrames = getCompletedFrames(user.unlockedFrames || []);
-  const totalSpins = completedFrames.length; // 1 lượt / frame hoàn chỉnh
+  // ⚠️ TEST: cộng 10 lượt quay/tuần cho mọi người — ĐẶT VỀ 0 trước khi chạy thật!
+  const TEST_SPINS_PER_WEEK = 10;
+  const totalSpins = completedFrames.length + TEST_SPINS_PER_WEEK;
 
-  // Reset spinsUsed nếu sang tuần mới
   const spinsUsedThisWeek =
     (user.lastSpinWeek ?? 0) === (currentWeek ?? 0)
       ? (user.spinsUsed ?? 0)
@@ -120,49 +212,129 @@ const LuckySpin: React.FC<LuckySpinProps> = ({ user, onSpinResult }) => {
   const spinsLeft = Math.max(0, totalSpins - spinsUsedThisWeek);
 
   // ── Draw loop ───────────────────────────────────────────────────────────────
+  // Nhịp nhấp nháy bóng đèn trên vành (đổi pha mỗi 400ms)
+  const [bulbPhase, setBulbPhase] = useState(0);
+  useEffect(() => {
+    const id = window.setInterval(() => setBulbPhase(p => (p + 1) % 2), 400);
+    return () => clearInterval(id);
+  }, []);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const size = canvas.width;
+    // Render 2x rồi scale: chữ nét trên màn retina (điện thoại)
+    const DPR = 2;
+    if (canvas.width !== 300 * DPR) {
+      canvas.width = 300 * DPR;
+      canvas.height = 300 * DPR;
+    }
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+    const size = 300;
     const cx = size / 2;
     const r = cx * 0.88;
 
-    drawWheel(ctx, cx, cx, r, displayRotation);
-  }, [displayRotation]);
+    drawWheel(ctx, cx, cx, r, displayRotation, bulbPhase);
+  }, [displayRotation, bulbPhase]);
+
+  // ── Chọn giải theo trọng số + quota ─────────────────────────────────────────
+  const pickPrize = useCallback(async (): Promise<number> => {
+    // Đếm số người đã trúng từng giải (cho quota thẻ).
+    // Lỗi mạng/chưa có bảng → counts = null → KHÔNG cho ra thẻ (an toàn quota).
+    const counts = await getSpinWinCounts().catch(() => null);
+
+    const effectiveWeights = SPIN_PRIZES.map(p => {
+      const cfg = serverConfig?.[p.id];
+      const enabled = cfg ? cfg.enabled : true;
+      const weight = cfg ? cfg.weight : p.weight;
+      const quota = cfg !== undefined && cfg !== null ? cfg.quota : p.quota;
+      if (!enabled || weight <= 0) return 0;
+      if (p.type === 'card') {
+        if (!counts) return 0; // không xác minh được quota → bỏ thẻ lượt này
+        if (quota !== null && (counts[p.id] || 0) >= quota) return 0; // hết quota
+      }
+      return weight;
+    });
+
+    const total = effectiveWeights.reduce((s, w) => s + w, 0);
+    if (total <= 0) {
+      // Tất cả giải bị tắt — fallback ô "hẹn gặp lần sau"
+      return SPIN_PRIZES.findIndex(p => p.type === 'miss');
+    }
+
+    let roll = Math.random() * total;
+    for (let i = 0; i < SPIN_PRIZES.length; i++) {
+      roll -= effectiveWeights[i];
+      if (roll < 0) return i;
+    }
+    return SPIN_PRIZES.length - 1;
+  }, [serverConfig]);
 
   // ── Spin logic ──────────────────────────────────────────────────────────────
-  const spin = useCallback(() => {
+  const spin = useCallback(async () => {
     if (isSpinning || spinsLeft <= 0) return;
 
     setPrize(null);
     setShowResult(false);
     setIsSpinning(true);
 
-    // Chọn prize ngẫu nhiên
-    const winIndex = Math.floor(Math.random() * SEGMENT_COUNT);
+    const winIndex = await pickPrize();
     const winPrize = SPIN_PRIZES[winIndex];
 
-    // Góc dừng: kim ở trên (−π/2), slice winIndex phải nằm ở đó
-    // Trung tâm của slice winIndex ở góc: winIndex * FULL_ANGLE + FULL_ANGLE/2
-    // Ta cần: rotation + sliceCenter = −π/2  ⟹  rotation = −π/2 − sliceCenter
     const sliceCenter = winIndex * FULL_ANGLE + FULL_ANGLE / 2;
     const targetAngle = -Math.PI / 2 - sliceCenter;
 
-    // Thêm ≥5 vòng ngẫu nhiên
     const extraSpins = (5 + Math.floor(Math.random() * 4)) * 2 * Math.PI;
     const finalRotation = rotationRef.current + extraSpins + (targetAngle - ((rotationRef.current + extraSpins) % (2 * Math.PI)));
 
-    const duration = 4000 + Math.random() * 1000; // 4-5s
+    const duration = 4000 + Math.random() * 1000;
     const startTime = performance.now();
     const startRot = rotationRef.current;
 
     function easeOut(t: number) {
-      // cubic ease-out
       return 1 - Math.pow(1 - t, 3);
     }
+
+    const finishSpin = async () => {
+      setIsSpinning(false);
+
+      // Ghi lượt quay lên server (mọi giải — để đếm quota + audit + XP reconcile)
+      let recordId: string | null = null;
+      try {
+        recordId = await saveSpinResult({
+          userId: user.id,
+          userName: user.name,
+          prizeId: winPrize.id,
+          prizeLabel: winPrize.label,
+          xpBonus: winPrize.xpBonus,
+          week: currentWeek,
+        });
+      } catch (e) {
+        console.error('Error saving spin result:', e);
+      }
+
+      if (winPrize.type === 'card') {
+        // Mở form nhận thưởng
+        setFormPhone('');
+        setFormCarrier('');
+        setFormName(user.name || '');
+        setFormClass(user.grade ? `Lớp ${user.grade}` : '');
+        setFormSchool('');
+        setFormError('');
+        setFormDone(false);
+        setCardWin({ prize: winPrize, recordId });
+      } else {
+        setPrize(winPrize);
+        setShowResult(true);
+      }
+
+      // 'extra' = thêm 1 lượt → lượt này không bị trừ
+      const consumed = winPrize.type === 'extra' ? 0 : 1;
+      onSpinResult(winPrize, spinsUsedThisWeek + consumed);
+    };
 
     function animate(now: number) {
       const elapsed = now - startTime;
@@ -178,21 +350,54 @@ const LuckySpin: React.FC<LuckySpinProps> = ({ user, onSpinResult }) => {
       } else {
         rotationRef.current = finalRotation;
         setDisplayRotation(finalRotation);
-        setIsSpinning(false);
-        setPrize(winPrize);
-        setShowResult(true);
-
-        const newSpinsUsed = spinsUsedThisWeek + 1;
-        onSpinResult(winPrize, newSpinsUsed);
+        finishSpin();
       }
     }
 
     animFrameRef.current = requestAnimationFrame(animate);
-  }, [isSpinning, spinsLeft, spinsUsedThisWeek, onSpinResult]);
+  }, [isSpinning, spinsLeft, spinsUsedThisWeek, onSpinResult, pickPrize, user, currentWeek]);
 
   useEffect(() => {
     return () => cancelAnimationFrame(animFrameRef.current);
   }, []);
+
+  // ── Submit form nhận thưởng ─────────────────────────────────────────────────
+  const submitCardForm = async () => {
+    if (formSubmitting) return;
+    const phone = formPhone.trim();
+    if (!/^0\d{9}$/.test(phone)) {
+      setFormError('Số điện thoại không hợp lệ (10 số, bắt đầu bằng 0)');
+      return;
+    }
+    if (!formCarrier) {
+      setFormError('Vui lòng chọn nhà mạng');
+      return;
+    }
+    if (!formName.trim()) {
+      setFormError('Vui lòng điền họ và tên');
+      return;
+    }
+    setFormError('');
+    setFormSubmitting(true);
+
+    let ok = false;
+    if (cardWin?.recordId) {
+      ok = await updateSpinContact(cardWin.recordId, {
+        phone,
+        carrier: formCarrier,
+        studentName: formName.trim(),
+        className: formClass.trim(),
+        school: formSchool.trim(),
+      });
+    }
+    setFormSubmitting(false);
+
+    if (ok) {
+      setFormDone(true);
+    } else {
+      setFormError('Không gửi được thông tin. Vui lòng thử lại!');
+    }
+  };
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
@@ -207,14 +412,13 @@ const LuckySpin: React.FC<LuckySpinProps> = ({ user, onSpinResult }) => {
             Mỗi khung hoàn chỉnh = 1 lượt quay / tuần
           </p>
         </div>
-        {/* Lượt quay badge */}
         <div className={`flex flex-col items-center px-4 py-2 rounded-2xl border font-black ${
           spinsLeft > 0
             ? 'bg-yellow-500/10 border-yellow-500/40 text-yellow-400'
             : 'bg-slate-800 border-slate-700 text-slate-500'
         }`}>
           <span className="text-2xl leading-none">{spinsLeft}</span>
-          <span className="text-[9px] uppercase tracking-widest">lượt còn</span>
+          <span className="text-[10px] uppercase tracking-widest">lượt còn</span>
         </div>
       </div>
 
@@ -236,7 +440,6 @@ const LuckySpin: React.FC<LuckySpinProps> = ({ user, onSpinResult }) => {
       {/* Wheel + pointer */}
       <div className="flex flex-col items-center gap-4">
         <div className="relative">
-          {/* Pointer (kim chỉ) ở trên */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1 z-10 pointer-events-none">
             <div
               className="w-0 h-0"
@@ -251,10 +454,13 @@ const LuckySpin: React.FC<LuckySpinProps> = ({ user, onSpinResult }) => {
 
           <canvas
             ref={canvasRef}
-            width={300}
-            height={300}
+            width={600}
+            height={600}
             className="rounded-full"
             style={{
+              width: '100%',
+              maxWidth: 300,
+              height: 'auto',
               boxShadow: isSpinning
                 ? '0 0 40px rgba(239,68,68,0.4), 0 0 80px rgba(239,68,68,0.2)'
                 : '0 0 20px rgba(0,0,0,0.4)',
@@ -299,7 +505,7 @@ const LuckySpin: React.FC<LuckySpinProps> = ({ user, onSpinResult }) => {
         )}
       </div>
 
-      {/* Result overlay */}
+      {/* Result overlay (giải thường) */}
       {showResult && prize && (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-400">
           <div
@@ -316,21 +522,147 @@ const LuckySpin: React.FC<LuckySpinProps> = ({ user, onSpinResult }) => {
             >
               {prize.label}
             </p>
-            {prize.xpBonus > 0 ? (
+            {prize.type === 'xp' && (
               <p className="text-xs text-slate-400 mt-1 font-bold uppercase tracking-widest">
-                Phần thưởng sẽ được cộng vào XP của bạn
+                Đã cộng vào XP của bạn!
               </p>
-            ) : (
+            )}
+            {prize.type === 'extra' && (
+              <p className="text-xs text-slate-400 mt-1 font-bold uppercase tracking-widest">
+                Lượt quay này không bị trừ — quay tiếp nào!
+              </p>
+            )}
+            {prize.type === 'miss' && (
               <p className="text-xs text-slate-500 mt-1 font-bold uppercase tracking-widest">
                 Chúc bạn may mắn lần sau!
               </p>
             )}
             <button
               onClick={() => setShowResult(false)}
-              className="mt-3 px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition-all border border-slate-700"
+              className="mt-3 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition-all border border-slate-700"
             >
               OK
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Popup trúng thẻ điện thoại + form nhận thưởng */}
+      {cardWin && (
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <div className="bg-slate-900 border-2 border-yellow-500/50 rounded-[28px] p-6 sm:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl shadow-yellow-500/20">
+            {!formDone ? (
+              <>
+                <div className="text-center mb-5">
+                  <p className="text-5xl mb-3">🎉</p>
+                  <h4 className="text-lg sm:text-xl font-black text-yellow-400 uppercase leading-snug">
+                    Chúc mừng bạn đã trúng thưởng thẻ điện thoại trị giá{' '}
+                    <span className="text-2xl text-white">{(cardWin.prize.cardValue || 0).toLocaleString('vi-VN')}đ</span>
+                  </h4>
+                  <p className="text-xs text-slate-400 font-bold mt-2">
+                    Để nhận quà, vui lòng điền thông tin:
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Họ và tên</label>
+                    <input
+                      value={formName}
+                      onChange={e => setFormName(e.target.value)}
+                      className="mt-1 w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white text-sm font-bold focus:outline-none focus:border-yellow-500"
+                      placeholder="Họ và tên của bạn"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Lớp</label>
+                      <input
+                        value={formClass}
+                        onChange={e => setFormClass(e.target.value)}
+                        className="mt-1 w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white text-sm font-bold focus:outline-none focus:border-yellow-500"
+                        placeholder="VD: 6A1"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Trường</label>
+                      <input
+                        value={formSchool}
+                        onChange={e => setFormSchool(e.target.value)}
+                        className="mt-1 w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white text-sm font-bold focus:outline-none focus:border-yellow-500"
+                        placeholder="Tên trường"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">
+                      SĐT nhận thưởng <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      value={formPhone}
+                      onChange={e => setFormPhone(e.target.value.replace(/[^0-9]/g, ''))}
+                      maxLength={10}
+                      inputMode="numeric"
+                      className="mt-1 w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white text-sm font-bold focus:outline-none focus:border-yellow-500"
+                      placeholder="0xxxxxxxxx"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">
+                      Nhà mạng <span className="text-red-400">*</span>
+                    </label>
+                    <div className="mt-1 grid grid-cols-3 gap-2">
+                      {CARRIERS.map(c => (
+                        <button
+                          key={c}
+                          type="button"
+                          onClick={() => setFormCarrier(c)}
+                          className={`py-2.5 rounded-xl font-black text-xs uppercase tracking-wide transition-all border ${
+                            formCarrier === c
+                              ? 'bg-yellow-500 text-black border-yellow-400'
+                              : 'bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700'
+                          }`}
+                        >
+                          {c}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {formError && (
+                    <p className="text-xs font-bold text-red-400 text-center">{formError}</p>
+                  )}
+
+                  <button
+                    onClick={submitCardForm}
+                    disabled={formSubmitting}
+                    className="w-full py-3.5 bg-yellow-500 hover:bg-yellow-400 disabled:bg-slate-700 disabled:text-slate-500 text-black font-black rounded-2xl text-sm uppercase tracking-widest transition-all"
+                  >
+                    {formSubmitting ? 'Đang gửi...' : '🎁 NHẬN THƯỞNG'}
+                  </button>
+
+                  <p className="text-[11px] text-slate-500 text-center leading-relaxed">
+                    Phần thưởng của bạn sẽ được Eduso gửi về SĐT trên vào{' '}
+                    <span className="text-slate-300 font-bold">Thứ 2 tuần sau</span>, vui lòng kiểm tra tin nhé!
+                  </p>
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-6">
+                <p className="text-5xl mb-3">✅</p>
+                <h4 className="text-lg font-black text-green-400 uppercase">Đã ghi nhận thông tin!</h4>
+                <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                  Thẻ {(cardWin.prize.cardValue || 0).toLocaleString('vi-VN')}đ sẽ được Eduso gửi về số{' '}
+                  <span className="text-white font-bold">{formPhone}</span> ({formCarrier}) vào Thứ 2 tuần sau.
+                </p>
+                <button
+                  onClick={() => setCardWin(null)}
+                  className="mt-5 px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition-all border border-slate-700"
+                >
+                  Đóng
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -341,7 +673,7 @@ const LuckySpin: React.FC<LuckySpinProps> = ({ user, onSpinResult }) => {
           <span className="group-open:rotate-90 transition-transform inline-block">▶</span>
           Danh sách phần thưởng
         </summary>
-        <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2">
+        <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2">
           {SPIN_PRIZES.map(p => (
             <div
               key={p.id}

@@ -151,11 +151,14 @@ const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
   }, [gamePhase, countdown, isHost]);
 
   // Start game when component mounts (host initiated)
+  // CHỈ start khi đã nhận được state thật từ server (gameState != null).
+  // Trước khi state về, gamePhase mặc định là 'waiting' — nếu không check,
+  // host reload giữa trận sẽ startGame() lại → reset điểm + countdown + timer cho cả phòng.
   useEffect(() => {
-    if (isHost && gamePhase === 'waiting' && questions.length > 0) {
+    if (isHost && gameState && gamePhase === 'waiting' && questions.length > 0) {
       handleStartGame();
     }
-  }, [isHost, gamePhase, questions.length, handleStartGame]);
+  }, [isHost, gameState, gamePhase, questions.length, handleStartGame]);
 
   // Countdown screen - show loading when countdown reaches 0 (waiting for phase transition)
   if (gamePhase === 'countdown') {
@@ -265,7 +268,7 @@ const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
 
   // Main game view
   return (
-    <div className="max-w-4xl mx-auto space-y-6 relative">
+    <div className="mx-auto space-y-6 relative">
       {/* Floating XP + Streak animation (combined) */}
       {floatingXp && (
         <div key={floatingXp.id} className="absolute right-4 top-16 z-50 pointer-events-none float-up flex flex-col items-end gap-0.5">
@@ -282,7 +285,7 @@ const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
           <div className="flex justify-between text-xs font-black uppercase text-slate-500 tracking-tighter">
             <div className="flex items-center gap-2">
               <span>C{'â'}u {currentQuestionIndex + 1}/{gameState?.questions.length || questions.length}</span>
-              <span className="px-2 py-0.5 bg-blue-600/10 border border-blue-600/20 rounded text-[9px] text-blue-500 font-black">
+              <span className="px-2 py-0.5 bg-blue-600/10 border border-blue-600/20 rounded text-[10px] text-blue-500 font-black">
                 TH{'Á'}CH {'Đ'}{'Ấ'}U
               </span>
             </div>
@@ -335,7 +338,7 @@ const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
                     </div>
                     <div>
                       <p className="text-xl font-black text-green-400 leading-tight">{myPlayer?.correctCount || 0}</p>
-                      <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wide">{'Đú'}ng</p>
+                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">{'Đú'}ng</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 bg-slate-800/60 px-3 py-2 rounded-2xl">
@@ -344,7 +347,7 @@ const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
                     </div>
                     <div>
                       <p className="text-xl font-black text-blue-400 leading-tight">{(myPlayer?.score || 0).toLocaleString()}</p>
-                      <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wide">{'Đi'}{'ể'}m</p>
+                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">{'Đi'}{'ể'}m</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 bg-slate-800/60 px-3 py-2 rounded-2xl">
@@ -353,7 +356,7 @@ const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
                     </div>
                     <div>
                       <p className="text-xl font-black text-orange-400 leading-tight">{myPlayer?.maxStreak || 0}</p>
-                      <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wide">Streak</p>
+                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Streak</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 bg-slate-800/60 px-3 py-2 rounded-2xl">
@@ -366,7 +369,7 @@ const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
                           ? `${Math.floor((myPlayer.finishedAt - gameState.startedAt) / 1000)}s`
                           : '--'}
                       </p>
-                      <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wide">Th{'ờ'}i gian</p>
+                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Th{'ờ'}i gian</p>
                     </div>
                   </div>
                 </div>
@@ -408,7 +411,7 @@ const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
                             <span className="font-bold text-base truncate">{p.name}</span>
-                            {isMe && <span className="text-[9px] font-black bg-blue-600 text-white px-1.5 py-0.5 rounded">B{'ạ'}n</span>}
+                            {isMe && <span className="text-[10px] font-black bg-blue-600 text-white px-1.5 py-0.5 rounded">B{'ạ'}n</span>}
                           </div>
                           <div className="flex items-center gap-3 text-[11px] text-slate-500 mt-1">
                             <span className="inline-flex items-center gap-1"><IconTarget className="w-3.5 h-3.5 text-green-400" /> {p.correctCount}/{totalQ}</span>
@@ -535,7 +538,7 @@ const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5">
                           <span className="font-bold text-sm truncate">{p.name}</span>
-                          {isMe && <span className="text-[9px] font-black bg-blue-600 text-white px-1.5 py-0.5 rounded">{'Bạn'}</span>}
+                          {isMe && <span className="text-[10px] font-black bg-blue-600 text-white px-1.5 py-0.5 rounded">{'Bạn'}</span>}
                         </div>
                         <div className="flex items-center gap-2 text-[10px] text-slate-500 mt-0.5">
                           <span className="inline-flex items-center gap-0.5"><IconTarget className="w-3 h-3 text-green-400" /> {p.correctCount}/{totalQ}</span>
@@ -544,7 +547,7 @@ const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
                       </div>
                       <div className="text-right flex-shrink-0">
                         <p className="font-black text-sm">{p.score.toLocaleString()}</p>
-                        <p className={`text-[9px] font-bold ${isPlayerFinished ? 'text-green-500' : 'text-yellow-500'}`}>
+                        <p className={`text-[10px] font-bold ${isPlayerFinished ? 'text-green-500' : 'text-yellow-500'}`}>
                           {isPlayerFinished ? 'Hoàn thành' : `${p.currentQuestionIndex}/${totalQ}`}
                         </p>
                       </div>
@@ -604,16 +607,18 @@ const MultiplayerResults: React.FC<MultiplayerResultsProps> = ({
       {/* My Stats */}
       {myResult && (() => {
         const streakBonus = myResult.maxStreak * 5;
-        const correctXp = myResult.score - streakBonus;
+        // Bonus hạng 1 = +100XP (khớp logic trao thưởng trong useMultiplayerGame)
+        const rankBonus = myResult.rank === 1 ? 100 : 0;
+        // Tách XP câu đúng từ tổng xpEarned (không dùng score vì score đã gồm bonus hạng)
+        const correctXp = myResult.xpEarned - rankBonus - streakBonus;
         const xpPerQ = myResult.correctCount > 0 ? Math.round(correctXp / myResult.correctCount) : 0;
-        const rankBonus = myResult.rank === 1 ? 50 : 0;
         const avgTime = Math.floor(myResult.timeSpent / 1000 / myResult.totalQuestions);
         const accuracy = myResult.totalQuestions > 0 ? Math.round((myResult.correctCount / myResult.totalQuestions) * 100) : 0;
         return (
           <div className="bg-slate-900 border border-blue-600/30 p-4 sm:p-6 rounded-[30px]">
             {/* Header with formula tooltip */}
             <div className="relative group/xp cursor-help mb-3 sm:mb-4 text-center">
-              <p className="text-[9px] sm:text-[10px] font-black uppercase text-slate-500 tracking-[0.2em] inline-flex items-center gap-1">
+              <p className="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em] inline-flex items-center gap-1">
                 {'TỔNG XP NHẬN ĐƯỢC'}
                 <span className="text-slate-600 group-hover/xp:text-slate-400 transition-colors">{'ⓘ'}</span>
               </p>
@@ -626,7 +631,7 @@ const MultiplayerResults: React.FC<MultiplayerResultsProps> = ({
                   {'+ Điểm thưởng xếp hạng'}
                 </p>
                 <div className="mt-2 pt-2 border-t border-slate-700">
-                  <p className="text-[9px] sm:text-[10px] font-bold text-slate-400">
+                  <p className="text-[10px] font-bold text-slate-400">
                     {'Dễ: '}<span className="text-green-400">{'10XP/câu'}</span>{' · TB: '}<span className="text-yellow-400">{'12XP/câu'}</span>{' · Khó: '}<span className="text-red-400">{'15XP/câu'}</span>
                   </p>
                 </div>
@@ -658,15 +663,15 @@ const MultiplayerResults: React.FC<MultiplayerResultsProps> = ({
               <p className="text-3xl sm:text-5xl font-black text-yellow-500 tracking-tighter">+{myResult.xpEarned}</p>
               <div className="grid grid-cols-3 gap-2 sm:gap-4 w-full mt-3 sm:mt-4">
                 <div className="text-center">
-                  <p className="text-[8px] sm:text-[9px] font-black uppercase text-slate-500">{'CHÍNH XÁC'}</p>
+                  <p className="text-[10px] font-black uppercase text-slate-500">{'CHÍNH XÁC'}</p>
                   <p className="text-xs sm:text-sm font-black text-white">{accuracy}%</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-[8px] sm:text-[9px] font-black uppercase text-slate-500">{'STREAK'}</p>
+                  <p className="text-[10px] font-black uppercase text-slate-500">{'STREAK'}</p>
                   <p className="text-xs sm:text-sm font-black text-white">{myResult.maxStreak}</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-[8px] sm:text-[9px] font-black uppercase text-slate-500">{'TG/CÂU'}</p>
+                  <p className="text-[10px] font-black uppercase text-slate-500">{'TG/CÂU'}</p>
                   <p className="text-xs sm:text-sm font-black text-white">{avgTime}s</p>
                 </div>
               </div>
@@ -708,7 +713,7 @@ const MultiplayerResults: React.FC<MultiplayerResultsProps> = ({
                     <div className="flex items-center gap-2">
                       <span className="font-black text-base truncate">{result.playerName}</span>
                       {result.playerId === myPlayerId && (
-                        <span className="px-2 py-0.5 bg-blue-500/20 text-blue-500 text-[9px] font-black rounded flex-shrink-0">
+                        <span className="px-2 py-0.5 bg-blue-500/20 text-blue-500 text-[10px] font-black rounded flex-shrink-0">
                           {`BẠN`}
                         </span>
                       )}

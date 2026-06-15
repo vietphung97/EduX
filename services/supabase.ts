@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { Question, Difficulty, UserProfile, GameHistory, GameResult } from '../types';
+import { PROGRAM_START_DATE, getCurrentProgramWeek } from '../constants';
 
 // Supabase client initialization
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
@@ -180,6 +181,64 @@ export async function getGameHistory(userId: string, limit: number = 20): Promis
   return (data || []).map(gameToCamelCase);
 }
 
+/**
+ * Thống kê tổng từ TOÀN BỘ lịch sử đấu của user trên server.
+ * Nguồn sự thật để: (1) đối chiếu/sửa profile.xp (counter có thể drift),
+ * (2) hiển thị tổng kết full ở trang Lịch sử (danh sách chỉ giữ 50 trận gần nhất).
+ */
+export interface UserHistoryStats {
+  totalGames: number;
+  totalXp: number;
+  totalCorrect: number;
+  totalQuestions: number;
+  bestStreak: number;
+  totalTimeSpent: number;
+  spinXp: number; // XP thưởng từ vòng quay may mắn
+  gameIds: Set<string>;
+}
+
+export async function getUserHistoryStats(userId: string): Promise<UserHistoryStats | null> {
+  const { data, error } = await supabase
+    .from('edux_game_history')
+    .select('id, xp_earned, correct_count, total_questions, max_streak, time_spent')
+    .eq('user_id', userId)
+    .limit(10000);
+
+  if (error) {
+    console.error('Error fetching user history stats:', error);
+    return null;
+  }
+
+  const stats: UserHistoryStats = {
+    totalGames: 0, totalXp: 0, totalCorrect: 0,
+    totalQuestions: 0, bestStreak: 0, totalTimeSpent: 0,
+    spinXp: 0,
+    gameIds: new Set<string>(),
+  };
+  for (const g of data || []) {
+    stats.totalGames++;
+    stats.totalXp += Math.round(g.xp_earned || 0);
+    stats.totalCorrect += Math.round(g.correct_count || 0);
+    stats.totalQuestions += g.total_questions || 0;
+    stats.bestStreak = Math.max(stats.bestStreak, g.max_streak || 0);
+    stats.totalTimeSpent += g.time_spent || 0;
+    stats.gameIds.add(g.id);
+  }
+
+  // XP từ vòng quay may mắn (bảng có thể chưa tạo — lỗi thì coi như 0)
+  try {
+    const { data: spins, error: spinErr } = await supabase
+      .from('edux_spin_history')
+      .select('xp_bonus')
+      .eq('user_id', userId);
+    if (!spinErr) {
+      stats.spinXp = (spins || []).reduce((s, r) => s + Math.round(r.xp_bonus || 0), 0);
+    }
+  } catch { /* bảng chưa tồn tại — bỏ qua */ }
+
+  return stats;
+}
+
 // Tính toán và cập nhật gradeXp từ toàn bộ lịch sử game
 export async function recalculateGradeXpFromHistory(userId: string): Promise<Record<number, number> | null> {
   // Lấy toàn bộ lịch sử game (không giới hạn)
@@ -347,26 +406,124 @@ export async function getLeaderboard(limit: number = 10): Promise<UserProfile[]>
   return (data || []).map(toCamelCase);
 }
 
+/**
+ * Khoảng thời gian (ISO) của tuần chương trình hiện tại.
+ * Trả về null nếu ngoài chương trình.
+ */
+function getCurrentWeekRangeIso(): { startIso: string; endIso: string } | null {
+  const week = getCurrentProgramWeek();
+  if (!week) return null;
+  const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+  const start = PROGRAM_START_DATE.getTime() + (week - 1) * msPerWeek;
+  return {
+    startIso: new Date(start).toISOString(),
+    endIso: new Date(start + msPerWeek).toISOString(),
+  };
+}
+
+/**
+ * Tổng XP theo user từ game history trong tuần hiện tại.
+ * Fix bug BXH tuần: cột weekly_xp trong edux_profiles KHÔNG tự reset khi sang tuần
+ * (chỉ reset client-side khi user mở app), nên user không chơi tuần này vẫn giữ
+ * weekly_xp tuần cũ và chiếm top. Tính trực tiếp từ played_at mới chính xác.
+ */
+let weeklyTotalsCache: { totals: Map<string, number>; fetchedAt: number } | null = null;
+const WEEKLY_TOTALS_CACHE_MS = 30 * 1000; // tránh query trùng khi rank + top5 gọi cùng lúc
+
+async function getWeeklyXpTotals(): Promise<Map<string, number> | null> {
+  const range = getCurrentWeekRangeIso();
+  if (!range) return null;
+
+  if (weeklyTotalsCache && Date.now() - weeklyTotalsCache.fetchedAt < WEEKLY_TOTALS_CACHE_MS) {
+    return weeklyTotalsCache.totals;
+  }
+
+  const totals = new Map<string, number>();
+
+  // Ưu tiên RPC: Postgres GROUP BY + chỉ trả top 200 dòng (nhẹ, nhanh).
+  // SQL tạo function: scripts/sql/weekly_leaderboard_rpc.sql
+  const { data: rpcData, error: rpcError } = await supabase.rpc('edux_weekly_xp_totals', {
+    p_start: range.startIso,
+    p_end: range.endIso,
+  });
+
+  if (!rpcError && Array.isArray(rpcData)) {
+    for (const row of rpcData) {
+      if (row.user_id) totals.set(row.user_id, Number(row.weekly_xp) || 0);
+    }
+    weeklyTotalsCache = { totals, fetchedAt: Date.now() };
+    return totals;
+  }
+
+  // Fallback: RPC chưa được tạo trên Supabase → kéo raw rows về cộng client-side
+  // (chấp nhận được khi ít người chơi; chạy SQL ở scripts/sql/ để tối ưu)
+  console.warn('edux_weekly_xp_totals RPC unavailable, falling back to raw query:', rpcError?.message);
+
+  const { data, error } = await supabase
+    .from('edux_game_history')
+    .select('user_id, xp_earned')
+    .gte('played_at', range.startIso)
+    .lt('played_at', range.endIso)
+    .limit(10000);
+
+  if (error) {
+    console.error('Error fetching weekly game history:', error);
+    return null;
+  }
+
+  for (const g of data || []) {
+    if (!g.user_id) continue;
+    totals.set(g.user_id, (totals.get(g.user_id) || 0) + Math.round(g.xp_earned || 0));
+  }
+  weeklyTotalsCache = { totals, fetchedAt: Date.now() };
+  return totals;
+}
+
 export async function getWeeklyLeaderboard(limit: number = 10): Promise<UserProfile[]> {
+  // Tính từ game history tuần này (chính xác), thay vì cột weekly_xp (không tự reset)
+  const totals = await getWeeklyXpTotals();
+
+  if (totals === null) {
+    // Ngoài chương trình hoặc lỗi query → BXH tuần trống
+    return [];
+  }
+
+  const top = [...totals.entries()]
+    .filter(([, xp]) => xp > 0)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit);
+
+  if (top.length === 0) return [];
+
   const { data, error } = await supabase
     .from('edux_profiles')
     .select('id, name, avatar, equipped_frame, unlocked_frames, grade, xp, level, total_games, best_streak, weekly_xp, topic_stats, grade_xp')
-    .order('weekly_xp', { ascending: false })
-    .limit(limit);
+    .in('id', top.map(([id]) => id));
 
   if (error) {
-    console.error('Error fetching weekly leaderboard:', error);
+    console.error('Error fetching weekly leaderboard profiles:', error);
     return [];
   }
-  return (data || []).map(toCamelCase);
+
+  const byId = new Map((data || []).map(p => [p.id, toCamelCase(p)]));
+  return top
+    .filter(([id]) => byId.has(id))
+    .map(([id, weeklyXp]) => ({ ...byId.get(id)!, weeklyXp }));
 }
 
 export async function getLeaderboardByGrade(grade: number, limit: number = 10): Promise<UserProfile[]> {
-  // Fetch all profiles that have played this grade (have gradeXp for this grade)
+  // Fetch profiles ordered by total xp (server-side, index `idx_edux_profiles_xp`),
+  // then filter/sort by gradeXp client-side.
+  // BUG fix: trước đây `.limit(200)` không có `.order()` → Postgres trả 200 rows
+  // theo physical order (thường là cũ nhất), bỏ sót user mới có gradeXp cao →
+  // BXH theo khối hiện thiếu hàng (vd user rank thật 19 lại xuất hiện ở vị trí 4
+  // vì 15 user nằm giữa không được fetch về). gradeXp luôn ≤ xp nên user top
+  // theo gradeXp gần như chắc chắn nằm trong top theo xp; thêm cushion limit 1000.
   const { data, error } = await supabase
     .from('edux_profiles')
     .select('id, name, avatar, equipped_frame, unlocked_frames, grade, xp, level, total_games, best_streak, weekly_xp, topic_stats, grade_xp')
-    .limit(200); // Fetch more to filter client-side
+    .order('xp', { ascending: false })
+    .limit(1000);
 
   if (error) {
     console.error('Error fetching leaderboard by grade:', error);
@@ -386,10 +543,14 @@ export async function getLeaderboardByGrade(grade: number, limit: number = 10): 
 // Get user's actual rank in the leaderboard
 export async function getUserRank(userId: string, gradeFilter?: number): Promise<number> {
   if (gradeFilter) {
-    // For grade filter, we need to fetch all profiles and count
+    // For grade filter, we need to fetch all profiles and count.
+    // Align fetch limit + ordering với getLeaderboardByGrade để 2 hàm thấy cùng tập dữ liệu
+    // (trước đây getUserRank dùng default limit 1000, getLeaderboardByGrade chỉ 200 → lệch rank).
     const { data, error } = await supabase
       .from('edux_profiles')
-      .select('id, grade_xp');
+      .select('id, grade_xp')
+      .order('xp', { ascending: false })
+      .limit(1000);
 
     if (error || !data) {
       console.error('Error fetching user rank:', error);
@@ -431,22 +592,144 @@ export async function getUserRank(userId: string, gradeFilter?: number): Promise
 }
 
 // Get user's weekly rank
+// Tính từ game history tuần này (cùng nguồn với getWeeklyLeaderboard) để rank khớp BXH
 export async function getWeeklyUserRank(userId: string): Promise<number> {
-  const { data: userData, error: userError } = await supabase
-    .from('edux_profiles')
-    .select('weekly_xp')
-    .eq('id', userId)
+  const totals = await getWeeklyXpTotals();
+  if (totals === null) return -1;
+
+  const myXp = totals.get(userId) || 0;
+  if (myXp <= 0) return -1; // Chưa chơi tuần này → chưa có hạng
+
+  let higher = 0;
+  totals.forEach((xp, id) => {
+    if (id !== userId && xp > myXp) higher++;
+  });
+  return higher + 1;
+}
+
+// ============ LUCKY SPIN ============
+
+export interface SpinConfigRow {
+  prizeId: string;
+  weight: number;
+  quota: number | null;
+  enabled: boolean;
+}
+
+export interface SpinHistoryRow {
+  id: string;
+  userId: string;
+  userName: string | null;
+  prizeId: string;
+  prizeLabel: string | null;
+  xpBonus: number;
+  week: number | null;
+  phone: string | null;
+  carrier: string | null;
+  studentName: string | null;
+  className: string | null;
+  school: string | null;
+  claimed: boolean;
+  createdAt: string;
+}
+
+/** Cấu hình giải từ server (admin chỉnh qua trang quản lý). Lỗi/chưa có bảng → null (dùng default trong code). */
+export async function getSpinConfig(): Promise<SpinConfigRow[] | null> {
+  const { data, error } = await supabase.from('edux_spin_config').select('*');
+  if (error || !data) return null;
+  return data.map(r => ({
+    prizeId: r.prize_id,
+    weight: Number(r.weight) || 0,
+    quota: r.quota === null || r.quota === undefined ? null : Number(r.quota),
+    enabled: r.enabled !== false,
+  }));
+}
+
+export async function updateSpinConfig(rows: SpinConfigRow[]): Promise<boolean> {
+  const { error } = await supabase.from('edux_spin_config').upsert(
+    rows.map(r => ({ prize_id: r.prizeId, weight: r.weight, quota: r.quota, enabled: r.enabled }))
+  );
+  if (error) console.error('Error updating spin config:', error);
+  return !error;
+}
+
+/** Số người đã trúng theo từng giải (đếm quota). Lỗi → null (KHÔNG cho ra thẻ lượt đó để an toàn quota). */
+export async function getSpinWinCounts(): Promise<Record<string, number> | null> {
+  const { data, error } = await supabase.from('edux_spin_history').select('prize_id');
+  if (error || !data) return null;
+  const counts: Record<string, number> = {};
+  for (const r of data) counts[r.prize_id] = (counts[r.prize_id] || 0) + 1;
+  return counts;
+}
+
+/** Ghi lượt quay; trả về id dòng (để update thông tin nhận thưởng nếu trúng thẻ). */
+export async function saveSpinResult(record: {
+  userId: string; userName: string; prizeId: string; prizeLabel: string; xpBonus: number; week: number | null;
+}): Promise<string | null> {
+  const { data, error } = await supabase
+    .from('edux_spin_history')
+    .insert({
+      user_id: record.userId,
+      user_name: record.userName,
+      prize_id: record.prizeId,
+      prize_label: record.prizeLabel,
+      xp_bonus: record.xpBonus,
+      week: record.week,
+    })
+    .select('id')
     .single();
+  if (error) {
+    console.error('Error saving spin result:', error);
+    return null;
+  }
+  return data?.id ?? null;
+}
 
-  if (userError || !userData) return -1;
+/** HS điền form nhận thưởng thẻ điện thoại. */
+export async function updateSpinContact(id: string, info: {
+  phone: string; carrier: string; studentName: string; className: string; school: string;
+}): Promise<boolean> {
+  const { error } = await supabase
+    .from('edux_spin_history')
+    .update({
+      phone: info.phone,
+      carrier: info.carrier,
+      student_name: info.studentName,
+      class_name: info.className,
+      school: info.school,
+      claimed: true,
+    })
+    .eq('id', id);
+  if (error) console.error('Error updating spin contact:', error);
+  return !error;
+}
 
-  const { count, error } = await supabase
-    .from('edux_profiles')
-    .select('id', { count: 'exact', head: true })
-    .gt('weekly_xp', userData.weekly_xp);
-
-  if (error) return -1;
-  return (count || 0) + 1;
+/** Danh sách lượt quay cho trang quản lý. onlyCards = chỉ các giải thẻ điện thoại. */
+export async function getSpinHistoryAdmin(onlyCards: boolean, limit: number = 500): Promise<SpinHistoryRow[]> {
+  let query = supabase
+    .from('edux_spin_history')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  if (onlyCards) query = query.like('prize_id', 'card%');
+  const { data, error } = await query;
+  if (error || !data) return [];
+  return data.map(r => ({
+    id: r.id,
+    userId: r.user_id,
+    userName: r.user_name,
+    prizeId: r.prize_id,
+    prizeLabel: r.prize_label,
+    xpBonus: r.xp_bonus || 0,
+    week: r.week,
+    phone: r.phone,
+    carrier: r.carrier,
+    studentName: r.student_name,
+    className: r.class_name,
+    school: r.school,
+    claimed: !!r.claimed,
+    createdAt: r.created_at,
+  }));
 }
 
 // ============ QUESTIONS (Optional - if you want to store questions in Supabase) ============

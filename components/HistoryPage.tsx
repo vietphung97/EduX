@@ -1,6 +1,7 @@
-import React, { useMemo, useState, useRef } from 'react';
+import React, { useMemo, useState, useRef, useEffect } from 'react';
 import { GameHistory, Difficulty, UserProfile } from '../types';
 import { XP_PER_QUESTION } from '../utils/gameLogic';
+import { getUserHistoryStats, UserHistoryStats } from '../services/supabase';
 import AvatarDisplay from './AvatarDisplay';
 
 interface HistoryPageProps {
@@ -83,9 +84,20 @@ const HistoryPage: React.FC<HistoryPageProps> = ({ history, user, allUsers, onBa
     if (longPressAllTimer.current) { clearTimeout(longPressAllTimer.current); longPressAllTimer.current = null; }
   };
 
+  // Thống kê FULL từ server (danh sách chỉ hiển thị 50 trận gần nhất,
+  // nhưng tổng kết phải tính trên toàn bộ lịch sử)
+  const [serverStats, setServerStats] = useState<UserHistoryStats | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    getUserHistoryStats(user.id)
+      .then(stats => { if (!cancelled) setServerStats(stats); })
+      .catch(console.error);
+    return () => { cancelled = true; };
+  }, [user.id]);
+
   // Tính tổng kết
   const summary = useMemo(() => {
-    if (history.length === 0) {
+    if (history.length === 0 && !serverStats) {
       return {
         totalGames: 0,
         totalXp: 0,
@@ -97,23 +109,33 @@ const HistoryPage: React.FC<HistoryPageProps> = ({ history, user, allUsers, onBa
       };
     }
 
-    const totalGames = history.length;
-    const totalXp = Math.round(history.reduce((sum, g) => {
-      const xpPerQ = XP_PER_QUESTION[g.difficulty] || 10;
-      const base = Math.round(g.correctCount) * xpPerQ + g.maxStreak * 5;
-      const rBonus = g.mode === 'multiplayer'
-        ? (g.myRank === 1 ? 100 : 0)
-        : Math.max(0, Math.round(g.xpEarned) - base);
-      return sum + base + rBonus;
-    }, 0));
-    const totalCorrect = history.reduce((sum, g) => sum + Math.round(g.correctCount), 0);
-    const totalQuestions = history.reduce((sum, g) => sum + g.totalQuestions, 0);
+    // Server có toàn bộ lịch sử; cộng thêm các trận local chưa sync.
+    // Khi chưa fetch xong/lỗi mạng → fallback tính từ 50 trận local.
+    const localGames = serverStats
+      ? history.filter(g => g && g.id && !serverStats.gameIds.has(g.id))
+      : history;
+
+    let totalGames = serverStats ? serverStats.totalGames : 0;
+    // Tổng tích lũy = XP trận đấu + XP thưởng vòng quay (khớp với XP profile)
+    let totalXp = serverStats ? serverStats.totalXp + serverStats.spinXp : 0;
+    let totalCorrect = serverStats ? serverStats.totalCorrect : 0;
+    let totalQuestions = serverStats ? serverStats.totalQuestions : 0;
+    let bestStreak = serverStats ? serverStats.bestStreak : 0;
+    let totalTimeSpent = serverStats ? serverStats.totalTimeSpent : 0;
+
+    for (const g of localGames) {
+      totalGames++;
+      totalXp += Math.round(g.xpEarned || 0);
+      totalCorrect += Math.round(g.correctCount || 0);
+      totalQuestions += g.totalQuestions || 0;
+      bestStreak = Math.max(bestStreak, g.maxStreak || 0);
+      totalTimeSpent += g.timeSpent || 0;
+    }
+    totalXp = Math.round(totalXp);
     const avgAccuracy = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
-    const bestStreak = Math.max(...history.map(g => g.maxStreak));
-    const totalTimeSpent = history.reduce((sum, g) => sum + g.timeSpent, 0);
 
     return { totalGames, totalXp, totalCorrect, totalQuestions, avgAccuracy, bestStreak, totalTimeSpent };
-  }, [history]);
+  }, [history, serverStats]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -175,19 +197,19 @@ const HistoryPage: React.FC<HistoryPageProps> = ({ history, user, allUsers, onBa
       {/* Summary Stats */}
       <div className="grid grid-cols-2 gap-2 sm:gap-4">
         <div className="bg-slate-900 border border-slate-800 p-3 sm:p-6 rounded-xl sm:rounded-[24px] text-center">
-          <p className="text-[8px] sm:text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1 sm:mb-2">TỔNG XP</p>
+          <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1 sm:mb-2">TỔNG XP</p>
           <p className="text-xl sm:text-3xl font-black text-yellow-500">{summary.totalXp.toLocaleString()}</p>
         </div>
         <div className="bg-slate-900 border border-slate-800 p-3 sm:p-6 rounded-xl sm:rounded-[24px] text-center">
-          <p className="text-[8px] sm:text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1 sm:mb-2">ĐỘ CHÍNH XÁC</p>
+          <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1 sm:mb-2">ĐỘ CHÍNH XÁC</p>
           <p className="text-xl sm:text-3xl font-black text-green-500">{summary.avgAccuracy}%</p>
         </div>
         <div className="bg-slate-900 border border-slate-800 p-3 sm:p-6 rounded-xl sm:rounded-[24px] text-center">
-          <p className="text-[8px] sm:text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1 sm:mb-2">STREAK CAO NHẤT</p>
+          <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1 sm:mb-2">STREAK CAO NHẤT</p>
           <p className="text-xl sm:text-3xl font-black text-orange-500">{summary.bestStreak}</p>
         </div>
         <div className="bg-slate-900 border border-slate-800 p-3 sm:p-6 rounded-xl sm:rounded-[24px] text-center">
-          <p className="text-[8px] sm:text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1 sm:mb-2">TỔNG THỜI GIAN</p>
+          <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1 sm:mb-2">TỔNG THỜI GIAN</p>
           <p className="text-xl sm:text-3xl font-black text-blue-500">{Math.floor(summary.totalTimeSpent / 60)}p</p>
         </div>
       </div>
@@ -233,20 +255,20 @@ const HistoryPage: React.FC<HistoryPageProps> = ({ history, user, allUsers, onBa
                       <div className="flex items-center justify-between gap-2 mb-1">
                         <div className="flex items-center gap-1.5 flex-wrap">
                           <span className="font-black text-white text-sm">{'Lớp'} {game.grade}</span>
-                          <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase border ${getDifficultyColor(game.difficulty)}`}>
+                          <span className={`px-1.5 py-0.5 rounded text-[10px] font-black uppercase border ${getDifficultyColor(game.difficulty)}`}>
                             {game.difficulty === 'Trung bình' ? 'TB' : game.difficulty.split(' ')[0]}
                           </span>
                           {game.mode === 'multiplayer' ? (
-                            <span className="px-1.5 py-0.5 rounded text-[8px] font-black uppercase border border-blue-500/30 text-blue-400 bg-blue-500/10">
+                            <span className="px-1.5 py-0.5 rounded text-[10px] font-black uppercase border border-blue-500/30 text-blue-400 bg-blue-500/10">
                               {'⚔️'}
                             </span>
                           ) : (
-                            <span className="px-1.5 py-0.5 rounded text-[8px] font-black uppercase border border-slate-600/30 text-slate-400 bg-slate-600/10">
+                            <span className="px-1.5 py-0.5 rounded text-[10px] font-black uppercase border border-slate-600/30 text-slate-400 bg-slate-600/10">
                               Solo
                             </span>
                           )}
                           {game.myRank && game.totalPlayers && (
-                            <span className={`px-1.5 py-0.5 rounded text-[8px] font-black border ${
+                            <span className={`px-1.5 py-0.5 rounded text-[10px] font-black border ${
                               game.myRank === 1 ? 'border-yellow-500/30 text-yellow-400 bg-yellow-500/10' :
                               'border-slate-600/30 text-slate-400 bg-slate-600/10'
                             }`}>
@@ -265,15 +287,15 @@ const HistoryPage: React.FC<HistoryPageProps> = ({ history, user, allUsers, onBa
                       <div className="flex items-center gap-4 text-center">
                         <div>
                           <p className="text-sm font-black text-yellow-500">+{safeXpEarned}</p>
-                          <p className="text-[8px] font-black uppercase text-slate-600">XP</p>
+                          <p className="text-[10px] font-black uppercase text-slate-600">XP</p>
                         </div>
                         <div>
                           <p className="text-sm font-black text-orange-500">{game.maxStreak}</p>
-                          <p className="text-[8px] font-black uppercase text-slate-600">STREAK</p>
+                          <p className="text-[10px] font-black uppercase text-slate-600">STREAK</p>
                         </div>
                         <div>
                           <p className="text-sm font-black text-blue-500">{formatTime(game.timeSpent)}</p>
-                          <p className="text-[8px] font-black uppercase text-slate-600">THỜI GIAN</p>
+                          <p className="text-[10px] font-black uppercase text-slate-600">THỜI GIAN</p>
                         </div>
                       </div>
                     </div>
@@ -288,20 +310,20 @@ const HistoryPage: React.FC<HistoryPageProps> = ({ history, user, allUsers, onBa
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-0.5">
                         <span className="font-black text-white text-sm">Lớp {game.grade}</span>
-                        <span className={`px-1.5 py-0.5 rounded text-[9px] font-black uppercase border ${getDifficultyColor(game.difficulty)}`}>
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-black uppercase border ${getDifficultyColor(game.difficulty)}`}>
                           {game.difficulty === 'Trung bình' ? 'TB' : game.difficulty.split(' ')[0]}
                         </span>
                         {game.mode === 'multiplayer' ? (
-                          <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase border border-blue-500/30 text-blue-400 bg-blue-500/10">
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-black uppercase border border-blue-500/30 text-blue-400 bg-blue-500/10">
                             Thách đấu
                           </span>
                         ) : (
-                          <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase border border-slate-600/30 text-slate-400 bg-slate-600/10">
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-black uppercase border border-slate-600/30 text-slate-400 bg-slate-600/10">
                             Solo
                           </span>
                         )}
                         {game.myRank && game.totalPlayers && (
-                          <span className={`px-1.5 py-0.5 rounded text-[9px] font-black border ${
+                          <span className={`px-1.5 py-0.5 rounded text-[10px] font-black border ${
                             game.myRank === 1 ? 'border-yellow-500/30 text-yellow-400 bg-yellow-500/10' :
                             'border-slate-600/30 text-slate-400 bg-slate-600/10'
                           }`}>
@@ -315,19 +337,19 @@ const HistoryPage: React.FC<HistoryPageProps> = ({ history, user, allUsers, onBa
                     <div className="flex items-center gap-5 text-center flex-shrink-0">
                       <div>
                         <p className="text-base font-black text-white">{safeCorrectCount}/{game.totalQuestions}</p>
-                        <p className="text-[8px] font-black uppercase text-slate-600">Đúng</p>
+                        <p className="text-[10px] font-black uppercase text-slate-600">Đúng</p>
                       </div>
                       <div>
                         <p className="text-base font-black text-yellow-500">+{safeXpEarned}</p>
-                        <p className="text-[8px] font-black uppercase text-slate-600">XP</p>
+                        <p className="text-[10px] font-black uppercase text-slate-600">XP</p>
                       </div>
                       <div>
                         <p className="text-base font-black text-orange-500">{game.maxStreak}</p>
-                        <p className="text-[8px] font-black uppercase text-slate-600">Streak</p>
+                        <p className="text-[10px] font-black uppercase text-slate-600">Streak</p>
                       </div>
                       <div>
                         <p className="text-base font-black text-blue-500">{formatTime(game.timeSpent)}</p>
-                        <p className="text-[8px] font-black uppercase text-slate-600">Thời gian</p>
+                        <p className="text-[10px] font-black uppercase text-slate-600">Thời gian</p>
                       </div>
                       <span className="text-slate-600 text-xs">{isExpanded ? '▲' : '▼'}</span>
                     </div>
@@ -338,7 +360,7 @@ const HistoryPage: React.FC<HistoryPageProps> = ({ history, user, allUsers, onBa
                 {isExpanded && (
                   <div className="px-4 sm:px-6 pb-4 sm:pb-6 animate-in slide-in-from-top-2 duration-200">
                     <div className="bg-slate-950/60 border border-slate-800/50 rounded-xl p-4 sm:p-5 ml-11 sm:ml-16">
-                      <p className="text-[9px] sm:text-[10px] font-black uppercase text-slate-500 tracking-widest mb-3">Chi tiết XP</p>
+                      <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-3">Chi tiết XP</p>
                       <div className="space-y-2">
                         <div className="flex justify-between items-center">
                           <span className="text-xs sm:text-sm text-slate-400">Câu đúng × XP/câu</span>
@@ -364,7 +386,7 @@ const HistoryPage: React.FC<HistoryPageProps> = ({ history, user, allUsers, onBa
                     {/* Opponents section for multiplayer */}
                     {game.mode === 'multiplayer' && game.opponents && game.opponents.length > 0 && (
                       <div className="bg-slate-950/60 border border-slate-800/50 rounded-xl p-4 sm:p-5 ml-11 sm:ml-16 mt-3">
-                        <p className="text-[9px] sm:text-[10px] font-black uppercase text-slate-500 tracking-widest mb-3">
+                        <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-3">
                           Bảng xếp hạng ({game.totalPlayers} người chơi)
                         </p>
                         <div className="space-y-2">
