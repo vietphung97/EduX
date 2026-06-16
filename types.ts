@@ -5,6 +5,10 @@ export interface EdusoUserData {
   name?: string;
   email: string;
   phone?: string;
+  /** Lớp (className) — Eduso có thể trả về để in chứng nhận. Optional, fallback nhập tay. */
+  className?: string;
+  /** Tên trường — Eduso có thể trả về để in chứng nhận. Optional, fallback nhập tay. */
+  school?: string;
 }
 
 export interface StoredUserData {

@@ -1,55 +1,168 @@
 /**
  * CertificatePage.tsx
- * Chứng nhận tham gia chương trình Đấu trường X Summer 2026.
+ * Giấy chứng nhận EDUSO SUMMER ENGLISH ARENA — đè text động (họ tên, lớp, trường, tháng)
+ * lên ảnh template `public/cert/certificate.png` bằng font viết tay (Caveat).
+ *
+ * NGUỒN DỮ LIỆU DUY NHẤT: Eduso (https://eduso.vn/currentuser).
+ *  - Họ tên  ← edusoUser.name
+ *  - Lớp     ← edusoUser.className
+ *  - Trường  ← edusoUser.school
+ *  - Tháng   ← tháng hiện tại
+ *
+ * Nếu user là tài khoản tạm (guest, không có edusoUser) ⇒ chặn truy cập, yêu cầu đăng nhập Eduso.
+ * Nếu edusoUser tồn tại nhưng API chưa trả className/school ⇒ vẫn render chứng nhận,
+ * các dòng đó để trống và hiển thị cảnh báo về backend cần bổ sung.
  */
 
-import React from 'react';
-import { UserProfile } from '../types';
-import { LEVEL_CONFIG, WEEKLY_FRAMES } from '../constants';
-import { getCompletedFrames } from '../utils/frameLogic';
-import AvatarDisplay from './AvatarDisplay';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { UserProfile, EdusoUserData } from '../types';
+import { checkEdusoUserWithClass, EDUSO_LOGIN_URL } from '../utils/userSession';
 
 interface CertificatePageProps {
   user: UserProfile;
+  edusoUser?: EdusoUserData | null;
   onBack: () => void;
 }
 
-const ITEM_MAP: Record<string, { name: string; emoji: string }> = {};
-WEEKLY_FRAMES.forEach(frame => {
-  frame.items.forEach(item => {
-    ITEM_MAP[item.id] = { name: item.name, emoji: item.emoji };
-  });
-});
+const TEMPLATE_URL = ((import.meta as any).env?.BASE_URL || '/') + 'cert/certificate.png';
 
-function getCertSerial(userId: string): string {
-  const raw = userId.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-  const tail = raw.slice(-8).padStart(8, '0');
-  return `DTX-2026-${tail.slice(0, 4)}-${tail.slice(4)}`;
-}
+const CertificatePage: React.FC<CertificatePageProps> = ({ user, edusoUser, onBack }) => {
+  // State riêng để hỗ trợ refresh từ Eduso mà không phải reload app.
+  const [eduso, setEduso] = useState<EdusoUserData | null>(edusoUser || null);
+  const [syncing, setSyncing] = useState(false);
+  const [syncedAt, setSyncedAt] = useState<number | null>(edusoUser ? Date.now() : null);
 
-const CertificatePage: React.FC<CertificatePageProps> = ({ user, onBack }) => {
-  const levelConfig = LEVEL_CONFIG.find(c => c.level === user.level) || LEVEL_CONFIG[0];
-  const unlockedFrames = user.unlockedFrames || [];
-  const completedWeeks = getCompletedFrames(unlockedFrames);
-  const serial = getCertSerial(user.id);
+  // Sync ngay khi mở trang: gọi /currentuserwithclass để lấy luôn className + school.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setSyncing(true);
+      const fresh = await checkEdusoUserWithClass(5000);
+      if (cancelled) return;
+      if (fresh) {
+        setEduso(fresh);
+        setSyncedAt(Date.now());
+      }
+      setSyncing(false);
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
-  const today = new Date().toLocaleDateString('vi-VN', {
-    day: '2-digit', month: '2-digit', year: 'numeric',
-  });
+  const manualSync = async () => {
+    setSyncing(true);
+    const fresh = await checkEdusoUserWithClass(6000);
+    if (fresh) {
+      setEduso(fresh);
+      setSyncedAt(Date.now());
+    }
+    setSyncing(false);
+  };
+
+  const [imgOk, setImgOk] = useState<boolean | null>(null);
+  const imgProbe = useRef<HTMLImageElement | null>(null);
+
+  useEffect(() => {
+    const img = new Image();
+    img.onload = () => setImgOk(true);
+    img.onerror = () => setImgOk(false);
+    img.src = TEMPLATE_URL;
+    imgProbe.current = img;
+  }, []);
+
+  // ====== TRƯỜNG HỢP CHƯA ĐĂNG NHẬP ĐUSO ======
+  // Định nghĩa: là Eduso user khi có eduso (object có userId).
+  // Phụ trợ: nếu user.id bắt đầu bằng "temp_" thì chắc chắn là guest.
+  const isEdusoUser = !!eduso?.userId && !user.id.startsWith('temp_');
+
+  if (!isEdusoUser) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-10 animate-in fade-in duration-300">
+        <div className="bg-slate-900/70 border border-slate-800 rounded-3xl p-8 text-center space-y-5">
+          <div className="text-5xl">🔒</div>
+          <h2 className="text-2xl font-black uppercase tracking-tight">Cần đăng nhập Eduso</h2>
+          <p className="text-slate-400 text-sm leading-relaxed">
+            Giấy chứng nhận chỉ cấp cho học sinh đang đăng nhập bằng tài khoản{' '}
+            <b>Eduso</b>. Bạn đang dùng tài khoản tạm — họ tên, lớp và trường không đầy đủ.
+            Vui lòng đăng nhập tại{' '}
+            <a
+              href={EDUSO_LOGIN_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-red-400 underline hover:text-red-300"
+            >
+              {EDUSO_LOGIN_URL.replace(/^https?:\/\//, '').split('/')[0]}
+            </a>{' '}
+            rồi quay lại đây.
+          </p>
+          <div className="flex justify-center gap-2">
+            <button
+              onClick={manualSync}
+              disabled={syncing}
+              className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 text-white font-black rounded-xl text-xs uppercase tracking-widest"
+            >
+              {syncing ? '⏳ ĐANG ĐỒNG BỘ…' : '🔄 ĐỒNG BỘ LẠI EDUSO'}
+            </button>
+            <button
+              onClick={onBack}
+              className="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-black rounded-xl text-xs uppercase tracking-widest border border-slate-700"
+            >
+              QUAY LẠI
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ====== RENDER GIẤY CHỨNG NHẬN ======
+  const data = {
+    fullName: eduso!.name?.trim() || '',
+    className: (eduso!.className || '').trim(),
+    school: (eduso!.school || '').trim(),
+    month: String(new Date().getMonth() + 1).padStart(2, '0'),
+  };
+
+  // Các trường Eduso chưa cấp ⇒ cảnh báo backend.
+  const missing: string[] = [];
+  if (!data.fullName)  missing.push('name');
+  if (!data.className) missing.push('className');
+  if (!data.school)    missing.push('school');
+
+  // Toạ độ tương đối (% theo chiều rộng/cao ảnh template 1508×1043).
+  const POS = {
+    name:   { yPct: 47.8, left: '37.0%', width: '52%', fontSize: 'clamp(20px, 3.8vw, 50px)' },
+    klass:  { yPct: 55.2, left: '30.5%', width: '58%', fontSize: 'clamp(18px, 3.4vw, 46px)' },
+    school: { yPct: 62.7, left: '33.8%', width: '55%', fontSize: 'clamp(18px, 3.4vw, 46px)' },
+    // Dots "....." trên dòng Tháng tập trung tại y=925 (88.7%) — bottom ở 91% để
+    // baseline "06" rơi đúng vào dòng kẻ chấm; left dịch trái để khít với "Tháng …."
+    month:  { yPct: 89.0, left: '28%', width: '9%',  fontSize: 'clamp(14px, 2.2vw, 28px)' },
+  } as const;
+  const ASPECT = 1508 / 1043;
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 pb-20 px-4 animate-in fade-in duration-500">
-      <div className="flex justify-between items-center">
+    <div className="max-w-6xl mx-auto space-y-5 pb-20 px-4 animate-in fade-in duration-500">
+      {/* Header & nút điều khiển — ẩn khi in */}
+      <div className="flex justify-between items-center no-print gap-3 flex-wrap">
         <div>
-          <h2 className="text-2xl sm:text-4xl font-black italic tracking-tighter uppercase">🎓 CHỨNG NHẬN</h2>
-          <p className="text-slate-500 text-xs uppercase tracking-widest">Đấu trường X · Summer 2026</p>
+          <h2 className="text-2xl sm:text-4xl font-black italic tracking-tighter uppercase">🎓 GIẤY CHỨNG NHẬN</h2>
+          <p className="text-slate-500 text-xs uppercase tracking-widest">Eduso Summer English Arena · 2026</p>
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => window.print()}
-            className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-xl text-xs uppercase tracking-widest transition-all"
+            onClick={manualSync}
+            disabled={syncing}
+            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-slate-200 font-black rounded-xl text-xs uppercase tracking-widest border border-slate-700"
+            title="Đồng bộ lại thông tin từ eduso.vn/currentuser"
           >
-            🖨️ In / Lưu PDF
+            {syncing ? '⏳ SYNC…' : '🔄 SYNC EDUSO'}
+          </button>
+          <button
+            onClick={() => window.print()}
+            disabled={!imgOk || missing.length > 0}
+            className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-black rounded-xl text-xs uppercase tracking-widest transition-all"
+            title={missing.length > 0 ? 'Cần đủ tên, lớp, trường mới in được chứng nhận' : 'In hoặc lưu PDF'}
+          >
+            🖨️ IN / LƯU PDF
           </button>
           <button
             onClick={onBack}
@@ -60,136 +173,101 @@ const CertificatePage: React.FC<CertificatePageProps> = ({ user, onBack }) => {
         </div>
       </div>
 
-      <div
-        className="relative overflow-hidden rounded-[32px] p-1"
-        style={{ background: 'linear-gradient(135deg, #f59e0b, #ef4444, #a855f7, #3b82f6)' }}
-      >
-        <div className="bg-[#0f172a] rounded-[28px] p-8 sm:p-12 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-5 pointer-events-none select-none" style={{
-            backgroundImage: 'repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 0, transparent 50%)',
-            backgroundSize: '20px 20px',
-          }} />
-          <div className="absolute -top-20 -right-20 w-64 h-64 bg-red-600/10 rounded-full blur-3xl" />
-          <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl" />
+      {/* Thẻ tóm tắt nguồn dữ liệu (chỉ debug; ẩn khi in) */}
+      <div className="no-print bg-slate-900/60 border border-slate-800 rounded-2xl p-4 sm:p-5 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+        <Info label="Họ và tên" value={data.fullName} />
+        <Info label="Lớp"        value={data.className} />
+        <Info label="Trường"     value={data.school} />
+        <Info label="Tháng"      value={data.month} />
+        <p className="col-span-2 sm:col-span-4 text-[11px] text-slate-500">
+          Nguồn: <code className="text-slate-300">{EDUSO_LOGIN_URL.replace(/^https?:\/\//, '').split('/')[0]}/currentuserwithclass</code>
+          {syncedAt && <> · cập nhật {new Date(syncedAt).toLocaleTimeString('vi-VN')}</>}
+          {' '}· user ID <code className="text-slate-300">{eduso!.userId}</code>
+        </p>
+      </div>
 
-          <div className="relative z-10 text-center space-y-7">
-            <div className="flex justify-center">
-              <div className="bg-red-600 w-14 h-14 rounded-2xl flex items-center justify-center font-black text-4xl shadow-lg shadow-red-600/30">
-                X
-              </div>
+      {/* Cảnh báo trường thiếu từ Eduso */}
+      {missing.length > 0 && (
+        <div className="no-print bg-amber-500/10 border border-amber-500/40 rounded-2xl p-4 text-amber-200 text-sm">
+          ⚠️ API <code className="font-mono">/currentuserwithclass</code> chưa trả về:
+          {' '}<b>{missing.join(', ')}</b>.
+          Backend Eduso cần bổ sung các field này vào response để chứng nhận in được đầy đủ.
+        </div>
+      )}
+
+      {/* Cảnh báo khi thiếu file template */}
+      {imgOk === false && (
+        <div className="no-print bg-amber-500/10 border border-amber-500/40 rounded-2xl p-4 text-amber-200 text-sm">
+          ⚠️ Chưa tìm thấy <code className="font-mono">public/cert/certificate.png</code>.
+        </div>
+      )}
+
+      {/* Giấy chứng nhận — phần in */}
+      <div className="cert-print mx-auto" style={{ maxWidth: '1100px' }}>
+        <div
+          className="relative w-full rounded-2xl overflow-hidden shadow-2xl bg-white"
+          style={{ aspectRatio: `${ASPECT}` as any }}
+        >
+          {imgOk !== false ? (
+            <img
+              src={TEMPLATE_URL}
+              alt="Eduso Summer English Arena - Giấy chứng nhận"
+              className="absolute inset-0 w-full h-full object-contain select-none pointer-events-none"
+              draggable={false}
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center bg-slate-100 text-slate-500 text-sm">
+              (Đặt file certificate.png vào public/cert/ để xem chứng nhận)
             </div>
+          )}
 
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500 mb-2">EDUSO · CHỨNG NHẬN THAM GIA</p>
-              <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-white leading-tight">
-                ĐẤU TRƯỜNG X<br/>
-                <span className="text-red-500">SUMMER 2026</span>
-              </h1>
-              <p className="text-slate-400 text-sm font-medium mt-3 max-w-xs mx-auto">
-                Chứng nhận học sinh đã tham gia chương trình thi đấu Tiếng Anh hè
-              </p>
-            </div>
-
-            <div className="flex justify-center">
-              <AvatarDisplay
-                avatar={user.avatar}
-                name={user.name}
-                equippedFrame={user.equippedFrame}
-                unlockedFrames={user.unlockedFrames}
-                size="xl"
-              />
-            </div>
-
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Tên học sinh</p>
-              <p className="text-3xl sm:text-4xl font-black text-white">{user.name}</p>
-            </div>
-
-            <div className="grid grid-cols-3 gap-3 max-w-sm mx-auto">
-              <div className="bg-slate-800/50 p-4 rounded-2xl border border-slate-700/50">
-                <p className="text-2xl font-black text-yellow-400">{user.xp.toLocaleString()}</p>
-                <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mt-0.5">Tổng XP</p>
-              </div>
-              <div className="bg-slate-800/50 p-4 rounded-2xl border border-slate-700/50">
-                <p className="text-2xl font-black text-green-400">{user.totalGames}</p>
-                <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mt-0.5">Trận đấu</p>
-              </div>
-              <div className="bg-slate-800/50 p-4 rounded-2xl border border-slate-700/50">
-                <p className="text-2xl font-black text-orange-400">{user.bestStreak}🔥</p>
-                <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mt-0.5">Streak cao nhất</p>
-              </div>
-            </div>
-
-            <div className="inline-flex items-center gap-3 bg-slate-800/50 px-6 py-3 rounded-full border border-slate-700/50">
-              <span className="text-2xl">{levelConfig.emoji}</span>
-              <div className="text-left">
-                <p className="font-black text-white text-sm uppercase">{user.level}</p>
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Cấp độ hiện tại</p>
-              </div>
-            </div>
-
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">
-                KHUNG TUẦN HOÀN THÀNH ({completedWeeks.length}/8)
-              </p>
-              <div className="flex justify-center gap-2 flex-wrap">
-                {WEEKLY_FRAMES.map(frame => {
-                  const done = completedWeeks.includes(frame.id);
-                  return (
-                    <div
-                      key={frame.id}
-                      className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl border transition-all ${
-                        done
-                          ? 'bg-slate-800/60 border-opacity-40'
-                          : 'bg-slate-900/40 border-slate-800 opacity-30'
-                      }`}
-                      style={done ? { borderColor: `${frame.color}60` } : undefined}
-                    >
-                      <span className="text-xl">{frame.emoji}</span>
-                      <span
-                        className="text-[10px] font-black uppercase tracking-wider"
-                        style={done ? { color: frame.color } : { color: '#475569' }}
-                      >
-                        T{frame.week}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {unlockedFrames.length > 0 && (
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">
-                  VẬT PHẨM ĐÃ MỜ KHÓA ({unlockedFrames.length} items)
-                </p>
-                <div className="flex justify-center gap-1.5 flex-wrap max-w-xs mx-auto">
-                  {unlockedFrames.map(itemId => {
-                    const item = ITEM_MAP[itemId];
-                    return (
-                      <span key={itemId} className="text-xl" title={item?.name || itemId}>
-                        {item?.emoji || '🏅'}
-                      </span>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            <div className="pt-6 border-t border-slate-800/50 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs">
-              <p className="text-slate-600 font-bold">Ngày cấp: {today}</p>
-              <p className="text-slate-500 font-mono font-bold text-[10px] tracking-wider">{serial}</p>
-              <p className="text-slate-600 font-bold">eduso.vn · Đấu trường X</p>
-            </div>
-          </div>
+          <OverlayText pos={POS.name}   text={data.fullName} />
+          <OverlayText pos={POS.klass}  text={data.className} />
+          <OverlayText pos={POS.school} text={data.school} />
+          <OverlayText pos={POS.month}  text={data.month} align="center" />
         </div>
       </div>
 
-      <p className="text-center text-xs text-slate-600">
-        Nhấn "In / Lưu PDF" để lưu chứng nhận, hoặc chụp màn hình để chia sẻ.
+      <p className="no-print text-center text-xs text-slate-600">
+        Nhấn <b>In / Lưu PDF</b> để xuất chứng nhận khổ A4 ngang (landscape).
       </p>
     </div>
   );
 };
+
+/** Một dòng text viết tay đè lên template, định vị bằng % cha.
+ *  Dùng `bottom` để mép đáy text khớp với dòng kẻ chấm (yPct). */
+const OverlayText: React.FC<{
+  pos: { yPct: number; left: string; width: string; fontSize: string };
+  text: string;
+  align?: 'left' | 'center';
+}> = ({ pos, text, align = 'left' }) => (
+  <div
+    className="absolute font-handwriting text-[#1e3a8a]"
+    style={{
+      bottom: `${100 - pos.yPct}%`,
+      left: pos.left,
+      width: pos.width,
+      fontSize: pos.fontSize,
+      lineHeight: 1,
+      textAlign: align,
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'clip',
+    }}
+  >
+    {text}
+  </div>
+);
+
+/** Thẻ tóm tắt một trường dữ liệu Eduso (chỉ hiển thị giá trị + label, không sửa). */
+const Info: React.FC<{ label: string; value: string }> = ({ label, value }) => (
+  <div className="bg-slate-950/50 border border-slate-800 rounded-xl px-3 py-2">
+    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{label}</p>
+    <p className={`mt-0.5 font-bold ${value ? 'text-white' : 'text-amber-400 italic'}`}>
+      {value || '— chưa có —'}
+    </p>
+  </div>
+);
 
 export default CertificatePage;

@@ -11,6 +11,7 @@ import {
   createGuestUser,
   switchUser,
   checkAccountData,
+  EDUSO_LOGIN_URL,
 } from '../utils/userSession';
 
 interface LoginScreenProps {
@@ -371,8 +372,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginComplete, existingUser
 
         <p className="text-center text-xs text-slate-600">
           Đăng nhập bằng tài khoản Eduso tại{' '}
-          <a href="https://eduso.vn/login?returnUrl=https://eduso.vn/edux/" target="_blank" rel="noopener noreferrer" className="text-red-500 hover:underline">
-            eduso.vn
+          <a href={EDUSO_LOGIN_URL} target="_blank" rel="noopener noreferrer" className="text-red-500 hover:underline">
+            {EDUSO_LOGIN_URL.replace(/^https?:\/\//, '').split('/')[0]}
           </a>
           {' '}để lưu kết quả vĩnh viễn
         </p>

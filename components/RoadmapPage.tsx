@@ -146,7 +146,7 @@ const RoadmapPage: React.FC<RoadmapPageProps> = ({ onBack, onGoRewards }) => {
                 LỘ TRÌNH
               </h1>
               <h2 className="text-lg sm:text-xl md:text-2xl font-black italic tracking-tight text-red-500 mb-4">
-                TÌM X – TÌM BẢN LĨNH ✦
+                EDUSO SUMMER ENGLISH ARENA ✦
               </h2>
               <p className="text-slate-400 text-sm max-w-sm leading-relaxed">
                 8 tuần thử thách – 8 vùng đất kỳ thú.<br/>

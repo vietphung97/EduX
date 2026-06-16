@@ -618,12 +618,12 @@ const MultiplayerResults: React.FC<MultiplayerResultsProps> = ({
           <div className="bg-slate-900 border border-blue-600/30 p-4 sm:p-6 rounded-[30px]">
             {/* Header with formula tooltip */}
             <div className="relative group/xp cursor-help mb-3 sm:mb-4 text-center">
-              <p className="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em] inline-flex items-center gap-1">
+              <p className="text-xs sm:text-sm font-black uppercase text-slate-500 tracking-[0.2em] inline-flex items-center gap-1">
                 {'TỔNG XP NHẬN ĐƯỢC'}
                 <span className="text-slate-600 group-hover/xp:text-slate-400 transition-colors">{'ⓘ'}</span>
               </p>
               <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-slate-800 border border-slate-700 rounded-xl p-3 text-left opacity-0 group-hover/xp:opacity-100 transition-opacity pointer-events-none z-[60] shadow-xl">
-                <p className="text-white font-bold text-[10px] sm:text-xs leading-relaxed">
+                <p className="text-white font-bold text-xs sm:text-sm leading-relaxed">
                   {'XP nhận được = (Số câu đúng × XP/câu)'}
                   <br/>
                   {'+ (Streak cao nhất × 5XP)'}
@@ -631,7 +631,7 @@ const MultiplayerResults: React.FC<MultiplayerResultsProps> = ({
                   {'+ Điểm thưởng xếp hạng'}
                 </p>
                 <div className="mt-2 pt-2 border-t border-slate-700">
-                  <p className="text-[10px] font-bold text-slate-400">
+                  <p className="text-[11px] sm:text-xs font-bold text-slate-400">
                     {'Dễ: '}<span className="text-green-400">{'10XP/câu'}</span>{' · TB: '}<span className="text-yellow-400">{'12XP/câu'}</span>{' · Khó: '}<span className="text-red-400">{'15XP/câu'}</span>
                   </p>
                 </div>
@@ -640,39 +640,39 @@ const MultiplayerResults: React.FC<MultiplayerResultsProps> = ({
 
             {/* Detailed breakdown */}
             <div className="space-y-2 sm:space-y-3">
-              <div className="flex justify-between items-center py-1.5 sm:py-2 border-b border-slate-800/50">
-                <span className="text-[10px] sm:text-xs font-bold text-slate-400">{'Tổng số câu trả lời đúng'}</span>
-                <span className="text-xs sm:text-sm font-black text-white">{myResult.correctCount}</span>
+              <div className="flex justify-between items-center py-2 sm:py-2.5 border-b border-slate-800/50">
+                <span className="text-sm sm:text-base font-bold text-slate-400">{'Tổng số câu trả lời đúng'}</span>
+                <span className="text-base sm:text-lg font-black text-white">{myResult.correctCount}</span>
               </div>
-              <div className="flex justify-between items-center py-1.5 sm:py-2 border-b border-slate-800/50">
-                <span className="text-[10px] sm:text-xs font-bold text-slate-400">{'XP mỗi câu đúng'}</span>
-                <span className="text-xs sm:text-sm font-black text-white">{xpPerQ}XP</span>
+              <div className="flex justify-between items-center py-2 sm:py-2.5 border-b border-slate-800/50">
+                <span className="text-sm sm:text-base font-bold text-slate-400">{'XP mỗi câu đúng'}</span>
+                <span className="text-base sm:text-lg font-black text-white">{xpPerQ}XP</span>
               </div>
-              <div className="flex justify-between items-center py-1.5 sm:py-2 border-b border-slate-800/50">
-                <span className="text-[10px] sm:text-xs font-bold text-slate-400">{'Streak cao nhất'}</span>
-                <span className="text-xs sm:text-sm font-black text-orange-400">{myResult.maxStreak}</span>
+              <div className="flex justify-between items-center py-2 sm:py-2.5 border-b border-slate-800/50">
+                <span className="text-sm sm:text-base font-bold text-slate-400">{'Streak cao nhất'}</span>
+                <span className="text-base sm:text-lg font-black text-orange-400">{myResult.maxStreak}</span>
               </div>
-              <div className="flex justify-between items-center py-1.5 sm:py-2 border-b border-slate-800/50">
-                <span className="text-[10px] sm:text-xs font-bold text-slate-400">{'Điểm thưởng xếp hạng thách đấu'}</span>
-                <span className="text-xs sm:text-sm font-black text-green-500">{rankBonus}XP</span>
+              <div className="flex justify-between items-center py-2 sm:py-2.5 border-b border-slate-800/50">
+                <span className="text-sm sm:text-base font-bold text-slate-400">{'Điểm thưởng xếp hạng thách đấu'}</span>
+                <span className="text-base sm:text-lg font-black text-green-500">{rankBonus}XP</span>
               </div>
             </div>
 
             {/* Total + bottom stats */}
             <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t-2 border-slate-800 flex flex-col items-center">
-              <p className="text-3xl sm:text-5xl font-black text-yellow-500 tracking-tighter">+{myResult.xpEarned}</p>
+              <p className="text-5xl sm:text-6xl font-black text-yellow-500 tracking-tighter">+{myResult.xpEarned}</p>
               <div className="grid grid-cols-3 gap-2 sm:gap-4 w-full mt-3 sm:mt-4">
                 <div className="text-center">
-                  <p className="text-[10px] font-black uppercase text-slate-500">{'CHÍNH XÁC'}</p>
-                  <p className="text-xs sm:text-sm font-black text-white">{accuracy}%</p>
+                  <p className="text-xs sm:text-sm font-black uppercase text-slate-500">{'CHÍNH XÁC'}</p>
+                  <p className="text-base sm:text-lg font-black text-white">{accuracy}%</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-[10px] font-black uppercase text-slate-500">{'STREAK'}</p>
-                  <p className="text-xs sm:text-sm font-black text-white">{myResult.maxStreak}</p>
+                  <p className="text-xs sm:text-sm font-black uppercase text-slate-500">{'STREAK'}</p>
+                  <p className="text-base sm:text-lg font-black text-white">{myResult.maxStreak}</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-[10px] font-black uppercase text-slate-500">{'TG/CÂU'}</p>
-                  <p className="text-xs sm:text-sm font-black text-white">{avgTime}s</p>
+                  <p className="text-xs sm:text-sm font-black uppercase text-slate-500">{'TG/CÂU'}</p>
+                  <p className="text-base sm:text-lg font-black text-white">{avgTime}s</p>
                 </div>
               </div>
             </div>

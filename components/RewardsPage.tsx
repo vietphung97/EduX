@@ -75,7 +75,7 @@ const RewardsPage: React.FC<RewardsPageProps> = ({ user, onEquipFrame, onSpinRes
               QUÀ TẶNG
             </h2>
             <p className="text-red-500 font-black text-sm uppercase tracking-widest mt-1">
-              Kho quà Tìm X – Tìm bản lĩnh
+              Kho quà EDUSO English Summer Arena
             </p>
             <p className="text-slate-400 text-xs mt-3 max-w-lg leading-relaxed">
               Tích lũy XP qua Đấu hạng và Thách đấu để mở khóa khung avatar, quay thưởng may mắn và nhận chứng nhận hoàn thành.
@@ -300,7 +300,7 @@ const RewardsPage: React.FC<RewardsPageProps> = ({ user, onEquipFrame, onSpinRes
             <div className="w-full sm:w-[240px] flex-shrink-0 bg-gradient-to-br from-yellow-900/20 to-slate-900 border border-yellow-700/30 rounded-2xl p-6 text-center">
               <p className="text-4xl mb-2">📜</p>
               <p className="text-xs font-black text-yellow-500 uppercase tracking-widest">Chứng nhận</p>
-              <p className="text-[10px] text-slate-500 mt-1">Đấu trường X 2026</p>
+              <p className="text-[10px] text-slate-500 mt-1">EDUSO ENGLISH SUMMER ARENA 2026</p>
               {/* Avatar to, rõ — đặt giữa, tên bên dưới */}
               <div className="mt-3 flex flex-col items-center gap-1.5">
                 <AvatarDisplay

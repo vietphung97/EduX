@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đấu trường X - Tìm X, Tìm bản lĩnh</title>
+    <title>EDUSO SUMMER ENGLISH ARENA</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Caveat:wght@500;600;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
     <style>
         /* Tăng font-size toàn trang: 16px → 18px (+2). Mọi class text-*/p-*... của
            Tailwind dùng rem nên tự scale theo tỷ lệ trên toàn bộ app. */
@@ -51,6 +51,23 @@
         }
         .streak-pop {
             animation: streakPop 0.4s ease-out forwards;
+        }
+        /* Handwriting font cho phần điền tay trên giấy chứng nhận */
+        .font-handwriting {
+            font-family: 'Caveat', 'Dancing Script', cursive;
+            font-weight: 700;
+        }
+        /* Print: ẩn UI ngoài giấy chứng nhận */
+        @media print {
+            @page { size: A4 landscape; margin: 0; }
+            html, body { background: #fff !important; color: #000 !important; }
+            .no-print { display: none !important; }
+            .cert-print {
+                page-break-inside: avoid;
+                width: 100% !important;
+                max-width: none !important;
+                margin: 0 !important;
+            }
         }
     </style>
 <script type="importmap">

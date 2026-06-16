@@ -133,6 +133,19 @@ export function getCurrentUserID(): string {
 // ============================================
 
 /**
+ * Base URL của API Eduso. Cấu hình qua env `VITE_EDUSO_API_BASE`.
+ *  - Local dev:  https://test.eduso.vn   (đặt trong .env.local)
+ *  - Production: https://eduso.vn        (đặt trong .env.production)
+ * Fallback https://eduso.vn nếu chưa cấu hình.
+ */
+const EDUSO_BASE: string = (
+  ((import.meta as any).env?.VITE_EDUSO_API_BASE as string) || 'https://eduso.vn'
+).replace(/\/+$/, '');
+
+/** Trang đăng nhập Eduso tương ứng với base hiện tại (cho link "Đăng nhập"). */
+export const EDUSO_LOGIN_URL = `${EDUSO_BASE}/login?returnUrl=${encodeURIComponent(EDUSO_BASE + '/edux/')}`;
+
+/**
  * Check for logged-in Eduso user via API
  * Returns user data if logged in, null otherwise
  */
@@ -141,7 +154,7 @@ export async function checkEdusoUser(timeoutMs: number = 2000): Promise<EdusoUse
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
-    const response = await fetch('https://eduso.vn/currentuser', {
+    const response = await fetch(`${EDUSO_BASE}/currentuser`, {
       signal: controller.signal,
       credentials: 'include', // Send cookies for authentication
     });
@@ -162,6 +175,78 @@ export async function checkEdusoUser(timeoutMs: number = 2000): Promise<EdusoUse
       console.log('Eduso API timeout after', timeoutMs, 'ms');
     } else {
       console.error('Error checking Eduso user:', error);
+    }
+    return null;
+  }
+}
+
+/**
+ * Lấy profile đầy đủ của user Eduso bao gồm lớp (className) và trường (school).
+ * Endpoint: eduso.vn/currentuserwithclass — chỉ trả thông tin lớp/trường nếu user
+ * đã đăng nhập và là học sinh có gán lớp.
+ *
+ * Tự normalize các tên field thường gặp (className/class_name/class.name/grade,
+ * school/schoolName/school.name) để dùng cho giấy chứng nhận.
+ */
+export async function checkEdusoUserWithClass(
+  timeoutMs: number = 4000
+): Promise<EdusoUserData | null> {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    const response = await fetch(`${EDUSO_BASE}/currentuserwithclass`, {
+      signal: controller.signal,
+      credentials: 'include',
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      console.log('currentuserwithclass status', response.status);
+      return null;
+    }
+
+    const raw: any = await response.json();
+    if (!raw || !raw.userId) return null;
+
+    // Normalize: backend Eduso có thể đặt tên field khác nhau, chuẩn hoá về
+    // EdusoUserData để CertificatePage dùng được trực tiếp.
+    const className: string | undefined =
+      raw.className ??
+      raw.class_name ??
+      raw.classname ??
+      raw.class?.name ??
+      raw.class?.title ??
+      (typeof raw.class === 'string' ? raw.class : undefined) ??
+      raw.grade;
+
+    const school: string | undefined =
+      raw.school ??
+      raw.schoolName ??
+      raw.school_name ??
+      raw.school?.name ??
+      raw.school?.title ??
+      (typeof raw.school === 'string' ? raw.school : undefined) ??
+      raw.organization ??
+      raw.org;
+
+    const out: EdusoUserData = {
+      userId: raw.userId,
+      name: raw.name,
+      email: raw.email,
+      phone: raw.phone,
+      className: className ? String(className) : undefined,
+      school: school ? String(school) : undefined,
+    };
+
+    console.log('Eduso /currentuserwithclass →', out);
+    return out;
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      console.log('currentuserwithclass timeout', timeoutMs, 'ms');
+    } else {
+      console.error('Error checking currentuserwithclass:', error);
     }
     return null;
   }

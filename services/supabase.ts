@@ -324,6 +324,10 @@ export async function recalculateAllUsersXp(programStartMs: number, currentWeek:
 
   let fixed = 0;
 
+  // Biên tuần hiện tại (cùng range với BXH tuần) — dùng để cộng XP spin in-range
+  const weekStart = currentWeek ? programStartMs + (currentWeek - 1) * msPerWeek : 0;
+  const weekEnd = weekStart + msPerWeek;
+
   for (const profile of profiles) {
     // Lấy toàn bộ game history của user
     const { data: games, error: gErr } = await supabase
@@ -346,11 +350,9 @@ export async function recalculateAllUsersXp(programStartMs: number, currentWeek:
 
       totalXpRecalc += newXp;
 
-      // Tính weeklyXp cho tuần hiện tại
+      // Tính weeklyXp cho tuần hiện tại (từ game history)
       if (currentWeek && g.played_at) {
         const t = new Date(g.played_at).getTime();
-        const weekStart = programStartMs + (currentWeek - 1) * msPerWeek;
-        const weekEnd = weekStart + msPerWeek;
         if (t >= weekStart && t < weekEnd) {
           weeklyXpRecalc += newXp;
         }
@@ -361,6 +363,25 @@ export async function recalculateAllUsersXp(programStartMs: number, currentWeek:
         gameFixes.push({ id: g.id, correct_count: safeCorrect, xp_earned: newXp });
       }
     }
+
+    // Cộng XP thưởng vòng quay vào tổng XP + weeklyXp (đúng định nghĩa weekly XP = game + spin trong tuần)
+    try {
+      const { data: spins } = await supabase
+        .from('edux_spin_history')
+        .select('xp_bonus, created_at')
+        .eq('user_id', profile.id);
+      if (Array.isArray(spins)) {
+        for (const s of spins) {
+          const bonus = Math.round(s.xp_bonus || 0);
+          if (bonus <= 0) continue;
+          totalXpRecalc += bonus;
+          if (currentWeek && s.created_at) {
+            const t = new Date(s.created_at).getTime();
+            if (t >= weekStart && t < weekEnd) weeklyXpRecalc += bonus;
+          }
+        }
+      }
+    } catch { /* bảng spin có thể chưa tạo — bỏ qua, weekly = chỉ trận đấu */ }
 
     const needsProfileFix = Math.round(profile.xp) !== totalXpRecalc ||
                             Math.round(profile.weekly_xp) !== weeklyXpRecalc ||
@@ -440,6 +461,7 @@ async function getWeeklyXpTotals(): Promise<Map<string, number> | null> {
 
   const totals = new Map<string, number>();
 
+  // ---------- (A) XP từ trận đấu trong tuần ----------
   // Ưu tiên RPC: Postgres GROUP BY + chỉ trả top 200 dòng (nhẹ, nhanh).
   // SQL tạo function: scripts/sql/weekly_leaderboard_rpc.sql
   const { data: rpcData, error: rpcError } = await supabase.rpc('edux_weekly_xp_totals', {
@@ -451,30 +473,52 @@ async function getWeeklyXpTotals(): Promise<Map<string, number> | null> {
     for (const row of rpcData) {
       if (row.user_id) totals.set(row.user_id, Number(row.weekly_xp) || 0);
     }
-    weeklyTotalsCache = { totals, fetchedAt: Date.now() };
-    return totals;
+  } else {
+    // Fallback: RPC chưa được tạo trên Supabase → kéo raw rows về cộng client-side
+    console.warn('edux_weekly_xp_totals RPC unavailable, falling back to raw query:', rpcError?.message);
+
+    const { data, error } = await supabase
+      .from('edux_game_history')
+      .select('user_id, xp_earned')
+      .gte('played_at', range.startIso)
+      .lt('played_at', range.endIso)
+      .limit(10000);
+
+    if (error) {
+      console.error('Error fetching weekly game history:', error);
+      return null;
+    }
+
+    for (const g of data || []) {
+      if (!g.user_id) continue;
+      totals.set(g.user_id, (totals.get(g.user_id) || 0) + Math.round(g.xp_earned || 0));
+    }
   }
 
-  // Fallback: RPC chưa được tạo trên Supabase → kéo raw rows về cộng client-side
-  // (chấp nhận được khi ít người chơi; chạy SQL ở scripts/sql/ để tối ưu)
-  console.warn('edux_weekly_xp_totals RPC unavailable, falling back to raw query:', rpcError?.message);
-
-  const { data, error } = await supabase
-    .from('edux_game_history')
-    .select('user_id, xp_earned')
-    .gte('played_at', range.startIso)
-    .lt('played_at', range.endIso)
-    .limit(10000);
-
-  if (error) {
-    console.error('Error fetching weekly game history:', error);
-    return null;
+  // ---------- (B) XP thưởng từ vòng quay trong tuần ----------
+  // Cộng vào BXH tuần. Nếu user chỉ có spin XP (không có trận đấu) vẫn lên hạng tuần.
+  // Bảng edux_spin_history có thể chưa tồn tại trên project chưa chạy lucky_spin.sql → bỏ qua.
+  try {
+    const { data: spinRows, error: spinErr } = await supabase
+      .from('edux_spin_history')
+      .select('user_id, xp_bonus')
+      .gte('created_at', range.startIso)
+      .lt('created_at', range.endIso)
+      .limit(10000);
+    if (!spinErr && Array.isArray(spinRows)) {
+      for (const r of spinRows) {
+        if (!r.user_id) continue;
+        const bonus = Math.round(r.xp_bonus || 0);
+        if (bonus <= 0) continue;
+        totals.set(r.user_id, (totals.get(r.user_id) || 0) + bonus);
+      }
+    } else if (spinErr) {
+      console.warn('Spin XP not included in weekly totals:', spinErr.message);
+    }
+  } catch (e) {
+    console.warn('Spin history table unavailable — weekly XP excludes spin:', e);
   }
 
-  for (const g of data || []) {
-    if (!g.user_id) continue;
-    totals.set(g.user_id, (totals.get(g.user_id) || 0) + Math.round(g.xp_earned || 0));
-  }
   weeklyTotalsCache = { totals, fetchedAt: Date.now() };
   return totals;
 }
@@ -605,6 +649,15 @@ export async function getWeeklyUserRank(userId: string): Promise<number> {
     if (id !== userId && xp > myXp) higher++;
   });
   return higher + 1;
+}
+
+// Get user's XP tuần này theo đúng range tuần đang xét (cùng nguồn với BXH tuần).
+// Trả về 0 nếu chưa chơi trận nào trong tuần — KHÔNG dùng cột weekly_xp của profile
+// vì cột này không tự reset khi sang tuần mới (sẽ giữ XP của tuần trước).
+export async function getWeeklyUserXp(userId: string): Promise<number> {
+  const totals = await getWeeklyXpTotals();
+  if (totals === null) return 0;
+  return totals.get(userId) || 0;
 }
 
 // ============ LUCKY SPIN ============

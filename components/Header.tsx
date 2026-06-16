@@ -32,7 +32,7 @@ const Header: React.FC<HeaderProps> = ({ user, currentView, onNavigate }) => {
             <div className="bg-red-600 w-10 h-10 rounded-lg flex items-center justify-center font-black text-2xl shadow-lg shadow-red-600/20 group-hover:scale-105 transition-transform">X</div>
             <div>
               <h1 className="text-xl font-extrabold tracking-tight leading-none">Đấu trường X</h1>
-              <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest">Tìm X – Tìm bản lĩnh</p>
+              <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest">EDUSO SUMMER ENGLISH ARENA</p>
             </div>
           </div>
 

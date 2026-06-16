@@ -31,7 +31,7 @@ import {
   MultiplayerGameState,
   MultiplayerResult
 } from './types';
-import { DEFAULT_GRADES, DEFAULT_TOPICS_BY_GRADE, LEVEL_CONFIG, WEEKLY_FRAMES, getCurrentProgramWeek } from './constants';
+import { DEFAULT_GRADES, DEFAULT_TOPICS_BY_GRADE, LEVEL_CONFIG, PROGRAM_START_DATE, WEEKLY_FRAMES, getCurrentProgramWeek } from './constants';
 import { TopicsByGrade, fetchQuestionsFromSheet } from './services/sheets';
 import { fetchK9Questions, getK9Topics } from './services/k9Questions';
 import { fetchK6Questions, getK6Difficulties } from './services/k6Questions';
@@ -49,6 +49,7 @@ import {
   recalculateAllUsersXp,
   getUserRank,
   getWeeklyUserRank,
+  getWeeklyUserXp,
   getUserHistoryStats
 } from './services/supabase';
 
@@ -62,19 +63,20 @@ import { startGame as startMultiplayerGame } from './utils/multiplayerSync';
 import { getPlayerId, clearActiveRoom, checkRejoinableRoom, updateActiveRoomPhase, isAvatarImage, normalizeAvatarUrl } from './utils/playerSession';
 
 /**
- * Reset weeklyXp khi tuần chương trình thay đổi.
- * Mỗi tuần có bộ milestone riêng — không được dùng XP tuần cũ để unlock tuần mới.
+ * Reset weeklyXp khi profile không chứng minh được giá trị thuộc tuần hiện tại.
+ * Mỗi tuần có bộ milestone riêng — không được phép dùng XP tuần cũ để unlock tuần mới.
+ *
+ * Nguyên tắc: weeklyXp chỉ được coi là "của tuần hiện tại" KHI `weeklyXpWeek === currentWeek`.
+ * Bất kỳ trường hợp nào khác (null vì data cũ / load từ server không sync field này,
+ * hay tuần đã đổi) đều phải reset về 0; giá trị thực sẽ được reconcile lại bằng
+ * `getWeeklyUserXp` (đếm trực tiếp từ game/spin history theo range tuần đúng).
  */
 function normalizeWeeklyXp(profile: UserProfile): UserProfile {
   const currentWeek = getCurrentProgramWeek();
   if (currentWeek === null) return profile; // Ngoài chương trình — giữ nguyên
   if (profile.weeklyXpWeek === currentWeek) return profile; // Cùng tuần — OK
-  if (profile.weeklyXpWeek != null && profile.weeklyXpWeek !== currentWeek) {
-    // Tuần đã đổi → reset weeklyXp
-    return { ...profile, weeklyXp: 0, weeklyXpWeek: currentWeek };
-  }
-  // weeklyXpWeek chưa set (user cũ / load từ Supabase) → giữ weeklyXp, gán tuần
-  return { ...profile, weeklyXpWeek: currentWeek };
+  // Bao gồm cả case weeklyXpWeek == null: không chứng minh được là tuần này → reset.
+  return { ...profile, weeklyXp: 0, weeklyXpWeek: currentWeek };
 }
 
 /** ── Leaderboard Components — asset cắt trực tiếp từ ảnh thiết kế gốc (public/lb) ── */
@@ -416,6 +418,9 @@ const App: React.FC = () => {
 
   // Weekly rank banner + popup state
   const [myWeeklyRank, setMyWeeklyRank] = useState<number>(-1);
+  // XP tuần này tính từ game history (cùng nguồn BXH). KHÔNG dùng user.weeklyXp vì
+  // cột weekly_xp trong DB không tự reset → giữ XP tuần trước, làm hỏng BXH tuần.
+  const [myWeeklyXp, setMyWeeklyXp] = useState<number>(0);
   const [weeklyTop5, setWeeklyTop5] = useState<UserProfile[]>([]);
   const [showRankPopup, setShowRankPopup] = useState(false);
 
@@ -475,12 +480,14 @@ const App: React.FC = () => {
 
         // Fetch actual rank for current user (cả all-time lẫn tuần — mỗi tab dùng rank riêng)
         const gradeFilter = leaderboardGradeFilter === 'all' ? undefined : leaderboardGradeFilter;
-        const [rank, weeklyRank] = await Promise.all([
+        const [rank, weeklyRank, weeklyXpFresh] = await Promise.all([
           getUserRank(user.id, gradeFilter),
           getWeeklyUserRank(user.id),
+          getWeeklyUserXp(user.id),
         ]);
         setMyRank(rank);
         setMyWeeklyRank(weeklyRank);
+        setMyWeeklyXp(weeklyXpFresh);
 
         setIsLoadingLeaderboard(false);
       };
@@ -535,17 +542,43 @@ const App: React.FC = () => {
       // Tổng XP = trận đấu (server + local chưa sync) + XP thưởng vòng quay
       const authoritativeXp = serverStats.totalXp + serverStats.spinXp + localOnlyXp;
       const authoritativeGames = serverStats.totalGames + localOnly.length;
-      if (authoritativeGames === 0) return; // Chưa có trận nào — không đụng profile
+
+      // XP TUẦN NÀY: nguồn duy nhất đáng tin = getWeeklyUserXp (game + spin trong
+      // range tuần hiện tại). Bất kỳ giá trị weeklyXp local/server đều có thể stale.
+      const currentWeek = getCurrentProgramWeek();
+      let authoritativeWeeklyXp: number | null = null;
+      if (currentWeek !== null) {
+        try {
+          authoritativeWeeklyXp = await getWeeklyUserXp(userId);
+        } catch { /* mạng lỗi — bỏ qua, giữ giá trị local */ }
+      }
+
+      if (authoritativeGames === 0 && authoritativeWeeklyXp === null) return; // Không có gì để cập nhật
 
       setUser(prev => {
         if (!prev || prev.id !== userId) return prev;
-        if (prev.xp === authoritativeXp && prev.totalGames === authoritativeGames) return prev;
-        console.log(`Reconciled XP from history: ${prev.xp} → ${authoritativeXp} (${authoritativeGames} games)`);
+        const nextWeeklyXp = authoritativeWeeklyXp ?? prev.weeklyXp;
+        const nextWeeklyWeek = currentWeek ?? prev.weeklyXpWeek;
+        const sameTotal = authoritativeGames === 0
+          ? true
+          : (prev.xp === authoritativeXp && prev.totalGames === authoritativeGames);
+        const sameWeekly = nextWeeklyXp === prev.weeklyXp && nextWeeklyWeek === prev.weeklyXpWeek;
+        if (sameTotal && sameWeekly) return prev;
+        if (!sameTotal) {
+          console.log(`Reconciled XP from history: ${prev.xp} → ${authoritativeXp} (${authoritativeGames} games)`);
+        }
+        if (!sameWeekly) {
+          console.log(`Reconciled weekly XP: ${prev.weeklyXp} → ${nextWeeklyXp} (week ${nextWeeklyWeek})`);
+        }
         const fixedUser: UserProfile = {
           ...prev,
-          xp: authoritativeXp,
-          totalGames: authoritativeGames,
-          level: getLevelFromXp(authoritativeXp).level,
+          ...(authoritativeGames > 0 ? {
+            xp: authoritativeXp,
+            totalGames: authoritativeGames,
+            level: getLevelFromXp(authoritativeXp).level,
+          } : {}),
+          weeklyXp: nextWeeklyXp,
+          weeklyXpWeek: nextWeeklyWeek,
         };
         localStorage.setItem('arena_x_user', JSON.stringify(fixedUser));
         upsertUserProfile(fixedUser).catch(console.error);
@@ -576,8 +609,11 @@ const App: React.FC = () => {
               xp: Math.max(parsedUser.xp, serverProfile.xp),
               totalGames: Math.max(parsedUser.totalGames, serverProfile.totalGames),
               bestStreak: Math.max(parsedUser.bestStreak, serverProfile.bestStreak),
-              weeklyXp: Math.max(parsedUser.weeklyXp, serverProfile.weeklyXp),
-              weeklyXpWeek: parsedUser.weeklyXpWeek || serverProfile.weeklyXpWeek,
+              // KHÔNG Math.max với serverProfile.weeklyXp vì cột weekly_xp server
+              // không tự reset → giữ XP tuần cũ. Lấy local đã normalize theo tuần
+              // hiện tại; giá trị thực sẽ được override bằng getWeeklyUserXp ngay sau.
+              weeklyXp: parsedUser.weeklyXp,
+              weeklyXpWeek: parsedUser.weeklyXpWeek,
               level: serverProfile.xp > parsedUser.xp ? serverProfile.level : parsedUser.level,
               // Khôi phục khung/quà đã mở: union local + server để không mất mốc nào
               unlockedFrames: Array.from(new Set([...(parsedUser.unlockedFrames || []), ...(serverProfile.unlockedFrames || [])])),
@@ -851,8 +887,10 @@ const App: React.FC = () => {
           xp: Math.max(userProfile.xp, serverProfile.xp),
           totalGames: Math.max(userProfile.totalGames, serverProfile.totalGames),
           bestStreak: Math.max(userProfile.bestStreak, serverProfile.bestStreak),
-          weeklyXp: Math.max(userProfile.weeklyXp, serverProfile.weeklyXp),
-          weeklyXpWeek: userProfile.weeklyXpWeek || serverProfile.weeklyXpWeek,
+          // weekly_xp server có thể là XP tuần cũ — không Math.max. Local đã được
+          // normalize cho tuần hiện tại; reconcile chính xác sẽ chạy qua getWeeklyUserXp.
+          weeklyXp: userProfile.weeklyXp,
+          weeklyXpWeek: userProfile.weeklyXpWeek,
           level: serverProfile.xp > userProfile.xp ? serverProfile.level : userProfile.level,
           // Khôi phục khung/quà đã mở từ server (union để không mất mốc nào)
           unlockedFrames: Array.from(new Set([...(userProfile.unlockedFrames || []), ...(serverProfile.unlockedFrames || [])])),
@@ -1417,10 +1455,10 @@ const App: React.FC = () => {
           <div className="max-w-5xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-700">
              <div className="text-center space-y-6">
                 <div className="inline-block px-4 py-1.5 bg-red-600/10 border border-red-600/50 rounded-full text-red-500 text-xs font-black uppercase tracking-widest">
-                  Đấu trường X
+                  ĐẤU TRƯỜNG X
                 </div>
-                <h2 className="text-4xl sm:text-5xl md:text-8xl font-black tracking-tighter italic uppercase text-white leading-none">
-                  TÌM X <br/> <span className="text-red-600">TÌM BẢN LĨNH</span>
+                <h2 className="text-3xl sm:text-4xl md:text-6xl font-black tracking-tighter italic uppercase text-white leading-none">
+                 EDUSO SUMMER ENGLISH <br/> <span className="text-red-600"> ARENA</span>
                 </h2>
                 <p className="text-slate-400 text-base sm:text-lg md:text-xl font-medium max-w-2xl mx-auto">
                   Vượt qua áp lực thời gian, chinh phục bảng xếp hạng và trở thành Huyền thoại Tiếng Anh X.
@@ -1924,17 +1962,18 @@ const App: React.FC = () => {
             user={user}
             allUsers={leaderboardData}
             onBack={() => setView('home')}
-            onRecalculate={(fixedHistory, xpDiff) => {
+            onRecalculate={async (fixedHistory, xpDiff) => {
               setGameHistory(fixedHistory);
               localStorage.setItem('arena_x_history', JSON.stringify(fixedHistory));
               if (user) {
-                // Tính lại weeklyXp từ các ván trong tuần hiện tại
                 const currentWeek = getCurrentProgramWeek();
+                // weeklyXp tuần hiện tại = trận đấu trong tuần + XP thưởng vòng quay trong tuần.
+                // Dùng PROGRAM_START_DATE đã neo +07:00 (tránh lệch 7h như mốc hardcode cũ),
+                // và gọi getWeeklyUserXp để cộng cả spin XP (cùng nguồn với BXH tuần).
                 let recalcWeeklyXp = 0;
                 if (currentWeek) {
-                  const PROGRAM_START = new Date('2026-06-01').getTime();
                   const msPerWeek = 7 * 24 * 60 * 60 * 1000;
-                  const weekStart = PROGRAM_START + (currentWeek - 1) * msPerWeek;
+                  const weekStart = PROGRAM_START_DATE.getTime() + (currentWeek - 1) * msPerWeek;
                   const weekEnd = weekStart + msPerWeek;
                   recalcWeeklyXp = fixedHistory
                     .filter(g => {
@@ -1942,6 +1981,12 @@ const App: React.FC = () => {
                       return t >= weekStart && t < weekEnd;
                     })
                     .reduce((sum, g) => sum + g.xpEarned, 0);
+                  try {
+                    const authoritative = await getWeeklyUserXp(user.id);
+                    // Server đếm được cả spin XP — ưu tiên giá trị server nếu lớn hơn
+                    // (không Math.min, để không bỏ sót XP spin user chỉ có server-side).
+                    recalcWeeklyXp = Math.max(recalcWeeklyXp, authoritative);
+                  } catch { /* mạng lỗi — dùng giá trị tính từ history local */ }
                 }
                 const updatedUser = {
                   ...user,
@@ -1956,8 +2001,9 @@ const App: React.FC = () => {
             }}
             onRecalculateAll={async () => {
               const currentWeek = getCurrentProgramWeek();
-              const PROGRAM_START = new Date('2026-06-01').getTime();
-              const result = await recalculateAllUsersXp(PROGRAM_START, currentWeek);
+              // Dùng PROGRAM_START_DATE đã neo +07:00 — KHÔNG hardcode new Date('2026-06-01')
+              // vì sẽ parse thành UTC midnight, lệch 7h, weekly_xp tính sai biên tuần.
+              const result = await recalculateAllUsersXp(PROGRAM_START_DATE.getTime(), currentWeek);
               // Reload current user from Supabase after fix
               if (user) {
                 const fresh = await getUserProfile(user.id);
@@ -2072,10 +2118,20 @@ const App: React.FC = () => {
                };
 
                const userInList = rawData.some(p => p.id === user.id);
-               const userHasXp = !isGradeFilter || (user.gradeXp && user.gradeXp[leaderboardGradeFilter as number] > 0);
+               // Inject user vào danh sách nếu chưa có:
+               // - Tab weekly: chỉ inject khi có XP THỰC SỰ tuần này (myWeeklyXp > 0),
+               //   và inject bằng user.weeklyXp = myWeeklyXp (KHÔNG dùng user.weeklyXp stale từ profile).
+               // - Tab grade filter: inject nếu user có gradeXp[grade] > 0.
+               // - Tab all-time: luôn inject nếu chưa có (user.xp đáng tin).
+               const userHasXp = isWeekly
+                 ? myWeeklyXp > 0
+                 : (!isGradeFilter || (user.gradeXp && user.gradeXp[leaderboardGradeFilter as number] > 0));
+               const userInject: UserProfile = isWeekly
+                 ? { ...user, weeklyXp: myWeeklyXp }
+                 : user;
                let combinedData: UserProfile[] = userInList
                  ? rawData
-                 : (userHasXp ? [...rawData, user] : rawData);
+                 : (userHasXp ? [...rawData, userInject] : rawData);
 
                combinedData = combinedData.sort((a, b) => getDisplayXp(b) - getDisplayXp(a));
                if (isGradeFilter) combinedData = combinedData.filter(p => getDisplayXp(p) > 0);
@@ -2177,6 +2233,7 @@ const App: React.FC = () => {
         {view === 'certificate' && user && (
           <CertificatePage
             user={user}
+            edusoUser={edusoUser}
             onBack={() => setView('profile')}
           />
         )}
