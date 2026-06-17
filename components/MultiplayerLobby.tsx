@@ -7,8 +7,15 @@ import {
   Difficulty,
   UserProfile,
   MultiplayerGameState,
-  PlayerInfo
+  PlayerInfo,
+  GameHistory
 } from '../types';
+import {
+  THACH_DAU_DAILY_MATCH_CAP,
+  THACH_DAU_WINDOW_LABEL,
+  countThachDauTodayInWindow,
+  getThachDauStatus,
+} from '../utils/programRules';
 import {
   createRoom,
   joinRoom,
@@ -94,8 +101,36 @@ const MultiplayerLobby: React.FC<MultiplayerLobbyProps> = ({
     };
   }, [roomCode, mode, onStartGame]);
 
+  // Đọc lịch sử từ localStorage để kiểm tra hạn mức Thách đấu 5 trận/buổi
+  // (chỉ đếm trận multiplayer hôm nay trong khung 14h-21h VN). Đọc lại mỗi
+  // lần bấm để bắt cả các trận vừa kết thúc ở tab khác / lần chơi vừa rồi.
+  const readGameHistory = (): GameHistory[] => {
+    try {
+      const raw = localStorage.getItem('arena_x_history');
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  };
+
+  /** Kiểm tra quy định 3.2 ngay trước khi tạo/tham gia phòng. */
+  const ensureThachDauAllowed = (): boolean => {
+    const status = getThachDauStatus();
+    if (!status.open) {
+      setError(`Thách đấu chỉ mở: ${THACH_DAU_WINDOW_LABEL}. Vui lòng quay lại đúng khung giờ.`);
+      return false;
+    }
+    const used = countThachDauTodayInWindow(readGameHistory());
+    if (used >= THACH_DAU_DAILY_MATCH_CAP) {
+      setError(`Bạn đã chơi đủ ${THACH_DAU_DAILY_MATCH_CAP}/${THACH_DAU_DAILY_MATCH_CAP} trận Thách đấu trong buổi hôm nay.`);
+      return false;
+    }
+    return true;
+  };
+
   // Create room handler
   const handleCreateRoom = async () => {
+    if (!ensureThachDauAllowed()) return;
     setIsLoading(true);
     setError('');
 
@@ -148,6 +183,7 @@ const MultiplayerLobby: React.FC<MultiplayerLobbyProps> = ({
       setError('Vui lòng nhập mã phòng');
       return;
     }
+    if (!ensureThachDauAllowed()) return;
 
     setIsLoading(true);
     setError('');
@@ -237,6 +273,9 @@ const MultiplayerLobby: React.FC<MultiplayerLobbyProps> = ({
 
   // Render mode selection
   if (mode === 'select') {
+    const tdHistory = readGameHistory();
+    const tdUsed = countThachDauTodayInWindow(tdHistory);
+    const tdRemaining = Math.max(0, THACH_DAU_DAILY_MATCH_CAP - tdUsed);
     return (
       <div className="max-w-2xl mx-auto space-y-8 animate-in fade-in duration-500">
         <div className="text-center">
@@ -244,6 +283,14 @@ const MultiplayerLobby: React.FC<MultiplayerLobbyProps> = ({
           <p className="text-slate-500 font-bold uppercase tracking-widest text-xs mt-2">
             Chơi cùng bạn bè
           </p>
+        </div>
+
+        {/* Banner hiển thị quy định 3.2 */}
+        <div className="bg-blue-500/10 border border-blue-500/30 rounded-2xl p-4 text-xs sm:text-sm text-blue-200 space-y-1">
+          <p className="font-bold uppercase tracking-widest text-blue-300 text-[10px]">Quy định Thách đấu</p>
+          <p>Khung giờ mở: <span className="font-bold">{THACH_DAU_WINDOW_LABEL}</span>.</p>
+          <p>Hôm nay đã chơi: <span className="font-bold">{tdUsed}/{THACH_DAU_DAILY_MATCH_CAP}</span> trận — còn <span className="font-bold">{tdRemaining}</span> lượt.</p>
+          <p className="text-blue-300/80 text-[11px]">Rank 1 mỗi trận được cộng thêm +100 XP.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

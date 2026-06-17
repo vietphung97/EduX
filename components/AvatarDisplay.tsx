@@ -17,11 +17,12 @@ interface AvatarDisplayProps {
   className?: string;
 }
 
+// avatar ~78% container để phủ kín lỗ frame (các frame có lỗ ~58-69%, vùng dư bị frame mask)
 const SIZE_MAP = {
-  sm: { container: 40, avatar: 28 },
-  md: { container: 52, avatar: 36 },
-  lg: { container: 84, avatar: 58 },
-  xl: { container: 172, avatar: 128 },
+  sm: { container: 40, avatar: 31 },
+  md: { container: 52, avatar: 40 },
+  lg: { container: 84, avatar: 65 },
+  xl: { container: 172, avatar: 134 },
 };
 
 const AvatarDisplay: React.FC<AvatarDisplayProps> = ({
@@ -72,20 +73,7 @@ const AvatarDisplay: React.FC<AvatarDisplayProps> = ({
         />
       )}
 
-      {/* Fallback border khi không có frame */}
-      {!showFrame && (
-        <div
-          className="absolute rounded-full"
-          style={{
-            width: sz.avatar + 4,
-            height: sz.avatar + 4,
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            border: '2px solid #334155',
-          }}
-        />
-      )}
+      {/* Không có frame → không vẽ viền đè lên avatar nữa */}
     </div>
   );
 };

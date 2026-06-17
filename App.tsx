@@ -56,6 +56,15 @@ import {
 // Export migration function to window for one-time console run
 (window as any).migrateGradeXp = migrateAllUsersGradeXp;
 import { calculateDetailedXp, playSound, getLevelFromXp, generateRoomCode, DIFFICULTY_MULTIPLIERS, XP_PER_QUESTION } from './utils/gameLogic';
+import {
+  SOLO_WEEKLY_MATCH_CAP,
+  THACH_DAU_DAILY_MATCH_CAP,
+  THACH_DAU_WINDOW_LABEL,
+  countSoloThisWeek,
+  countThachDauTodayInWindow,
+  getThachDauStatus,
+  getVnParts,
+} from './utils/programRules';
 import { checkNewUnlocks, isFrameUsable, getFrameById } from './utils/frameLogic';
 import { generateQuestions, getExpertAnalysis } from './services/gemini';
 import { sendGameResultToEduso, createEndGameParams } from './utils/edusoApi';
@@ -139,10 +148,10 @@ const LbRankedAvatar: React.FC<{
       style={fluid ? { width: '100%', height: '100%' } : { width: px || 72 }}
     >
       {!fluid && <div style={{ paddingTop: '100%' }} />}
-      {/* Avatar tròn ở giữa (~68% như AvatarDisplay để khung ôm khít) */}
+      {/* Avatar tròn ở giữa (~78%) — không có khung thì cũng không vẽ viền đè lên avatar */}
       <div
         className="absolute rounded-full overflow-hidden bg-slate-800 flex items-center justify-center"
-        style={{ left: '16%', top: '16%', width: '68%', height: '68%' }}
+        style={{ left: '11%', top: '11%', width: '78%', height: '78%' }}
       >
         {isAvatarImage(avatar) ? (
           <img src={normalizeAvatarUrl(avatar)} alt={name} className="w-full h-full object-cover" />
@@ -157,13 +166,6 @@ const LbRankedAvatar: React.FC<{
           alt={frame.name}
           draggable={false}
           className="absolute inset-0 w-full h-full pointer-events-none"
-        />
-      )}
-      {/* Viền mảnh khi không có khung */}
-      {!showFrame && (
-        <div
-          className="absolute rounded-full border-2 border-slate-700"
-          style={{ left: '14%', top: '14%', width: '72%', height: '72%' }}
         />
       )}
     </div>
@@ -432,6 +434,9 @@ const App: React.FC = () => {
   // Frame unlock popup state
   const [newlyUnlockedItems, setNewlyUnlockedItems] = useState<string[]>([]);
   const [showFrameUnlock, setShowFrameUnlock] = useState(false);
+
+  // Thông báo chặn khi vi phạm quy định chương trình (đóng khung giờ, hết lượt...)
+  const [programRuleNotice, setProgramRuleNotice] = useState<{ title: string; lines: string[] } | null>(null);
 
   // Floating XP animation
   const [floatingXp, setFloatingXp] = useState<{ id: number; value: number } | null>(null);
@@ -1000,6 +1005,38 @@ const App: React.FC = () => {
     setView('solo-config');
   };
 
+  /**
+   * Vào Lobby Thách đấu — gate theo quy định 3.2:
+   *   - Khung giờ: 14h–21h các ngày T3/T5/T7 (giờ VN).
+   *   - Hạn mức: 5 trận/buổi (= 5 trận/ngày trong khung giờ).
+   * Vi phạm điều kiện nào hiển thị thông báo và KHÔNG chuyển view.
+   */
+  const handleEnterThachDauLobby = () => {
+    const status = getThachDauStatus();
+    if (status.open === false) {
+      setProgramRuleNotice({
+        title: status.reason === 'wrong_day' ? 'Ngoài ngày Thách đấu' : 'Ngoài khung giờ Thách đấu',
+        lines: [
+          `Thách đấu chỉ mở: ${THACH_DAU_WINDOW_LABEL}.`,
+          'Bạn vẫn có thể tham gia Đấu hạng (tự luyện) để tích lũy XP.',
+        ],
+      });
+      return;
+    }
+    const used = countThachDauTodayInWindow(gameHistory);
+    if (used >= THACH_DAU_DAILY_MATCH_CAP) {
+      setProgramRuleNotice({
+        title: 'Đã hết lượt Thách đấu trong buổi',
+        lines: [
+          `Mỗi buổi tối đa ${THACH_DAU_DAILY_MATCH_CAP} trận Thách đấu (bạn đã chơi ${used}/${THACH_DAU_DAILY_MATCH_CAP}).`,
+          'Hẹn gặp lại ở buổi Thách đấu kế tiếp.',
+        ],
+      });
+      return;
+    }
+    setView('lobby');
+  };
+
   const startSoloGame = async () => {
     setIsLoading(true);
     const topicsToUse = selectedTopics.length > 0 ? selectedTopics : [topicsByGrade[selectedGrade]?.[0] || 'General English'];
@@ -1231,7 +1268,13 @@ const App: React.FC = () => {
       const updatedGradeXp = { ...(user.gradeXp || {}) };
       updatedGradeXp[selectedGrade] = (updatedGradeXp[selectedGrade] || 0) + xpData.totalXp;
 
-      const newWeeklyXp = user.weeklyXp + xpData.totalXp;
+      // Quy định 3.1: Mỗi tuần chỉ tính XP cho TỐI ĐA 7 lượt Đấu hạng (solo) đầu tiên.
+      // Trận thứ 8 trở đi: vẫn được chơi để luyện tập, vẫn cộng XP tổng/gradeXp,
+      // nhưng KHÔNG cộng vào weeklyXp (XP tuần).
+      const soloPlayedThisWeekBeforeThis = countSoloThisWeek(gameHistory, PROGRAM_START_DATE);
+      const isCountableSoloForWeekly = soloPlayedThisWeekBeforeThis < SOLO_WEEKLY_MATCH_CAP;
+      const weeklyXpDelta = isCountableSoloForWeekly ? xpData.totalXp : 0;
+      const newWeeklyXp = user.weeklyXp + weeklyXpDelta;
 
       // Check frame unlock milestones
       const programWeek = getCurrentProgramWeek();
@@ -1565,6 +1608,36 @@ const App: React.FC = () => {
                );
              })()}
 
+             {/* ── Banner công bố BXH tuần (Thứ 2 hàng tuần) ── */}
+             {(() => {
+               const vn = getVnParts();
+               const programWeek = getCurrentProgramWeek();
+               // Hiển thị mọi Thứ 2 (VN) khi chương trình đang chạy.
+               // Tuần 1 (01/07 - 07/07): T2 đầu tiên = 06/07/2026 → khớp mốc công bố trong kế hoạch.
+               // Kết thúc chương trình: 19/08/2026 → không hiển thị sau ngày này.
+               const PROGRAM_END_KEY = '2026-08-19';
+               if (vn.day !== 1 || !programWeek || programWeek < 1 || vn.dateKey > PROGRAM_END_KEY) return null;
+               // Kế hoạch: công bố tuần TRƯỚC đó. Tuần hiện tại của chương trình
+               // tính theo Wed-Tue, nên T2 đầu mỗi "tuần lịch" rơi vào CUỐI tuần
+               // chương trình → công bố luôn tuần chương trình đang trôi.
+               return (
+                 <button
+                   onClick={() => setView('leaderboard')}
+                   className="w-full flex items-center gap-3 p-4 rounded-2xl border bg-gradient-to-r from-amber-500/15 to-yellow-500/10 border-amber-500/40 hover:border-amber-400 transition-all text-left animate-in fade-in duration-500"
+                 >
+                   <div className="shrink-0 w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-2xl">
+                     📣
+                   </div>
+                   <div className="flex-1 min-w-0">
+                     <p className="text-[10px] font-black uppercase tracking-widest text-amber-300">Công bố Thứ 2</p>
+                     <p className="font-black text-white text-sm mt-0.5">Kết quả BXH tuần {programWeek} đã có!</p>
+                     <p className="text-[11px] text-amber-200/80 mt-0.5">Bấm để xem ai dẫn đầu tuần này.</p>
+                   </div>
+                   <span className="text-amber-400 font-black text-lg shrink-0">›</span>
+                 </button>
+               );
+             })()}
+
              {/* ── Top Banner thứ hạng tuần ── */}
              {myWeeklyRank > 0 && (
                <button
@@ -1612,12 +1685,15 @@ const App: React.FC = () => {
                 </button>
 
                 <button
-                  onClick={() => setView('lobby')}
+                  onClick={handleEnterThachDauLobby}
                   className="relative group overflow-hidden bg-slate-900 border border-slate-800 p-10 rounded-[40px] hover:border-blue-500 transition-all text-left shadow-2xl"
                 >
                   <div className="absolute top-0 right-0 p-8 opacity-5 text-9xl group-hover:scale-110 transition-transform">👥</div>
                   <h3 className="text-3xl font-black mb-2 group-hover:text-blue-500 transition-colors uppercase">Thách đấu</h3>
                   <p className="text-slate-400 mb-8 font-medium italic">Thách đấu bạn bè, tích lũy XP, trở thành Huyền thoại</p>
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-3">
+                    Mở: {THACH_DAU_WINDOW_LABEL} · 5 trận/buổi
+                  </p>
                   <div className="flex items-center gap-2 text-blue-500 font-bold uppercase tracking-widest text-sm">
                     THÁCH ĐẤU NGAY <span className="group-hover:translate-x-2 transition-transform">→</span>
                   </div>
@@ -1639,13 +1715,13 @@ const App: React.FC = () => {
                 </button>
 
                 <button
-                  onClick={() => setView('lobby')}
+                  onClick={handleEnterThachDauLobby}
                   className="flex items-center gap-4 bg-slate-900 border border-slate-800 p-4 rounded-2xl hover:border-blue-500/50 transition-all text-left group"
                 >
                   <div className="w-12 h-12 rounded-xl bg-blue-600/10 border border-blue-600/20 flex items-center justify-center text-2xl flex-shrink-0">👥</div>
                   <div className="flex-1 min-w-0">
                     <h3 className="text-base font-black text-white uppercase">Thách đấu</h3>
-                    <p className="text-slate-500 text-xs mt-0.5">Thách đấu bạn bè · Tích lũy XP</p>
+                    <p className="text-slate-500 text-[10px] mt-0.5">T3/T5/T7 · 14h–21h · 5 trận/buổi</p>
                   </div>
                   <span className="text-blue-500 font-bold text-lg group-hover:translate-x-1 transition-transform flex-shrink-0">›</span>
                 </button>
@@ -2288,6 +2364,34 @@ const App: React.FC = () => {
                 Đóng
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Thông báo quy định chương trình (chặn vào Thách đấu ngoài khung giờ / hết lượt) */}
+      {programRuleNotice && (
+        <div
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-300"
+          onClick={() => setProgramRuleNotice(null)}
+        >
+          <div
+            className="bg-slate-900 border-2 border-amber-500/70 rounded-[28px] p-7 max-w-sm w-full shadow-2xl text-center animate-in zoom-in-95 duration-300"
+            style={{ boxShadow: '0 0 30px rgba(245,158,11,0.35)' }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="text-4xl mb-3">⏰</div>
+            <h3 className="text-lg font-black text-white uppercase tracking-tight mb-3">{programRuleNotice.title}</h3>
+            <div className="space-y-2 mb-5 text-sm text-slate-300">
+              {programRuleNotice.lines.map((line, i) => (
+                <p key={i}>{line}</p>
+              ))}
+            </div>
+            <button
+              onClick={() => setProgramRuleNotice(null)}
+              className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-900 font-black rounded-2xl text-sm uppercase tracking-widest transition-all"
+            >
+              Đã hiểu
+            </button>
           </div>
         </div>
       )}

@@ -197,6 +197,32 @@ export interface UserHistoryStats {
   gameIds: Set<string>;
 }
 
+/**
+ * Đếm số trận MULTIPLAYER (thách đấu) đạt điểm > minScore trong tuần chương trình hiện tại.
+ * Dùng để cộng lượt quay may mắn: 1 trận thắng > 150đ = +1 lượt quay (LuckySpin).
+ * Trả về 0 nếu ngoài chương trình hoặc query lỗi.
+ */
+export async function getMultiplayerWinsThisWeek(
+  userId: string,
+  minScore: number = 150
+): Promise<number> {
+  const range = getCurrentWeekRangeIso();
+  if (!range) return 0;
+  const { count, error } = await supabase
+    .from('edux_game_history')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', userId)
+    .eq('mode', 'multiplayer')
+    .gt('score', minScore)
+    .gte('played_at', range.startIso)
+    .lt('played_at', range.endIso);
+  if (error) {
+    console.error('Error counting multiplayer wins this week:', error);
+    return 0;
+  }
+  return count || 0;
+}
+
 export async function getUserHistoryStats(userId: string): Promise<UserHistoryStats | null> {
   const { data, error } = await supabase
     .from('edux_game_history')
@@ -329,15 +355,17 @@ export async function recalculateAllUsersXp(programStartMs: number, currentWeek:
   const weekEnd = weekStart + msPerWeek;
 
   for (const profile of profiles) {
-    // Lấy toàn bộ game history của user
+    // Lấy toàn bộ game history của user (cần `mode` + sort theo `played_at` để cap solo 7 trận/tuần)
     const { data: games, error: gErr } = await supabase
       .from('edux_game_history')
-      .select('id, difficulty, correct_count, total_questions, xp_earned, max_streak, played_at')
-      .eq('user_id', profile.id);
+      .select('id, difficulty, correct_count, total_questions, xp_earned, max_streak, played_at, mode')
+      .eq('user_id', profile.id)
+      .order('played_at', { ascending: true });
     if (gErr || !games) continue;
 
     let totalXpRecalc = 0;
     let weeklyXpRecalc = 0;
+    let soloThisWeekCount = 0; // đếm để cap 7 trận solo/tuần (quy định 3.1)
     const gameFixes: { id: string; correct_count: number; xp_earned: number }[] = [];
 
     for (const g of games) {
@@ -350,11 +378,19 @@ export async function recalculateAllUsersXp(programStartMs: number, currentWeek:
 
       totalXpRecalc += newXp;
 
-      // Tính weeklyXp cho tuần hiện tại (từ game history)
+      // Tính weeklyXp cho tuần hiện tại — solo chỉ tính 7 trận đầu, multiplayer tính tất cả
       if (currentWeek && g.played_at) {
         const t = new Date(g.played_at).getTime();
         if (t >= weekStart && t < weekEnd) {
-          weeklyXpRecalc += newXp;
+          const mode = g.mode || 'solo';
+          if (mode === 'solo') {
+            if (soloThisWeekCount < 7) {
+              weeklyXpRecalc += newXp;
+              soloThisWeekCount++;
+            }
+          } else {
+            weeklyXpRecalc += newXp;
+          }
         }
       }
 
@@ -431,7 +467,7 @@ export async function getLeaderboard(limit: number = 10): Promise<UserProfile[]>
  * Khoảng thời gian (ISO) của tuần chương trình hiện tại.
  * Trả về null nếu ngoài chương trình.
  */
-function getCurrentWeekRangeIso(): { startIso: string; endIso: string } | null {
+export function getCurrentWeekRangeIso(): { startIso: string; endIso: string } | null {
   const week = getCurrentProgramWeek();
   if (!week) return null;
   const msPerWeek = 7 * 24 * 60 * 60 * 1000;
@@ -479,9 +515,10 @@ async function getWeeklyXpTotals(): Promise<Map<string, number> | null> {
 
     const { data, error } = await supabase
       .from('edux_game_history')
-      .select('user_id, xp_earned')
+      .select('user_id, xp_earned, mode, played_at')
       .gte('played_at', range.startIso)
       .lt('played_at', range.endIso)
+      .order('played_at', { ascending: true })
       .limit(10000);
 
     if (error) {
@@ -489,8 +526,16 @@ async function getWeeklyXpTotals(): Promise<Map<string, number> | null> {
       return null;
     }
 
+    // Quy định 3.1: solo chỉ tính 7 trận đầu tiên/tuần/user.
+    const soloCount = new Map<string, number>();
     for (const g of data || []) {
       if (!g.user_id) continue;
+      const mode = g.mode || 'solo';
+      if (mode === 'solo') {
+        const used = soloCount.get(g.user_id) || 0;
+        if (used >= 7) continue;
+        soloCount.set(g.user_id, used + 1);
+      }
       totals.set(g.user_id, (totals.get(g.user_id) || 0) + Math.round(g.xp_earned || 0));
     }
   }

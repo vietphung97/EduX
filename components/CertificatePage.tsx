@@ -17,6 +17,12 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { UserProfile, EdusoUserData } from '../types';
 import { checkEdusoUserWithClass, EDUSO_LOGIN_URL } from '../utils/userSession';
+import { getCompletedFrames } from '../utils/frameLogic';
+import { WEEKLY_FRAMES } from '../constants';
+
+// Quy định kế hoạch ESEA 2026: điều kiện cấp Giấy chứng nhận hoàn thành
+// = học sinh phải mở khóa được TỐI THIỂU 2/8 khung avatar (frame hoàn chỉnh).
+const CERTIFICATE_MIN_FRAMES = 2;
 
 interface CertificatePageProps {
   user: UserProfile;
@@ -30,7 +36,6 @@ const CertificatePage: React.FC<CertificatePageProps> = ({ user, edusoUser, onBa
   // State riêng để hỗ trợ refresh từ Eduso mà không phải reload app.
   const [eduso, setEduso] = useState<EdusoUserData | null>(edusoUser || null);
   const [syncing, setSyncing] = useState(false);
-  const [syncedAt, setSyncedAt] = useState<number | null>(edusoUser ? Date.now() : null);
 
   // Sync ngay khi mở trang: gọi /currentuserwithclass để lấy luôn className + school.
   useEffect(() => {
@@ -39,10 +44,7 @@ const CertificatePage: React.FC<CertificatePageProps> = ({ user, edusoUser, onBa
       setSyncing(true);
       const fresh = await checkEdusoUserWithClass(5000);
       if (cancelled) return;
-      if (fresh) {
-        setEduso(fresh);
-        setSyncedAt(Date.now());
-      }
+      if (fresh) setEduso(fresh);
       setSyncing(false);
     })();
     return () => { cancelled = true; };
@@ -51,10 +53,7 @@ const CertificatePage: React.FC<CertificatePageProps> = ({ user, edusoUser, onBa
   const manualSync = async () => {
     setSyncing(true);
     const fresh = await checkEdusoUserWithClass(6000);
-    if (fresh) {
-      setEduso(fresh);
-      setSyncedAt(Date.now());
-    }
+    if (fresh) setEduso(fresh);
     setSyncing(false);
   };
 
@@ -73,6 +72,11 @@ const CertificatePage: React.FC<CertificatePageProps> = ({ user, edusoUser, onBa
   // Định nghĩa: là Eduso user khi có eduso (object có userId).
   // Phụ trợ: nếu user.id bắt đầu bằng "temp_" thì chắc chắn là guest.
   const isEdusoUser = !!eduso?.userId && !user.id.startsWith('temp_');
+
+  // Đếm số khung HOÀN CHỈNH (đủ 3 item + tuần đã đến) → quy định cấp chứng nhận.
+  const completedFrameIds = getCompletedFrames(user.unlockedFrames || []);
+  const completedCount = completedFrameIds.length;
+  const meetsFrameRequirement = completedCount >= CERTIFICATE_MIN_FRAMES;
 
   if (!isEdusoUser) {
     return (
@@ -114,6 +118,41 @@ const CertificatePage: React.FC<CertificatePageProps> = ({ user, edusoUser, onBa
     );
   }
 
+  // ====== CHƯA ĐỦ ĐIỀU KIỆN HOÀN THÀNH KHUNG ======
+  // Plan: phải mở khóa ≥ 2/8 khung avatar mới được cấp chứng nhận.
+  if (!meetsFrameRequirement) {
+    const missingFrames = CERTIFICATE_MIN_FRAMES - completedCount;
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-10 animate-in fade-in duration-300">
+        <div className="bg-slate-900/70 border border-amber-500/40 rounded-3xl p-8 text-center space-y-5">
+          <div className="text-5xl">🎯</div>
+          <h2 className="text-2xl font-black uppercase tracking-tight text-amber-200">Chưa đủ điều kiện nhận chứng nhận</h2>
+          <p className="text-slate-300 text-sm leading-relaxed">
+            Theo quy định Eduso Summer English Arena 2026, học sinh cần mở khóa
+            tối thiểu <b className="text-amber-300">{CERTIFICATE_MIN_FRAMES}/{WEEKLY_FRAMES.length}</b> khung
+            avatar chủ đề (đủ cả 3 mốc 300 / 800 / 1300 XP trong tuần) để được
+            cấp Giấy chứng nhận hoàn thành chương trình.
+          </p>
+          <div className="bg-slate-800/60 rounded-2xl p-4 text-sm">
+            <p className="text-slate-400">Tiến độ hiện tại</p>
+            <p className="text-3xl font-black text-white mt-1">
+              {completedCount}<span className="text-slate-500"> / {CERTIFICATE_MIN_FRAMES}</span>
+            </p>
+            <p className="text-xs text-amber-300 mt-2">
+              Cần thêm <b>{missingFrames}</b> khung nữa để mở Giấy chứng nhận.
+            </p>
+          </div>
+          <button
+            onClick={onBack}
+            className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-black rounded-xl text-xs uppercase tracking-widest border border-slate-700"
+          >
+            QUAY LẠI
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // ====== RENDER GIẤY CHỨNG NHẬN ======
   const data = {
     fullName: eduso!.name?.trim() || '',
@@ -149,14 +188,6 @@ const CertificatePage: React.FC<CertificatePageProps> = ({ user, edusoUser, onBa
         </div>
         <div className="flex gap-2">
           <button
-            onClick={manualSync}
-            disabled={syncing}
-            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-slate-200 font-black rounded-xl text-xs uppercase tracking-widest border border-slate-700"
-            title="Đồng bộ lại thông tin từ eduso.vn/currentuser"
-          >
-            {syncing ? '⏳ SYNC…' : '🔄 SYNC EDUSO'}
-          </button>
-          <button
             onClick={() => window.print()}
             disabled={!imgOk || missing.length > 0}
             className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-black rounded-xl text-xs uppercase tracking-widest transition-all"
@@ -171,19 +202,6 @@ const CertificatePage: React.FC<CertificatePageProps> = ({ user, edusoUser, onBa
             QUAY LẠI
           </button>
         </div>
-      </div>
-
-      {/* Thẻ tóm tắt nguồn dữ liệu (chỉ debug; ẩn khi in) */}
-      <div className="no-print bg-slate-900/60 border border-slate-800 rounded-2xl p-4 sm:p-5 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-        <Info label="Họ và tên" value={data.fullName} />
-        <Info label="Lớp"        value={data.className} />
-        <Info label="Trường"     value={data.school} />
-        <Info label="Tháng"      value={data.month} />
-        <p className="col-span-2 sm:col-span-4 text-[11px] text-slate-500">
-          Nguồn: <code className="text-slate-300">{EDUSO_LOGIN_URL.replace(/^https?:\/\//, '').split('/')[0]}/currentuserwithclass</code>
-          {syncedAt && <> · cập nhật {new Date(syncedAt).toLocaleTimeString('vi-VN')}</>}
-          {' '}· user ID <code className="text-slate-300">{eduso!.userId}</code>
-        </p>
       </div>
 
       {/* Cảnh báo trường thiếu từ Eduso */}
@@ -257,16 +275,6 @@ const OverlayText: React.FC<{
     }}
   >
     {text}
-  </div>
-);
-
-/** Thẻ tóm tắt một trường dữ liệu Eduso (chỉ hiển thị giá trị + label, không sửa). */
-const Info: React.FC<{ label: string; value: string }> = ({ label, value }) => (
-  <div className="bg-slate-950/50 border border-slate-800 rounded-xl px-3 py-2">
-    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{label}</p>
-    <p className={`mt-0.5 font-bold ${value ? 'text-white' : 'text-amber-400 italic'}`}>
-      {value || '— chưa có —'}
-    </p>
   </div>
 );
 

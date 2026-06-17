@@ -57,17 +57,51 @@
             font-family: 'Caveat', 'Dancing Script', cursive;
             font-weight: 700;
         }
-        /* Print: ẩn UI ngoài giấy chứng nhận */
+        /* Print: ẩn TOÀN BỘ UI, chỉ giữ giấy chứng nhận chiếm hết trang A4 landscape. */
         @media print {
             @page { size: A4 landscape; margin: 0; }
-            html, body { background: #fff !important; color: #000 !important; }
-            .no-print { display: none !important; }
+            html, body {
+                background: #fff !important;
+                color: #000 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 297mm;
+                height: 210mm;
+            }
+            /* Ẩn mọi thứ */
+            body * { visibility: hidden !important; }
+            /* Chừa lại giấy chứng nhận và mọi thứ bên trong */
+            .cert-print, .cert-print * { visibility: visible !important; }
+            /* Định vị cert lấp đầy trang in (A4 ngang: 297×210mm).
+               Giữ aspect-ratio gốc của template (1508/1043 ≈ 1.446) để overlay text khớp. */
             .cert-print {
-                page-break-inside: avoid;
-                width: 100% !important;
+                position: fixed !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                width: 297mm !important;
+                /* 297 / (1508/1043) ≈ 205.4mm — vừa khít chiều cao A4 landscape */
+                height: 205.4mm !important;
                 max-width: none !important;
                 margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                background: transparent !important;
+                page-break-inside: avoid;
             }
+            /* Cert wrapper bên trong: full khít, bỏ bo góc + bóng */
+            .cert-print > div {
+                width: 100% !important;
+                height: 100% !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+            }
+            /* Bắt buộc in màu nền/ảnh nền (mặc định trình duyệt bỏ qua) */
+            .cert-print, .cert-print * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .no-print { display: none !important; }
         }
     </style>
 <script type="importmap">

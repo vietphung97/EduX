@@ -151,8 +151,9 @@ export function useMultiplayerGame({
         const rankings = calculateRankings(state);
         const totalPlayers = rankings.length;
         const results: MultiplayerResult[] = rankings.map(r => {
-          // Rank bonus: 1st = 100, others = 0
-          const rankBonus = r.rank === 1 ? 100 : 0;
+          // Quy định 3.2: Thách đấu (1:1 hoặc nhóm) — rank 1 được +100 XP.
+          // Yêu cầu totalPlayers >= 2 để loại trường hợp một mình (không phải thách đấu thật).
+          const rankBonus = r.rank === 1 && totalPlayers >= 2 ? 100 : 0;
           const baseXp = calculateXp(r.player.correctCount, r.player.maxStreak, state.roomSettings.difficulty);
           return {
             rank: r.rank,

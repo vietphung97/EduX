@@ -51,9 +51,8 @@ const RewardsPage: React.FC<RewardsPageProps> = ({ user, onEquipFrame, onSpinRes
     }
   };
 
-  const spinsUsedThisWeek =
-    (user.lastSpinWeek ?? 0) === (currentWeek ?? 0) ? (user.spinsUsed ?? 0) : 0;
-  const spinsLeft = Math.max(0, completedFrames.size - spinsUsedThisWeek);
+  // (spinsLeft hiển thị do LuckySpin tự tính — đồng bộ với cơ chế:
+  //  1 lượt free / tuần + bonus multiplayer + bonus hoàn thành khung tuần.)
 
   const handleSpinResult = (prize: SpinPrize, newSpinsUsed: number) => {
     onSpinResult?.(prize, newSpinsUsed);
@@ -224,8 +223,8 @@ const RewardsPage: React.FC<RewardsPageProps> = ({ user, onEquipFrame, onSpinRes
               >
                 {/* Frame image preview */}
                 <div className="relative w-24 h-24 mx-auto mb-3">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-14 h-14 rounded-full bg-slate-800 flex items-center justify-center overflow-hidden">
+                  <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 0 }}>
+                    <div className="w-[72px] h-[72px] rounded-full bg-slate-800 flex items-center justify-center overflow-hidden">
                       {isAvatarImage(user.avatar) ? (
                         <img src={normalizeAvatarUrl(user.avatar)} alt={user.name} className="w-full h-full object-cover" />
                       ) : (
@@ -236,7 +235,8 @@ const RewardsPage: React.FC<RewardsPageProps> = ({ user, onEquipFrame, onSpinRes
                   <img
                     src={`${baseUrl}${frame.frameImage}`}
                     alt={frame.name}
-                    className={`w-full h-full ${!canUse ? 'grayscale opacity-40' : ''}`}
+                    className={`absolute inset-0 w-full h-full pointer-events-none ${!canUse ? 'grayscale opacity-40' : ''}`}
+                    style={{ zIndex: 1 }}
                   />
                 </div>
 

@@ -1,6 +1,9 @@
 /**
  * LuckySpin.tsx
- * Vòng quay may mắn — mỗi frame hoàn chỉnh (3/3 items) = 1 lượt quay / tuần.
+ * Vòng quay may mắn — cơ chế mở lượt (Quy định ESEA 2026, mục 5):
+ *   • 1 lượt FREE mỗi tuần chương trình (FREE_SPINS_PER_WEEK)
+ *   • +1 lượt cho mỗi trận MULTIPLAYER (thách đấu) đạt điểm > 150 trong tuần
+ *   • +1 lượt khi mở đủ 3 mốc XP (300/800/1300) của tuần đó — "frame bonus"
  *
  * Giải thưởng (9 ô):
  * - 4 thẻ điện thoại 10k/20k/50k/100k — có QUOTA tổng (20/10/2/1 HS), đếm trên
@@ -15,13 +18,14 @@
 
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { UserProfile } from '../types';
-import { getCurrentProgramWeek } from '../constants';
-import { getCompletedFrames } from '../utils/frameLogic';
+import { getCurrentProgramWeek, WEEKLY_FRAMES } from '../constants';
+import { isFrameUsable } from '../utils/frameLogic';
 import {
   getSpinConfig,
   getSpinWinCounts,
   saveSpinResult,
   updateSpinContact,
+  getMultiplayerWinsThisWeek,
 } from '../services/supabase';
 
 // ─── Prize config ─────────────────────────────────────────────────────────────
@@ -198,11 +202,36 @@ const LuckySpin: React.FC<LuckySpinProps> = ({ user, onSpinResult }) => {
   const [formDone, setFormDone] = useState(false);
 
   // ── Tính số lượt quay còn lại ──────────────────────────────────────────────
+  // Quy định ESEA 2026 (mục 5):
+  //   1 lượt free / tuần
+  //   + 1 lượt cho mỗi trận multiplayer >150đ trong tuần
+  //   + 1 lượt khi hoàn thành đủ 3 mốc XP của TUẦN HIỆN TẠI (frame bonus)
   const currentWeek = getCurrentProgramWeek();
-  const completedFrames = getCompletedFrames(user.unlockedFrames || []);
-  // ⚠️ TEST: cộng 10 lượt quay/tuần cho mọi người — ĐẶT VỀ 0 trước khi chạy thật!
-  const TEST_SPINS_PER_WEEK = 10;
-  const totalSpins = completedFrames.length + TEST_SPINS_PER_WEEK;
+  const FREE_SPINS_PER_WEEK = 1;
+  const MULTIPLAYER_WIN_THRESHOLD = 150;
+
+  // Đếm trận thắng multiplayer (>150đ) trong tuần từ Supabase. Cache theo userId+week.
+  const [matchEarnedSpins, setMatchEarnedSpins] = useState<number>(0);
+  useEffect(() => {
+    if (!user.id) return;
+    let cancelled = false;
+    getMultiplayerWinsThisWeek(user.id, MULTIPLAYER_WIN_THRESHOLD).then(n => {
+      if (!cancelled) setMatchEarnedSpins(n);
+    });
+    return () => { cancelled = true; };
+  }, [user.id, currentWeek]);
+
+  // Frame bonus: nếu user đã mở đủ 3 item của khung TUẦN HIỆN TẠI → +1 lượt.
+  // (Hết tuần, frame tuần khác không cộng tiếp — đảm bảo đúng tinh thần "1 lượt
+  // quay của tuần đó" trong kế hoạch.)
+  const frameBonusSpin = React.useMemo<number>(() => {
+    if (!currentWeek) return 0;
+    const weekFrame = WEEKLY_FRAMES.find(f => f.week === currentWeek);
+    if (!weekFrame) return 0;
+    return isFrameUsable(weekFrame.id, user.unlockedFrames || []) ? 1 : 0;
+  }, [currentWeek, user.unlockedFrames]);
+
+  const totalSpins = FREE_SPINS_PER_WEEK + matchEarnedSpins + frameBonusSpin;
 
   const spinsUsedThisWeek =
     (user.lastSpinWeek ?? 0) === (currentWeek ?? 0)
@@ -409,7 +438,7 @@ const LuckySpin: React.FC<LuckySpinProps> = ({ user, onSpinResult }) => {
             🎰 VÒNG QUAY MAY MẮN
           </h3>
           <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-0.5">
-            Mỗi khung hoàn chỉnh = 1 lượt quay / tuần
+            1 lượt FREE/tuần · +1 lượt mỗi trận thách đấu &gt;150đ
           </p>
         </div>
         <div className={`flex flex-col items-center px-4 py-2 rounded-2xl border font-black ${
@@ -425,7 +454,10 @@ const LuckySpin: React.FC<LuckySpinProps> = ({ user, onSpinResult }) => {
       {/* Info pills */}
       <div className="flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-widest">
         <span className="px-3 py-1.5 bg-slate-800 rounded-full text-slate-400">
-          ✅ {completedFrames.length} khung hoàn chỉnh
+          🎁 {FREE_SPINS_PER_WEEK} lượt free
+        </span>
+        <span className="px-3 py-1.5 bg-slate-800 rounded-full text-slate-400">
+          ⚔️ {matchEarnedSpins} từ thách đấu &gt;150đ
         </span>
         <span className="px-3 py-1.5 bg-slate-800 rounded-full text-slate-400">
           🔄 Đã dùng: {spinsUsedThisWeek}/{totalSpins}

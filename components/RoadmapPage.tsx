@@ -126,15 +126,13 @@ const RoadmapPage: React.FC<RoadmapPageProps> = ({ onBack, onGoRewards }) => {
 
       {/* ── HERO ───────────────────────────────────────────────────── */}
       <div className="relative overflow-hidden rounded-[28px] mb-8 mx-4 mt-2"
-        style={{ background: '#030428' }}
+        style={{ background: '#000119' }}
       >
         {/* Stars bg */}
         <div className="absolute inset-0 opacity-20 pointer-events-none"
           style={{ backgroundImage: 'radial-gradient(white 1px, transparent 1px)', backgroundSize: '40px 40px' }}
         />
         {/* Glow blobs */}
-        <div className="absolute -top-10 -right-10 w-72 h-72 rounded-full blur-3xl opacity-20"
-          style={{ background: 'radial-gradient(#ef4444, transparent)' }} />
         <div className="absolute -bottom-10 -left-10 w-72 h-72 rounded-full blur-3xl opacity-20"
           style={{ background: 'radial-gradient(#a855f7, transparent)' }} />
 
