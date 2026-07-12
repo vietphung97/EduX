@@ -10,7 +10,8 @@ import { XP_PER_QUESTION } from './gameLogic';
 // Constants
 const ROOM_PREFIX = 'edux_room_';
 const ROOM_EXPIRATION_MS = 24 * 60 * 60 * 1000; // 24 hours
-const POLL_INTERVAL_MS = 1000; // 1 second fallback polling for faster sync
+const POLL_INTERVAL_MS = 1000; // 1 second polling during countdown/playing
+const POLL_INTERVAL_LOBBY_MS = 2500; // slower polling in waiting lobby (giảm egress)
 const INACTIVITY_TIMEOUT_MS = 60 * 1000; // 60 seconds
 
 // ============ ROOM CODE GENERATION ============
@@ -155,9 +156,92 @@ export async function createRoom(
   return null;
 }
 
+// ============ LIGHT STATE (tiết kiệm egress) ============
+// getRoomState được poll mỗi 1s bởi mọi client trong phòng. Trước đây nó tải
+// toàn bộ value JSON gồm cả mảng questions (~5-15KB) mỗi lần poll → ngốn egress.
+// Giờ: select từng field trừ questions; questions bất biến sau khi trận bắt đầu
+// nên chỉ tải 1 lần rồi cache theo (roomCode + startedAt).
+
+const LIGHT_SELECT =
+  'updated_at, roomCode:value->roomCode, hostId:value->hostId, players:value->players, ' +
+  'gamePhase:value->gamePhase, roomSettings:value->roomSettings, startedAt:value->startedAt, ' +
+  'endedAt:value->endedAt, lastUpdate:value->lastUpdate, shuffleSeed:value->shuffleSeed';
+
+const questionsCache = new Map<string, { cacheKey: string; questions: Question[] }>();
+
+async function getRoomQuestions(
+  roomCode: string,
+  key: string,
+  gamePhase: string,
+  startedAt: number | null
+): Promise<Question[]> {
+  // Chưa bắt đầu → chưa có câu hỏi; xoá cache để rematch không dính đề cũ
+  if (gamePhase === 'waiting') {
+    questionsCache.delete(roomCode);
+    return [];
+  }
+
+  const cacheKey = `${roomCode}:${startedAt ?? 0}`;
+  const cached = questionsCache.get(roomCode);
+  if (cached && cached.cacheKey === cacheKey) return cached.questions;
+
+  const { data, error } = await supabase
+    .from('edux_kv_store')
+    .select('questions:value->questions')
+    .eq('key', key)
+    .single();
+
+  if (error || !data) return cached?.questions ?? [];
+
+  const questions = ((data as any).questions as Question[]) || [];
+  if (questions.length > 0) {
+    questionsCache.set(roomCode, { cacheKey, questions });
+  }
+  return questions;
+}
+
 export async function getRoomState(roomCode: string): Promise<MultiplayerGameState | null> {
   const key = ROOM_PREFIX + roomCode.toUpperCase();
-  return await getFromKV(key);
+  try {
+    const { data, error } = await supabase
+      .from('edux_kv_store')
+      .select(LIGHT_SELECT)
+      .eq('key', key)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') return null; // Not found
+      console.error('KV get error:', error);
+      return null;
+    }
+
+    const row = data as any;
+
+    // Check expiration (giống getFromKV)
+    const updatedAt = new Date(row.updated_at).getTime();
+    if (Date.now() - updatedAt > ROOM_EXPIRATION_MS) {
+      await deleteFromKV(key);
+      return null;
+    }
+
+    const questions = await getRoomQuestions(roomCode, key, row.gamePhase, row.startedAt ?? null);
+
+    return {
+      roomCode: row.roomCode,
+      hostId: row.hostId,
+      players: row.players || {},
+      gamePhase: row.gamePhase,
+      questions,
+      roomSettings: row.roomSettings,
+      startedAt: row.startedAt ?? undefined,
+      endedAt: row.endedAt ?? undefined,
+      lastUpdate: row.lastUpdate,
+      shuffleSeed: row.shuffleSeed ?? undefined
+    };
+  } catch (err) {
+    console.error('KV get error:', err);
+    return null;
+  }
 }
 
 export async function updateRoomState(
@@ -509,39 +593,14 @@ export function subscribeToRoom(
   roomCode: string,
   callback: StateCallback
 ): { unsubscribe: () => void } {
-  const key = ROOM_PREFIX + roomCode.toUpperCase();
   let isSubscribed = true;
   let pollInterval: number | undefined;
   let lastPhase: string | null = null;
 
-  // Setup Supabase Realtime subscription
-  const channel = supabase
-    .channel(`room:${roomCode}`)
-    .on(
-      'postgres_changes',
-      {
-        event: '*',
-        schema: 'public',
-        table: 'edux_kv_store',
-        filter: `key=eq.${key}`
-      },
-      async (payload) => {
-        if (!isSubscribed) return;
+  // NOTE: Realtime subscription removed to cut Supabase Realtime Messages quota
+  // (was postgres_changes on edux_kv_store). Polling below is the sole sync path.
 
-        if (payload.eventType === 'DELETE') {
-          callback(null, 'realtime');
-          return;
-        }
-
-        const state = (payload.new as any)?.value as MultiplayerGameState;
-        if (state) {
-          callback(state, 'realtime');
-        }
-      }
-    )
-    .subscribe();
-
-  // Fallback polling
+  // Polling (primary sync)
   const startPolling = async () => {
     if (!isSubscribed) return;
 
@@ -557,86 +616,4 @@ export function subscribeToRoom(
 
     // Stop polling if game is completed (still allow realtime updates)
     if (state?.gamePhase === 'completed') {
-      console.log('[subscribeToRoom] Game completed, stopping polling');
-      return;
-    }
-
-    if (isSubscribed) {
-      pollInterval = window.setTimeout(startPolling, POLL_INTERVAL_MS);
-    }
-  };
-
-  // Start initial poll immediately
-  console.log('[subscribeToRoom] Starting subscription for room:', roomCode);
-  startPolling();
-
-  return {
-    unsubscribe: () => {
-      isSubscribed = false;
-      if (pollInterval) {
-        clearTimeout(pollInterval);
-      }
-      supabase.removeChannel(channel);
-    }
-  };
-}
-
-// ============ PLAYER ACTIVITY ============
-
-export async function updatePlayerActivity(
-  roomCode: string,
-  playerId: string
-): Promise<void> {
-  const key = ROOM_PREFIX + roomCode.toUpperCase();
-
-  // ATOMIC: only update this player's lastActivity. No full players read-write
-  // like before (the 10s keep-alive could clobber a just-submitted score).
-  const { error } = await supabase.rpc('edux_touch_activity', {
-    p_key: key,
-    p_player_id: playerId
-  });
-
-  if (!error) return;
-
-  // Fallback if RPC is not installed. Note: old path is still clobber-prone.
-  console.warn('[updatePlayerActivity] edux_touch_activity RPC failed, falling back:', error?.message);
-  const state = await getRoomState(roomCode);
-  if (!state || !state.players[playerId]) return;
-
-  state.players[playerId].lastActivity = Date.now();
-  await updateRoomState(roomCode, { players: state.players });
-}
-
-export function getInactivePlayers(state: MultiplayerGameState): string[] {
-  const now = Date.now();
-  return Object.values(state.players)
-    .filter(p => now - p.lastActivity > INACTIVITY_TIMEOUT_MS)
-    .map(p => p.id);
-}
-
-// ============ RANKING ============
-
-export function calculateRankings(state: MultiplayerGameState): Array<{
-  rank: number;
-  player: PlayerInfo;
-  timeSpent: number;
-}> {
-  const players = Object.values(state.players);
-
-  // Sort by: score (desc), then by finish time (asc)
-  const sorted = players.sort((a, b) => {
-    if (b.score !== a.score) return b.score - a.score;
-
-    const aTime = a.finishedAt || Infinity;
-    const bTime = b.finishedAt || Infinity;
-    return aTime - bTime;
-  });
-
-  const startTime = state.startedAt || Date.now();
-
-  return sorted.map((player, index) => ({
-    rank: index + 1,
-    player,
-    timeSpent: (player.finishedAt || state.endedAt || Date.now()) - startTime
-  }));
-}
+    

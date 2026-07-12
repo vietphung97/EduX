@@ -1193,17 +1193,8 @@ function normalizeGradeMap(raw: any): Record<number, number> {
 }
 
 // ============ REALTIME SUBSCRIPTIONS ============
-
-export function subscribeToLeaderboard(callback: (payload: any) => void) {
-  return supabase
-    .channel('leaderboard_changes')
-    .on(
-      'postgres_changes',
-      { event: '*', schema: 'public', table: 'edux_profiles' },
-      callback
-    )
-    .subscribe();
-}
+// subscribeToLeaderboard đã xoá: subscribe không filter trên toàn bảng edux_profiles
+// ngốn Realtime Messages quota, và không có nơi nào gọi hàm này.
 
 // ============ PROGRAM RESET (ADMIN) ============
 // Dùng cho trang admin ẩn (/#admin-vongquay) khi chuẩn bị chương trình mới:
@@ -1443,3 +1434,4 @@ export async function resetProgramAllUsers(): Promise<ProgramResetResult> {
     spinHistoryDeleted: Number(r.spin_history_deleted) || 0,
   };
 }
+                                                                                                            

@@ -35,3 +35,5 @@ nul
 response.json
 .env.production
 migration/edux_dump.sql
+migration/.secrets*
+migration/setup.log
