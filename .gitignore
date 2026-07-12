@@ -34,3 +34,4 @@ nul
 # Temp files
 response.json
 .env.production
+migration/edux_dump.sql
