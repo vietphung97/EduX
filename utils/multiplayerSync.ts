@@ -263,13 +263,35 @@ export async function leaveRoom(roomCode: string, playerId: string): Promise<boo
   const state = await getRoomState(roomCode);
   if (!state) return false;
 
-  // If host leaves, delete room
-  if (state.hostId === playerId) {
+  const wasHost = state.hostId === playerId;
+
+  // Xóa người chơi khỏi phòng trước
+  delete state.players[playerId];
+
+  // Nếu là người cuối → xóa phòng luôn
+  const remainingIds = Object.keys(state.players);
+  if (remainingIds.length === 0) {
     return await deleteRoom(roomCode);
   }
 
-  // Remove player
-  delete state.players[playerId];
+  // Nếu host rời → chuyển quyền cho người vào phòng sớm nhất (insertion
+  // order của object keys trong JS — người join đầu tiên sau host).
+  if (wasHost) {
+    const newHostId = remainingIds[0];
+    Object.values(state.players).forEach(p => { p.isHost = false; });
+    state.players[newHostId].isHost = true;
+    // Host mới mặc định Ready (giống host gốc ở createRoom) để khỏi kẹt
+    // ở banner "Đang chờ host bấm sẵn sàng".
+    state.players[newHostId].isReady = true;
+
+    console.log(`[leaveRoom] Host ${playerId} left, transferring host to ${newHostId}`);
+
+    return await updateRoomState(roomCode, {
+      players: state.players,
+      hostId: newHostId
+    });
+  }
+
   return await updateRoomState(roomCode, { players: state.players });
 }
 
@@ -359,12 +381,40 @@ export async function submitAnswer(
   isCorrect: boolean,
   scoreEarned: number
 ): Promise<boolean> {
+  const key = ROOM_PREFIX + roomCode.toUpperCase();
+
+  // Read room lightly just to get XP-per-question for the difficulty.
   const state = await getRoomState(roomCode);
   if (!state || !state.players[playerId]) return false;
+  const xpPerQ = XP_PER_QUESTION[state.roomSettings.difficulty] || 10;
 
-  const player = state.players[playerId];
+  // ATOMIC path: server locks the row and only mutates this player's branch,
+  // eliminating the lost-update race when several players answer at once.
+  // See scripts/sql/edux_multiplayer_atomic_rpc.sql.
+  const { data, error } = await supabase.rpc('edux_submit_answer', {
+    p_key: key,
+    p_player_id: playerId,
+    p_question_index: questionIndex,
+    p_is_correct: isCorrect,
+    p_xp_per_q: xpPerQ
+  });
 
-  // Update player stats
+  if (!error && data !== null) {
+    return true;
+  }
+
+  // Fallback (RPC not installed yet or transient error): old read-modify-write
+  // so a match is never fully blocked. WARNING: still race-prone -- run the SQL.
+  console.warn('[submitAnswer] edux_submit_answer RPC failed, falling back:', error?.message);
+
+  const fresh = await getRoomState(roomCode);
+  if (!fresh || !fresh.players[playerId]) return false;
+
+  const player = fresh.players[playerId];
+
+  // Idempotency guard (same as RPC): skip if this question was already counted.
+  if (player.currentQuestionIndex > questionIndex) return true;
+
   player.currentQuestionIndex = questionIndex + 1;
   player.lastActivity = Date.now();
 
@@ -378,18 +428,14 @@ export async function submitAnswer(
     player.streak = 0;
   }
 
-  // Recalculate total score = correctXp + streakBonus (always up-to-date)
-  const xpPerQ = XP_PER_QUESTION[state.roomSettings.difficulty] || 10;
   player.score = player.correctCount * xpPerQ + player.maxStreak * 5;
 
-  // Check if player finished all questions
-  if (player.currentQuestionIndex >= state.questions.length) {
+  if (player.currentQuestionIndex >= fresh.questions.length) {
     player.finishedAt = Date.now();
   }
 
-  // Check if all players finished
-  const allFinished = Object.values(state.players).every(p => p.finishedAt);
-  const updates: Partial<MultiplayerGameState> = { players: state.players };
+  const allFinished = Object.values(fresh.players).every(p => p.finishedAt);
+  const updates: Partial<MultiplayerGameState> = { players: fresh.players };
 
   if (allFinished) {
     updates.gamePhase = 'completed';
@@ -541,6 +587,19 @@ export async function updatePlayerActivity(
   roomCode: string,
   playerId: string
 ): Promise<void> {
+  const key = ROOM_PREFIX + roomCode.toUpperCase();
+
+  // ATOMIC: only update this player's lastActivity. No full players read-write
+  // like before (the 10s keep-alive could clobber a just-submitted score).
+  const { error } = await supabase.rpc('edux_touch_activity', {
+    p_key: key,
+    p_player_id: playerId
+  });
+
+  if (!error) return;
+
+  // Fallback if RPC is not installed. Note: old path is still clobber-prone.
+  console.warn('[updatePlayerActivity] edux_touch_activity RPC failed, falling back:', error?.message);
   const state = await getRoomState(roomCode);
   if (!state || !state.players[playerId]) return;
 

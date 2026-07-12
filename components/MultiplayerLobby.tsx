@@ -56,9 +56,10 @@ const MultiplayerLobby: React.FC<MultiplayerLobbyProps> = ({
   initialRoomCode,
   isJoining = false
 }) => {
-  // View state
+  // View state — nếu đã có roomCode (auto-rejoin từ localStorage) thì
+  // vào thẳng lobby; subscription sẽ kéo state mới nhất từ server.
   const [mode, setMode] = useState<'select' | 'create' | 'join' | 'lobby'>(
-    initialRoomCode ? 'join' : 'select'
+    initialRoomCode ? 'lobby' : 'select'
   );
 
   // Room state
@@ -76,6 +77,31 @@ const MultiplayerLobby: React.FC<MultiplayerLobbyProps> = ({
 
   const playerId = getPlayerId();
 
+  // Khi mount với initialRoomCode (auto-rejoin từ localStorage hoặc invite
+  // link), gọi joinRoom một lần để đảm bảo player có mặt trong room.players.
+  // joinRoom là idempotent: nếu đã ở trong phòng chỉ refresh lastActivity.
+  useEffect(() => {
+    if (!initialRoomCode || mode !== 'lobby') return;
+    let cancelled = false;
+    (async () => {
+      const result = await joinRoom(
+        initialRoomCode.toUpperCase(),
+        playerId,
+        user.name,
+        getPlayerAvatar(user.avatar),
+        { equippedFrame: user.equippedFrame, unlockedFrames: user.unlockedFrames }
+      );
+      if (cancelled) return;
+      if (!result.success) {
+        setError(result.error || 'Không thể vào lại phòng');
+        setMode('select');
+        clearActiveRoom();
+      }
+    })();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Subscribe to room updates
   useEffect(() => {
     if (!roomCode || mode !== 'lobby') return;
@@ -89,6 +115,15 @@ const MultiplayerLobby: React.FC<MultiplayerLobbyProps> = ({
       }
 
       setRoomState(state);
+
+      // Đồng bộ isHost với server (source of truth) — fix bug host rejoin
+      // bằng mã phòng bị set isHost=false ở handleJoinRoom, dẫn tới mất
+      // nút "BẮT ĐẦU" dù thẻ HOST vẫn hiển thị đúng.
+      const trulyHost = state.hostId === playerId;
+      setIsHost(trulyHost);
+      // Đồng bộ luôn localStorage để lần reload sau checkRejoinableRoom
+      // trả về đúng vai trò.
+      setActiveRoom(roomCode, trulyHost, state.gamePhase);
 
       // Check if game started
       if (state.gamePhase === 'countdown' || state.gamePhase === 'playing') {
@@ -206,7 +241,9 @@ const MultiplayerLobby: React.FC<MultiplayerLobbyProps> = ({
       );
 
       if (result.success) {
-        setIsHost(false);
+        // Không set cứng isHost=false ở đây — subscription sẽ đọc lại
+        // hostId từ server và gán đúng (xử lý đúng case host rejoin
+        // bằng mã phòng sau khi reload/disconnect).
         setActiveRoom(roomCode.toUpperCase(), false);
         setMode('lobby');
       } else {

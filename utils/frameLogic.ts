@@ -104,7 +104,7 @@ export function getNextMilestone(
  */
 // ⚠️ TEST: bỏ chặn "tuần chưa đến" để trang bị được khung unlock bằng giữ 10s.
 // ĐẶT false TRƯỚC KHI CHẠY THẬT!
-const TEST_IGNORE_WEEK_GATE = true;
+const TEST_IGNORE_WEEK_GATE = false;
 
 export function isFrameUsable(frameId: string, unlockedFrames: string[]): boolean {
   const frame = WEEKLY_FRAMES.find(f => f.id === frameId);

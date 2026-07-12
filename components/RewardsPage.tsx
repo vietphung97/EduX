@@ -17,7 +17,7 @@ import LuckySpin, { SpinPrize } from './LuckySpin';
 
 // ⚠️ TEST: giữ 10s vào card khung avatar để unlock cả 3 mốc (chức năng ẩn cho test).
 // ĐẶT false TRƯỚC KHI CHẠY THẬT!
-const ENABLE_TEST_UNLOCK_HOLD = true;
+const ENABLE_TEST_UNLOCK_HOLD = false;
 const TEST_UNLOCK_HOLD_MS = 10000;
 
 interface RewardsPageProps {

@@ -34,27 +34,26 @@ import {
 import { DEFAULT_GRADES, DEFAULT_TOPICS_BY_GRADE, LEVEL_CONFIG, PROGRAM_START_DATE, WEEKLY_FRAMES, getCurrentProgramWeek } from './constants';
 import { TopicsByGrade, fetchQuestionsFromSheet } from './services/sheets';
 import { fetchK9Questions, getK9Topics } from './services/k9Questions';
-import { fetchK6Questions, getK6Difficulties } from './services/k6Questions';
-import { fetchK7Questions, getK7Difficulties } from './services/k7Questions';
+import { fetchK6Questions, getK6Difficulties, getK6Topics } from './services/k6Questions';
+import { fetchK7Questions, getK7Difficulties, getK7Topics } from './services/k7Questions';
 import { fetchK8Questions, getK8Difficulties, getK8Topics } from './services/k8Questions';
 import {
+  supabase,
   getLeaderboard,
   getLeaderboardByGrade,
   getWeeklyLeaderboard,
   getUserProfile,
+  createUserProfile,
   upsertUserProfile,
-  saveGameHistory as saveGameHistoryToSupabase,
+  updateUserProfile,
   getGameHistory as getGameHistoryFromSupabase,
-  migrateAllUsersGradeXp,
   recalculateAllUsersXp,
   getUserRank,
   getWeeklyUserRank,
   getWeeklyUserXp,
-  getUserHistoryStats
+  getUserHistoryStats,
+  recordGame
 } from './services/supabase';
-
-// Export migration function to window for one-time console run
-(window as any).migrateGradeXp = migrateAllUsersGradeXp;
 import { calculateDetailedXp, playSound, getLevelFromXp, generateRoomCode, DIFFICULTY_MULTIPLIERS, XP_PER_QUESTION } from './utils/gameLogic';
 import {
   SOLO_WEEKLY_MATCH_CAP,
@@ -531,25 +530,19 @@ const App: React.FC = () => {
    * (server + các trận local chưa sync). Lịch sử là nguồn sự thật;
    * counter trong profile có thể drift (merge max() nhiều thiết bị, bug cũ).
    */
+  // Đồng bộ điểm hiển thị từ SERVER (chỉ ĐỌC — không bao giờ ghi ngược lên server).
+  // Quy tắc (Viet 2026-07-03): client không được ghi đè điểm; điểm chỉ được cộng
+  // atomic qua RPC (edux_record_game / edux_spin_wheel). Hàm này chỉ kéo giá trị
+  // đúng từ server về cập nhật state + localStorage cho UI, KHÔNG upsert.
   const reconcileXpWithHistory = async (userId: string) => {
     try {
-      const serverStats = await getUserHistoryStats(userId);
-      if (!serverStats) return;
+      // Tổng XP toàn thời gian: lấy trực tiếp từ profile trên server (đã được RPC
+      // cộng atomic, là nguồn đúng duy nhất). KHÔNG cộng thêm trận local chưa sync —
+      // nếu có trận chưa ghi, chính recordGame sẽ cộng khi nó sync, không tự cộng ở đây.
+      const serverProfile = await getUserProfile(userId);
+      if (!serverProfile) return;
 
-      // Cộng thêm các trận chỉ có ở local (chưa sync được lên server)
-      let localHist: GameHistory[] = [];
-      try {
-        localHist = JSON.parse(localStorage.getItem('arena_x_history') || '[]');
-      } catch { /* ignore */ }
-      const localOnly = localHist.filter(g => g && g.id && !serverStats.gameIds.has(g.id));
-      const localOnlyXp = localOnly.reduce((s, g) => s + Math.round(g.xpEarned || 0), 0);
-
-      // Tổng XP = trận đấu (server + local chưa sync) + XP thưởng vòng quay
-      const authoritativeXp = serverStats.totalXp + serverStats.spinXp + localOnlyXp;
-      const authoritativeGames = serverStats.totalGames + localOnly.length;
-
-      // XP TUẦN NÀY: nguồn duy nhất đáng tin = getWeeklyUserXp (game + spin trong
-      // range tuần hiện tại). Bất kỳ giá trị weeklyXp local/server đều có thể stale.
+      // XP TUẦN NÀY: nguồn đáng tin = getWeeklyUserXp (game + spin trong range tuần).
       const currentWeek = getCurrentProgramWeek();
       let authoritativeWeeklyXp: number | null = null;
       if (currentWeek !== null) {
@@ -558,90 +551,116 @@ const App: React.FC = () => {
         } catch { /* mạng lỗi — bỏ qua, giữ giá trị local */ }
       }
 
-      if (authoritativeGames === 0 && authoritativeWeeklyXp === null) return; // Không có gì để cập nhật
-
       setUser(prev => {
         if (!prev || prev.id !== userId) return prev;
         const nextWeeklyXp = authoritativeWeeklyXp ?? prev.weeklyXp;
         const nextWeeklyWeek = currentWeek ?? prev.weeklyXpWeek;
-        const sameTotal = authoritativeGames === 0
-          ? true
-          : (prev.xp === authoritativeXp && prev.totalGames === authoritativeGames);
-        const sameWeekly = nextWeeklyXp === prev.weeklyXp && nextWeeklyWeek === prev.weeklyXpWeek;
-        if (sameTotal && sameWeekly) return prev;
-        if (!sameTotal) {
-          console.log(`Reconciled XP from history: ${prev.xp} → ${authoritativeXp} (${authoritativeGames} games)`);
-        }
-        if (!sameWeekly) {
-          console.log(`Reconciled weekly XP: ${prev.weeklyXp} → ${nextWeeklyXp} (week ${nextWeeklyWeek})`);
-        }
-        const fixedUser: UserProfile = {
+        // Server thắng tuyệt đối cho mọi field điểm tích lũy.
+        const syncedUser: UserProfile = {
           ...prev,
-          ...(authoritativeGames > 0 ? {
-            xp: authoritativeXp,
-            totalGames: authoritativeGames,
-            level: getLevelFromXp(authoritativeXp).level,
-          } : {}),
+          xp: serverProfile.xp,
+          totalGames: serverProfile.totalGames,
+          bestStreak: serverProfile.bestStreak,
+          gradeXp: serverProfile.gradeXp || {},
+          topicStats: serverProfile.topicStats || {},
+          level: getLevelFromXp(serverProfile.xp).level,
           weeklyXp: nextWeeklyXp,
           weeklyXpWeek: nextWeeklyWeek,
         };
-        localStorage.setItem('arena_x_user', JSON.stringify(fixedUser));
-        upsertUserProfile(fixedUser).catch(console.error);
-        return fixedUser;
+        localStorage.setItem('arena_x_user', JSON.stringify(syncedUser));
+        // KHÔNG upsert lên server — chỉ cập nhật hiển thị local.
+        return syncedUser;
       });
     } catch (e) {
-      console.error('Error reconciling XP from history:', e);
+      console.error('Error reconciling XP from server:', e);
     }
   };
 
   // Load user, history và khôi phục game state khi app khởi động
   useEffect(() => {
     const initializeApp = async () => {
-      // Load user từ localStorage trước (offline-first)
+      // ── Watermark reset chương trình ──────────────────────────────────────
+      // Admin chạy edux_admin_reset_program() trên Supabase sẽ bump
+      // edux_program_meta.last_reset_at. Nếu giá trị server > giá trị máy
+      // này đã thấy → server vừa reset; phải wipe localStorage TRƯỚC khi
+      // load user (nếu không Math.max(local.xp, 0) sẽ ghi đè XP cũ lên
+      // server, làm reset bị "đảo ngược").
+      try {
+        const { data: metaRow } = await supabase
+          .from('edux_program_meta')
+          .select('value')
+          .eq('key', 'last_reset_at')
+          .maybeSingle();
+        const serverResetAt = metaRow?.value || '';
+        const seenResetAt = localStorage.getItem('arena_x_program_reset_seen') || '';
+        if (serverResetAt && serverResetAt !== seenResetAt) {
+          // Wipe các cache liên quan tiến trình (giữ avatar/preferences nếu cần)
+          localStorage.removeItem('arena_x_user');
+          localStorage.removeItem('arena_x_history');
+          localStorage.removeItem('arena_x_weekly_xp_week');
+          localStorage.setItem('arena_x_program_reset_seen', serverResetAt);
+          console.info('[EduX] Phát hiện program reset mới — đã dọn localStorage và reload.');
+          window.location.reload();
+          return;
+        }
+      } catch (e) {
+        // Bảng edux_program_meta chưa được tạo → bỏ qua, app chạy như cũ
+        console.debug('program meta check skipped:', e);
+      }
+
+      // Load user từ localStorage CHỈ để biết id cần đồng bộ + hiển thị tạm trong
+      // lúc chờ mạng (offline-first). KHÔNG được tin bất kỳ field số liệu nào từ
+      // local (xp, totalGames, bestStreak, gradeXp, topicStats, unlockedFrames...) —
+      // local có thể mang dữ liệu rác/cũ (vd từ bản test/demo trước đây trên máy)
+      // và nếu ghi thẳng lên server sẽ tạo ra XP ảo không có nguồn gốc từ
+      // edux_game_history (đã xảy ra thực tế: 1 tài khoản hiện xp=76140 dù
+      // edux_game_history chỉ có 7 trận = 655 XP thật). Server LUÔN LÀ NGUỒN DUY
+      // NHẤT cho mọi số liệu; local chỉ giữ id để biết cần fetch ai.
       const savedUser = localStorage.getItem('arena_x_user');
       let parsedUser = null;
       if (savedUser) {
         parsedUser = normalizeWeeklyXp(JSON.parse(savedUser));
-        setUser(parsedUser);
+        setUser(parsedUser); // hiển thị tạm trong lúc chờ fetch — sẽ bị ghi đè ngay dưới
 
-        // Sync với Supabase - merge data từ server nếu có
         try {
           const serverProfile = await getUserProfile(parsedUser.id);
           if (serverProfile) {
-            // Server có data - merge với local (server wins cho XP, games, etc.)
+            // Thay thế HOÀN TOÀN bằng serverProfile — không spread parsedUser vào nền,
+            // để không có field số liệu nào lọt qua từ local nếu quên liệt kê ở đây.
             const mergedUser = normalizeWeeklyXp({
-              ...parsedUser,
-              xp: Math.max(parsedUser.xp, serverProfile.xp),
-              totalGames: Math.max(parsedUser.totalGames, serverProfile.totalGames),
-              bestStreak: Math.max(parsedUser.bestStreak, serverProfile.bestStreak),
-              // KHÔNG Math.max với serverProfile.weeklyXp vì cột weekly_xp server
-              // không tự reset → giữ XP tuần cũ. Lấy local đã normalize theo tuần
-              // hiện tại; giá trị thực sẽ được override bằng getWeeklyUserXp ngay sau.
+              ...serverProfile,
+              // KHÔNG lấy serverProfile.weeklyXp vì cột weekly_xp server không tự reset
+              // → giữ XP tuần cũ. Lấy local đã normalize theo tuần hiện tại (chỉ dùng
+              // để không nhấp nháy về 0 khi chờ); giá trị thực sẽ được override ngay
+              // sau bằng getWeeklyUserXp (nguồn duy nhất đáng tin cho weeklyXp).
               weeklyXp: parsedUser.weeklyXp,
               weeklyXpWeek: parsedUser.weeklyXpWeek,
-              level: serverProfile.xp > parsedUser.xp ? serverProfile.level : parsedUser.level,
-              // Khôi phục khung/quà đã mở: union local + server để không mất mốc nào
-              unlockedFrames: Array.from(new Set([...(parsedUser.unlockedFrames || []), ...(serverProfile.unlockedFrames || [])])),
-              // Avatar/khung: SERVER THẮNG — mọi thay đổi đều upsert ngay nên server
-              // là nguồn chung, đảm bảo đồng nhất giữa điện thoại và máy tính
-              equippedFrame: serverProfile.equippedFrame || parsedUser.equippedFrame,
-              avatar: serverProfile.avatar || parsedUser.avatar,
-              topicStats: { ...(serverProfile.topicStats || {}), ...(parsedUser.topicStats || {}) },
-              // gradeXp: merge bằng cách lấy max từng grade để không bỏ sót XP từ server
-              gradeXp: (() => {
-                const local = parsedUser.gradeXp || {};
-                const server = serverProfile.gradeXp || {};
-                const allGrades = new Set([...Object.keys(local), ...Object.keys(server)].map(Number));
-                const merged: Record<number, number> = {};
-                allGrades.forEach(g => {
-                  merged[g] = Math.max(local[g] || 0, server[g] || 0);
-                });
-                return merged;
-              })(),
             });
             setUser(mergedUser);
             localStorage.setItem('arena_x_user', JSON.stringify(mergedUser));
-            console.log('Merged user profile from Supabase');
+            console.log('Loaded user profile from Supabase (server authoritative)');
+          } else {
+            // Server CHƯA CÓ profile cho user này (lần đầu đồng bộ / tài khoản mới).
+            // KHÔNG được giữ nguyên parsedUser (có thể là dữ liệu rác từ local) —
+            // reset về giá trị mặc định an toàn rồi tạo mới trên server ngay, để
+            // lần upsert/RPC tiếp theo không vô tình đẩy số liệu ảo lên server.
+            const freshUser: UserProfile = {
+              ...parsedUser,
+              xp: 0,
+              weeklyXp: 0,
+              weeklyXpWeek: getCurrentProgramWeek() ?? undefined,
+              totalGames: 0,
+              bestStreak: 0,
+              topicStats: {},
+              gradeXp: {},
+              unlockedFrames: [],
+              spinsUsed: 0,
+              lastSpinWeek: undefined,
+            };
+            setUser(freshUser);
+            localStorage.setItem('arena_x_user', JSON.stringify(freshUser));
+            createUserProfile(freshUser).catch(console.error);
+            console.warn('Không tìm thấy profile trên server — khởi tạo mới, bỏ qua số liệu local cũ.');
           }
         } catch (e) {
           console.error('Error syncing with Supabase:', e);
@@ -821,14 +840,31 @@ const App: React.FC = () => {
   useEffect(() => {
     const loadTopics = async () => {
       setIsLoadingTopics(true);
-      const [k6Diff, k7Diff, k8Diff, k8Topics, k9Topics] = await Promise.all([
+      const [k6Diff, k7Diff, k8Diff, k6Topics, k7Topics, k8Topics, k9Topics] = await Promise.all([
         getK6Difficulties(),
         getK7Difficulties(),
         getK8Difficulties(),
+        getK6Topics(),
+        getK7Topics(),
         getK8Topics(),
         getK9Topics(),
       ]);
-      setTopicsByGrade(prev => ({ ...prev, 8: k8Topics, 9: k9Topics }));
+      // K6-K8 dùng category dạng "Tuần N" theo tiến độ chương trình — chỉ hiện tuần hiện tại,
+      // ẩn các tuần khác đi (K9 dùng category theo chủ đề, không lọc theo tuần).
+      const currentProgramWeek = getCurrentProgramWeek();
+      const currentWeekLabel = currentProgramWeek ? `Tuần ${currentProgramWeek}` : null;
+      const filterToCurrentWeek = (topics: string[]) => {
+        if (!currentWeekLabel) return topics;
+        const onlyCurrent = topics.filter(t => t === currentWeekLabel);
+        return onlyCurrent.length > 0 ? onlyCurrent : topics;
+      };
+      setTopicsByGrade(prev => ({
+        ...prev,
+        6: filterToCurrentWeek(k6Topics),
+        7: filterToCurrentWeek(k7Topics),
+        8: filterToCurrentWeek(k8Topics),
+        9: k9Topics,
+      }));
       setDifficultiesByGrade(prev => ({ ...prev, 6: k6Diff, 7: k7Diff, 8: k8Diff }));
       setIsLoadingTopics(false);
     };
@@ -882,41 +918,46 @@ const App: React.FC = () => {
       setView('home');
     }
 
-    // Sync với Supabase để khôi phục XP trên thiết bị mới / sau khi clear cache
-    // Chạy sau khi đã navigate về home để không block UI
+    // Sync với Supabase để khôi phục XP trên thiết bị mới / sau khi clear cache.
+    // Chạy sau khi đã navigate về home để không block UI.
+    // SERVER LUÔN THẮNG TUYỆT ĐỐI — không Math.max/union với userProfile (có thể
+    // là dữ liệu local rác từ thiết bị/bản cũ). Từng xảy ra thực tế: 1 tài khoản
+    // đăng nhập lại với local rác (xp=76140, 300 "trận") trong khi
+    // edux_game_history chỉ có 7 trận = 655 XP thật — Math.max khi đó giữ mãi
+    // số rác thay vì nhận số đúng từ server.
     try {
       const serverProfile = await getUserProfile(userProfile.id);
-      if (serverProfile && serverProfile.xp > 0) {
+      if (serverProfile) {
         const mergedUser: UserProfile = normalizeWeeklyXp({
-          ...userProfile,
-          xp: Math.max(userProfile.xp, serverProfile.xp),
-          totalGames: Math.max(userProfile.totalGames, serverProfile.totalGames),
-          bestStreak: Math.max(userProfile.bestStreak, serverProfile.bestStreak),
-          // weekly_xp server có thể là XP tuần cũ — không Math.max. Local đã được
+          ...serverProfile,
+          // weekly_xp server có thể là XP tuần cũ — không lấy thẳng. Local đã được
           // normalize cho tuần hiện tại; reconcile chính xác sẽ chạy qua getWeeklyUserXp.
           weeklyXp: userProfile.weeklyXp,
           weeklyXpWeek: userProfile.weeklyXpWeek,
-          level: serverProfile.xp > userProfile.xp ? serverProfile.level : userProfile.level,
-          // Khôi phục khung/quà đã mở từ server (union để không mất mốc nào)
-          unlockedFrames: Array.from(new Set([...(userProfile.unlockedFrames || []), ...(serverProfile.unlockedFrames || [])])),
-          // Avatar/khung: SERVER THẮNG để đồng nhất giữa các thiết bị
-          equippedFrame: serverProfile.equippedFrame || userProfile.equippedFrame,
-          avatar: serverProfile.avatar || userProfile.avatar,
-          topicStats: { ...(serverProfile.topicStats || {}), ...(userProfile.topicStats || {}) },
-          gradeXp: { ...(serverProfile.gradeXp || {}), ...(userProfile.gradeXp || {}) },
         });
-        // Chỉ cập nhật nếu có sự khác biệt thực sự (tránh re-render thừa)
-        if (
-          mergedUser.xp !== userProfile.xp ||
-          mergedUser.totalGames !== userProfile.totalGames ||
-          mergedUser.avatar !== userProfile.avatar ||
-          mergedUser.equippedFrame !== userProfile.equippedFrame ||
-          (mergedUser.unlockedFrames?.length || 0) !== (userProfile.unlockedFrames?.length || 0)
-        ) {
-          setUser(mergedUser);
-          localStorage.setItem('arena_x_user', JSON.stringify(mergedUser));
-          console.log(`Restored XP from Supabase: ${userProfile.xp} → ${mergedUser.xp}`);
-        }
+        setUser(mergedUser);
+        localStorage.setItem('arena_x_user', JSON.stringify(mergedUser));
+        console.log(`Restored profile from Supabase (server authoritative): xp=${mergedUser.xp}`);
+      } else {
+        // Server chưa có profile — KHÔNG giữ số liệu từ userProfile cục bộ (có thể rác),
+        // khởi tạo mới an toàn rồi tạo trên server ngay.
+        const freshUser: UserProfile = {
+          ...userProfile,
+          xp: 0,
+          weeklyXp: 0,
+          weeklyXpWeek: getCurrentProgramWeek() ?? undefined,
+          totalGames: 0,
+          bestStreak: 0,
+          topicStats: {},
+          gradeXp: {},
+          unlockedFrames: [],
+          spinsUsed: 0,
+          lastSpinWeek: undefined,
+        };
+        setUser(freshUser);
+        localStorage.setItem('arena_x_user', JSON.stringify(freshUser));
+        createUserProfile(freshUser).catch(console.error);
+        console.warn('Không tìm thấy profile trên server sau đăng nhập Eduso — khởi tạo mới, bỏ qua số liệu local cũ.');
       }
     } catch (e) {
       // Không block login nếu Supabase lỗi
@@ -963,38 +1004,37 @@ const App: React.FC = () => {
     console.log(`[TEST] Unlocked frame ${frameId}`);
   };
 
-  const handleSpinResult = (prize: import('./components/LuckySpin').SpinPrize, newSpinsUsed: number) => {
+  const handleSpinResult = (
+    prize: import('./components/LuckySpin').SpinPrize,
+    res: import('./components/LuckySpin').SpinServerResult
+  ) => {
     if (!user) return;
     const currentWeek = getCurrentProgramWeek();
-    // Cộng XP thưởng từ vòng quay vào cả tổng XP lẫn XP tuần
-    // (XP tuần dùng để mở khóa avatar frame milestone)
-    const xpBonus = prize.xpBonus || 0;
-    const newXp = user.xp + xpBonus;
-    const newWeeklyXp = user.weeklyXp + xpBonus;
+    // XP đã được RPC edux_spin_wheel cộng ATOMIC ở server (res.newXp/newWeeklyXp
+    // là giá trị THẬT sau khi cộng). Client CHỈ đồng bộ lại theo server — không
+    // tự tính xp = user.xp + bonus (tránh sai lệch/ghi ngược số local lên server).
+    const newWeeklyXp = res.newWeeklyXp;
 
-    // Check frame unlock milestones với weeklyXp mới
+    // Check frame unlock milestones với weeklyXp mới từ server
     const currentUnlocked = user.unlockedFrames || [];
     const newUnlocks = checkNewUnlocks(newWeeklyXp, currentUnlocked, currentWeek);
     const updatedUnlockedFrames = newUnlocks.length > 0
       ? [...currentUnlocked, ...newUnlocks]
       : currentUnlocked;
 
-    const updatedUser: UserProfile = {
+    const syncedUser: UserProfile = {
       ...user,
-      xp: newXp,
-      weeklyXp: newWeeklyXp,
+      xp: res.newXp,
+      weeklyXp: res.newWeeklyXp,
       weeklyXpWeek: currentWeek ?? user.weeklyXpWeek,
-      level: getLevelFromXp(newXp).level,
-      spinsUsed: newSpinsUsed,
-      lastSpinWeek: currentWeek ?? user.lastSpinWeek,
+      level: getLevelFromXp(res.newXp).level,
       unlockedFrames: updatedUnlockedFrames,
     };
-    setUser(updatedUser);
-    localStorage.setItem('arena_x_user', JSON.stringify(updatedUser));
-    upsertUserProfile(updatedUser).catch(console.error);
-
-    // XP tuần từ vòng quay có thể chạm mốc mở khung → hiện popup unlock
+    setUser(syncedUser);
+    localStorage.setItem('arena_x_user', JSON.stringify(syncedUser));
+    // Chỉ unlockedFrames cần ghi server (xp/weeklyXp server đã đúng, không ghi lại).
     if (newUnlocks.length > 0) {
+      updateUserProfile(user.id, { unlockedFrames: updatedUnlockedFrames }).catch(console.error);
       setNewlyUnlockedItems(newUnlocks);
       setShowFrameUnlock(true);
     }
@@ -1002,6 +1042,25 @@ const App: React.FC = () => {
 
   const handlePracticeTopic = (topic: string) => {
     setSelectedTopics([topic]);
+    setView('solo-config');
+  };
+
+  /**
+   * Vào màn cấu hình Đấu hạng — chặn nếu đã hết 7 lượt solo trong tuần.
+   * Decision Viet 2026-06-19: hết lượt thì KHÔNG cho chơi (kể cả luyện tập).
+   */
+  const handleEnterDauHang = () => {
+    const soloUsed = countSoloThisWeek(gameHistory, PROGRAM_START_DATE);
+    if (soloUsed >= SOLO_WEEKLY_MATCH_CAP) {
+      setProgramRuleNotice({
+        title: 'Đã hết lượt Đấu hạng tuần này',
+        lines: [
+          `Bạn đã chơi đủ ${SOLO_WEEKLY_MATCH_CAP}/${SOLO_WEEKLY_MATCH_CAP} lượt Đấu hạng trong tuần.`,
+          'Hẹn gặp lại vào Thứ 2 tuần sau để tiếp tục tích XP nhé!',
+        ],
+      });
+      return;
+    }
     setView('solo-config');
   };
 
@@ -1038,6 +1097,20 @@ const App: React.FC = () => {
   };
 
   const startSoloGame = async () => {
+    // Defense-in-depth: check quota lần nữa khi bấm "BẮT ĐẦU CHIẾN".
+    // Phòng trường hợp user mở 2 tab, hoặc đang ở solo-config thì hết lượt (cross-device).
+    const soloUsed = countSoloThisWeek(gameHistory, PROGRAM_START_DATE);
+    if (soloUsed >= SOLO_WEEKLY_MATCH_CAP) {
+      setProgramRuleNotice({
+        title: 'Đã hết lượt Đấu hạng tuần này',
+        lines: [
+          `Bạn đã chơi đủ ${SOLO_WEEKLY_MATCH_CAP}/${SOLO_WEEKLY_MATCH_CAP} lượt trong tuần.`,
+          'Hẹn gặp lại vào Thứ 2 tuần sau để tiếp tục tích XP nhé!',
+        ],
+      });
+      setView('home');
+      return;
+    }
     setIsLoading(true);
     const topicsToUse = selectedTopics.length > 0 ? selectedTopics : [topicsByGrade[selectedGrade]?.[0] || 'General English'];
 
@@ -1193,9 +1266,19 @@ const App: React.FC = () => {
     localStorage.removeItem('arena_x_game_state');
 
     const correctCount = sessionAnswers.filter(a => a.isCorrect).length;
-    const xpData = calculateDetailedXp(correctCount, maxStreak, selectedDifficulty);
+    const rawXpData = calculateDetailedXp(correctCount, maxStreak, selectedDifficulty);
 
-    // Lưu vào history
+    // Quy định 3.1 (cap chặt theo quyết định nội bộ ESEA 2026):
+    // Mỗi tuần chỉ tính XP cho TỐI ĐA 7 lượt Đấu hạng (solo) đầu tiên.
+    // Trận thứ 8 trở đi vẫn được chơi để luyện tập NHƯNG xpEarned = 0
+    // ở cả XP tổng, gradeXp lẫn weeklyXp.
+    const soloPlayedThisWeekBeforeThis = countSoloThisWeek(gameHistory, PROGRAM_START_DATE);
+    const isCountableSolo = soloPlayedThisWeekBeforeThis < SOLO_WEEKLY_MATCH_CAP;
+    const xpData = isCountableSolo
+      ? rawXpData
+      : { ...rawXpData, totalXp: 0, correctXp: 0, streakBonus: 0, rankBonus: 0, baseXp: 0, multipliedXp: 0 };
+
+    // Lưu vào history (trận quá cap lưu xpEarned = 0 để stats không phồng)
     const historyEntry: GameHistory = {
       id: `game-${Date.now()}`,
       playedAt: new Date().toISOString(),
@@ -1252,31 +1335,41 @@ const App: React.FC = () => {
     setExpertAdvice(null); // Reset ngay để không hiện nhận xét lượt cũ
     setView('results');
 
+    // Thông báo edge case: trận này không tính XP (race cross-device khi cap chạm).
+    // Bình thường handleEnterDauHang/startSoloGame đã chặn từ trước.
+    if (!isCountableSolo) {
+      setProgramRuleNotice({
+        title: 'Trận này không tính XP',
+        lines: [
+          `Bạn đã chơi ${soloPlayedThisWeekBeforeThis}/${SOLO_WEEKLY_MATCH_CAP} lượt Đấu hạng tuần này.`,
+          'Hẹn gặp lại Thứ 2 tuần sau để tiếp tục tích XP nhé!',
+        ],
+      });
+    }
+
     if (user) {
-      const newXp = user.xp + xpData.totalXp;
-      
       const updatedTopicStats = { ...(user.topicStats || {}) };
+      const topicCorrect: Record<string, number> = {};
+      const topicTotal: Record<string, number> = {};
       Object.entries(catBreak).forEach(([topic, stats]) => {
         if (!updatedTopicStats[topic]) {
           updatedTopicStats[topic] = { correct: 0, total: 0 };
         }
         updatedTopicStats[topic].correct += stats.correct;
         updatedTopicStats[topic].total += stats.total;
+        topicCorrect[topic] = stats.correct;
+        topicTotal[topic] = stats.total;
       });
 
-      // Cập nhật gradeXp cho khối vừa chơi
+      // Cập nhật gradeXp cho khối vừa chơi (xpData.totalXp đã = 0 nếu trận vượt cap client-side;
+      // server sẽ áp lại cap 7 trận/tuần một cách chính xác, không tin số client tính)
       const updatedGradeXp = { ...(user.gradeXp || {}) };
       updatedGradeXp[selectedGrade] = (updatedGradeXp[selectedGrade] || 0) + xpData.totalXp;
 
-      // Quy định 3.1: Mỗi tuần chỉ tính XP cho TỐI ĐA 7 lượt Đấu hạng (solo) đầu tiên.
-      // Trận thứ 8 trở đi: vẫn được chơi để luyện tập, vẫn cộng XP tổng/gradeXp,
-      // nhưng KHÔNG cộng vào weeklyXp (XP tuần).
-      const soloPlayedThisWeekBeforeThis = countSoloThisWeek(gameHistory, PROGRAM_START_DATE);
-      const isCountableSoloForWeekly = soloPlayedThisWeekBeforeThis < SOLO_WEEKLY_MATCH_CAP;
-      const weeklyXpDelta = isCountableSoloForWeekly ? xpData.totalXp : 0;
-      const newWeeklyXp = user.weeklyXp + weeklyXpDelta;
+      const newWeeklyXp = user.weeklyXp + xpData.totalXp;
 
-      // Check frame unlock milestones
+      // Check frame unlock milestones (dùng ước tính client để UI phản hồi ngay,
+      // sẽ đồng bộ lại số thật sau khi RPC trả về bên dưới)
       const programWeek = getCurrentProgramWeek();
       const currentUnlocked = user.unlockedFrames || [];
       const newUnlocks = checkNewUnlocks(newWeeklyXp, currentUnlocked, programWeek);
@@ -1284,12 +1377,12 @@ const App: React.FC = () => {
         ? [...currentUnlocked, ...newUnlocks]
         : currentUnlocked;
 
-      const updatedUser: UserProfile = {
+      const optimisticUser: UserProfile = {
         ...user,
-        xp: newXp,
+        xp: user.xp + xpData.totalXp,
         weeklyXp: newWeeklyXp,
         weeklyXpWeek: programWeek || user.weeklyXpWeek,
-        level: getLevelFromXp(newXp).level,
+        level: getLevelFromXp(user.xp + xpData.totalXp).level,
         totalGames: user.totalGames + 1,
         bestStreak: Math.max(user.bestStreak, maxStreak),
         topicStats: updatedTopicStats,
@@ -1297,22 +1390,36 @@ const App: React.FC = () => {
         gradeXp: updatedGradeXp,
         unlockedFrames: updatedUnlockedFrames,
       };
-      setUser(updatedUser);
-      localStorage.setItem('arena_x_user', JSON.stringify(updatedUser));
+      setUser(optimisticUser);
+      localStorage.setItem('arena_x_user', JSON.stringify(optimisticUser));
 
-      // Hiển thị popup unlock frame nếu có items mới
+      // Hiển thị popup unlock frame nếu có items mới + ghi lên server (nếu không,
+      // unlock chỉ tồn tại local và biến mất khi profile được đồng bộ lại từ
+      // server ở lần load/login sau — xem cùng cơ chế ở handleSpinResult).
       if (newUnlocks.length > 0) {
         setNewlyUnlockedItems(newUnlocks);
         setShowFrameUnlock(true);
+        updateUserProfile(user.id, { unlockedFrames: updatedUnlockedFrames }).catch(console.error);
       }
 
-      // Sync user profile to Supabase FIRST, then save game history
-      upsertUserProfile(updatedUser)
-        .then(() => {
-          return saveGameHistoryToSupabase(user.id, { ...historyEntry, mode: 'solo' });
+      // Ghi trận + cộng XP ATOMIC ở server (RPC edux_record_game — xem
+      // scripts/sql/edux_record_game_rpc.sql). Server tự áp lại cap 7 trận/tuần
+      // và cộng dồn xp/weekly_xp bằng `xp = xp + delta` (không ghi đè tuyệt đối),
+      // nên không bị race condition hay bypass cap qua nhiều tab như cách cũ.
+      recordGame(user.id, { ...historyEntry, mode: 'solo' }, rawXpData.totalXp, topicCorrect, topicTotal)
+        .then(res => {
+          if (!res) return;
+          setUser(prev => prev && prev.id === user.id ? {
+            ...prev,
+            xp: res.newXp,
+            weeklyXp: res.newWeeklyXp,
+            totalGames: res.newTotalGames,
+            bestStreak: res.newBestStreak,
+            level: getLevelFromXp(res.newXp).level,
+          } : prev);
         })
         .catch(err => {
-          console.error('Error syncing to Supabase:', err);
+          console.error('Error recording game to Supabase:', err);
         });
 
       // Send game result to Eduso API (if user is logged in with Eduso)
@@ -1366,6 +1473,7 @@ const App: React.FC = () => {
 
     if (questions.length > 0) {
       setMultiplayerQuestions(questions);
+      gameStartTime.current = new Date(); // Save game start time for Eduso API
 
       // If host, start the game with questions
       if (state.hostId === getPlayerId()) {
@@ -1413,7 +1521,7 @@ const App: React.FC = () => {
 
     // Update user XP and sync to Supabase
     if (user) {
-      const newXp = user.xp + myResult.xpEarned;
+      const newXp = user.xp + myResult.xpEarned; // ước tính để check unlock ngay, số thật lấy từ RPC bên dưới
       const gameGrade = multiplayerState?.roomSettings.grade || selectedGrade;
 
       // Cập nhật gradeXp cho khối vừa chơi
@@ -1428,7 +1536,7 @@ const App: React.FC = () => {
         ? [...currentUnlockedMp, ...newUnlocksMp]
         : currentUnlockedMp;
 
-      const updatedUser: UserProfile = {
+      const optimisticUserMp: UserProfile = {
         ...user,
         xp: newXp,
         weeklyXp: newWeeklyXpMp,
@@ -1440,24 +1548,47 @@ const App: React.FC = () => {
         gradeXp: updatedGradeXp,
         unlockedFrames: updatedUnlockedFramesMp,
       };
-      setUser(updatedUser);
-      localStorage.setItem('arena_x_user', JSON.stringify(updatedUser));
+      setUser(optimisticUserMp);
+      localStorage.setItem('arena_x_user', JSON.stringify(optimisticUserMp));
 
       if (newUnlocksMp.length > 0) {
         setNewlyUnlockedItems(newUnlocksMp);
         setShowFrameUnlock(true);
+        updateUserProfile(user.id, { unlockedFrames: updatedUnlockedFramesMp }).catch(console.error);
       }
 
-      // Sync user profile to Supabase FIRST, then save game history
-      // This ensures the foreign key constraint is satisfied (profile must exist before game_history)
-      upsertUserProfile(updatedUser)
-        .then(() => {
-          // Now save game history after profile exists
-          return saveGameHistoryToSupabase(user.id, historyEntry);
+      // Ghi trận + cộng XP ATOMIC ở server (multiplayer không bị cap 7 trận —
+      // RPC chỉ áp cap cho mode='solo' — nhưng vẫn cần cộng dồn atomic để
+      // tránh race condition khi nhiều trận kết thúc gần nhau).
+      recordGame(user.id, historyEntry, myResult.xpEarned, {}, {})
+        .then(res => {
+          if (!res) return;
+          setUser(prev => prev && prev.id === user.id ? {
+            ...prev,
+            xp: res.newXp,
+            weeklyXp: res.newWeeklyXp,
+            totalGames: res.newTotalGames,
+            bestStreak: res.newBestStreak,
+            level: getLevelFromXp(res.newXp).level,
+          } : prev);
         })
         .catch(err => {
-          console.error('Error syncing multiplayer data to Supabase:', err);
+          console.error('Error recording multiplayer game to Supabase:', err);
         });
+
+      // Send game result to Eduso API (if user is logged in with Eduso)
+      if (edusoUser && gameStartTime.current) {
+        const endGameParams = createEndGameParams(
+          edusoUser.userId,
+          user.name,
+          gameStartTime.current,
+          myResult.xpEarned,
+          'EDUX_ARENA'
+        );
+        sendGameResultToEduso(endGameParams).catch(err => {
+          console.error('Error sending multiplayer game result to Eduso:', err);
+        });
+      }
     }
   };
 
@@ -1670,61 +1801,159 @@ const App: React.FC = () => {
                </button>
              )}
 
+             {/* Tính quota còn lại để hiển thị trên 2 nút Đấu hạng / Thách đấu */}
+             {(() => null)()}
              {/* Desktop: large cards side by side */}
              <div className="hidden md:grid grid-cols-2 gap-8">
-                <button
-                  onClick={() => setView('solo-config')}
-                  className="relative group overflow-hidden bg-slate-900 border border-slate-800 p-10 rounded-[40px] hover:border-red-600 transition-all text-left shadow-2xl"
-                >
-                  <div className="absolute top-0 right-0 p-8 opacity-5 text-9xl group-hover:scale-110 transition-transform">🎯</div>
-                  <h3 className="text-3xl font-black mb-2 group-hover:text-red-500 transition-colors uppercase">Đấu hạng</h3>
-                  <p className="text-slate-400 mb-8 font-medium italic">Thi đấu cá nhân, vượt qua 15 câu hỏi trong 5 phút để leo rank</p>
-                  <div className="flex items-center gap-2 text-red-500 font-bold uppercase tracking-widest text-sm">
-                    BẮT ĐẦU NGAY <span className="group-hover:translate-x-2 transition-transform">→</span>
-                  </div>
-                </button>
+                {(() => {
+                  const soloUsed = countSoloThisWeek(gameHistory, PROGRAM_START_DATE);
+                  const soloRemaining = Math.max(0, SOLO_WEEKLY_MATCH_CAP - soloUsed);
+                  const soloExhausted = soloRemaining === 0;
+                  return (
+                    <button
+                      onClick={handleEnterDauHang}
+                      className={`relative group overflow-hidden bg-slate-900 border border-slate-800 p-10 rounded-[40px] transition-all text-left shadow-2xl ${
+                        soloExhausted ? 'opacity-70 hover:border-slate-700' : 'hover:border-red-600'
+                      }`}
+                    >
+                      <div className="absolute top-0 right-0 p-8 opacity-5 text-9xl group-hover:scale-110 transition-transform">🎯</div>
+                      <h3 className="text-3xl font-black mb-2 group-hover:text-red-500 transition-colors uppercase">Đấu hạng</h3>
+                      <p className="text-slate-400 mb-3 font-medium italic">Thi đấu cá nhân, vượt qua 15 câu hỏi trong 5 phút để leo rank</p>
+                      <div className={`inline-flex items-center gap-2 mb-5 px-3 py-1.5 rounded-full border text-xs font-black uppercase tracking-widest ${
+                        soloExhausted
+                          ? 'bg-slate-800 border-slate-700 text-slate-500'
+                          : soloRemaining <= 2
+                            ? 'bg-amber-500/10 border-amber-500/40 text-amber-300'
+                            : 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300'
+                      }`}>
+                        {soloExhausted
+                          ? '⛔ Hết lượt tuần này — hẹn Thứ 2 tuần sau'
+                          : <>Bạn còn <span className="text-base">{soloRemaining}/{SOLO_WEEKLY_MATCH_CAP}</span> lượt chơi tuần này</>}
+                      </div>
+                      <div className={`flex items-center gap-2 font-bold uppercase tracking-widest text-sm ${
+                        soloExhausted ? 'text-slate-500' : 'text-red-500'
+                      }`}>
+                        {soloExhausted ? 'XEM HƯỚNG DẪN' : 'BẮT ĐẦU NGAY'} <span className="group-hover:translate-x-2 transition-transform">→</span>
+                      </div>
+                    </button>
+                  );
+                })()}
 
-                <button
-                  onClick={handleEnterThachDauLobby}
-                  className="relative group overflow-hidden bg-slate-900 border border-slate-800 p-10 rounded-[40px] hover:border-blue-500 transition-all text-left shadow-2xl"
-                >
-                  <div className="absolute top-0 right-0 p-8 opacity-5 text-9xl group-hover:scale-110 transition-transform">👥</div>
-                  <h3 className="text-3xl font-black mb-2 group-hover:text-blue-500 transition-colors uppercase">Thách đấu</h3>
-                  <p className="text-slate-400 mb-8 font-medium italic">Thách đấu bạn bè, tích lũy XP, trở thành Huyền thoại</p>
-                  <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-3">
-                    Mở: {THACH_DAU_WINDOW_LABEL} · 5 trận/buổi
-                  </p>
-                  <div className="flex items-center gap-2 text-blue-500 font-bold uppercase tracking-widest text-sm">
-                    THÁCH ĐẤU NGAY <span className="group-hover:translate-x-2 transition-transform">→</span>
-                  </div>
-                </button>
+                {(() => {
+                  const tdStatus = getThachDauStatus();
+                  const tdUsed = countThachDauTodayInWindow(gameHistory);
+                  const tdRemaining = Math.max(0, THACH_DAU_DAILY_MATCH_CAP - tdUsed);
+                  const tdExhausted = tdRemaining === 0;
+                  // 4 trạng thái pill: closed-wrong-day | closed-wrong-hour | exhausted | open
+                  let pillTone = 'bg-sky-500/10 border-sky-500/40 text-sky-300';
+                  let pillContent: React.ReactNode;
+                  if (tdStatus.open === false) {
+                    pillTone = 'bg-slate-800 border-slate-700 text-slate-400';
+                    pillContent = tdStatus.reason === 'wrong_day'
+                      ? '🌙 Hôm nay không mở Thách đấu'
+                      : '⏰ Ngoài khung giờ Thách đấu (14h–21h)';
+                  } else if (tdExhausted) {
+                    pillTone = 'bg-slate-800 border-slate-700 text-slate-500';
+                    pillContent = '⛔ Hết lượt Thách đấu trong buổi hôm nay';
+                  } else {
+                    if (tdRemaining <= 1) pillTone = 'bg-amber-500/10 border-amber-500/40 text-amber-300';
+                    pillContent = <>Bạn còn <span className="text-base">{tdRemaining}/{THACH_DAU_DAILY_MATCH_CAP}</span> lượt chơi hôm nay</>;
+                  }
+                  return (
+                    <button
+                      onClick={handleEnterThachDauLobby}
+                      className={`relative group overflow-hidden bg-slate-900 border border-slate-800 p-10 rounded-[40px] transition-all text-left shadow-2xl ${
+                        tdStatus.open === false || tdExhausted ? 'opacity-70 hover:border-slate-700' : 'hover:border-blue-500'
+                      }`}
+                    >
+                      <div className="absolute top-0 right-0 p-8 opacity-5 text-9xl group-hover:scale-110 transition-transform">👥</div>
+                      <h3 className="text-3xl font-black mb-2 group-hover:text-blue-500 transition-colors uppercase">Thách đấu</h3>
+                      <p className="text-slate-400 mb-3 font-medium italic">Thách đấu bạn bè, tích lũy XP, trở thành Huyền thoại</p>
+                      <div className={`inline-flex items-center gap-2 mb-3 px-3 py-1.5 rounded-full border text-xs font-black uppercase tracking-widest ${pillTone}`}>
+                        {pillContent}
+                      </div>
+                      <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-3">
+                        Mở: {THACH_DAU_WINDOW_LABEL}
+                      </p>
+                      <div className={`flex items-center gap-2 font-bold uppercase tracking-widest text-sm ${
+                        tdStatus.open === false || tdExhausted ? 'text-slate-500' : 'text-blue-500'
+                      }`}>
+                        {tdStatus.open === false || tdExhausted ? 'XEM CHI TIẾT' : 'THÁCH ĐẤU NGAY'} <span className="group-hover:translate-x-2 transition-transform">→</span>
+                      </div>
+                    </button>
+                  );
+                })()}
              </div>
 
              {/* Mobile: compact list rows with chevron */}
              <div className="md:hidden flex flex-col gap-3">
-                <button
-                  onClick={() => setView('solo-config')}
-                  className="flex items-center gap-4 bg-slate-900 border border-slate-800 p-4 rounded-2xl hover:border-red-600/50 transition-all text-left group"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-red-600/10 border border-red-600/20 flex items-center justify-center text-2xl flex-shrink-0">🎯</div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-base font-black text-white uppercase">Đấu hạng</h3>
-                    <p className="text-slate-500 text-xs mt-0.5">15 câu hỏi · 5 phút · Leo rank</p>
-                  </div>
-                  <span className="text-red-500 font-bold text-lg group-hover:translate-x-1 transition-transform flex-shrink-0">›</span>
-                </button>
+                {(() => {
+                  const soloUsed = countSoloThisWeek(gameHistory, PROGRAM_START_DATE);
+                  const soloRemaining = Math.max(0, SOLO_WEEKLY_MATCH_CAP - soloUsed);
+                  const soloExhausted = soloRemaining === 0;
+                  return (
+                    <button
+                      onClick={handleEnterDauHang}
+                      className={`flex items-center gap-4 bg-slate-900 border border-slate-800 p-4 rounded-2xl transition-all text-left group ${
+                        soloExhausted ? 'opacity-70' : 'hover:border-red-600/50'
+                      }`}
+                    >
+                      <div className="w-12 h-12 rounded-xl bg-red-600/10 border border-red-600/20 flex items-center justify-center text-2xl flex-shrink-0">🎯</div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-base font-black text-white uppercase">Đấu hạng</h3>
+                        <p className={`text-[10px] mt-0.5 font-bold ${
+                          soloExhausted ? 'text-slate-500' : soloRemaining <= 2 ? 'text-amber-300' : 'text-emerald-300'
+                        }`}>
+                          {soloExhausted
+                            ? 'Hết lượt — hẹn T2 tuần sau'
+                            : `Còn ${soloRemaining}/${SOLO_WEEKLY_MATCH_CAP} lượt tuần này`}
+                        </p>
+                      </div>
+                      <span className={`font-bold text-lg group-hover:translate-x-1 transition-transform flex-shrink-0 ${
+                        soloExhausted ? 'text-slate-500' : 'text-red-500'
+                      }`}>›</span>
+                    </button>
+                  );
+                })()}
 
-                <button
-                  onClick={handleEnterThachDauLobby}
-                  className="flex items-center gap-4 bg-slate-900 border border-slate-800 p-4 rounded-2xl hover:border-blue-500/50 transition-all text-left group"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-blue-600/10 border border-blue-600/20 flex items-center justify-center text-2xl flex-shrink-0">👥</div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-base font-black text-white uppercase">Thách đấu</h3>
-                    <p className="text-slate-500 text-[10px] mt-0.5">T3/T5/T7 · 14h–21h · 5 trận/buổi</p>
-                  </div>
-                  <span className="text-blue-500 font-bold text-lg group-hover:translate-x-1 transition-transform flex-shrink-0">›</span>
-                </button>
+                {(() => {
+                  const tdStatus = getThachDauStatus();
+                  const tdUsed = countThachDauTodayInWindow(gameHistory);
+                  const tdRemaining = Math.max(0, THACH_DAU_DAILY_MATCH_CAP - tdUsed);
+                  const tdExhausted = tdRemaining === 0;
+                  const isClosed = tdStatus.open === false;
+                  let lineColor = 'text-sky-300';
+                  let lineText: string;
+                  if (isClosed) {
+                    lineColor = 'text-slate-400';
+                    lineText = tdStatus.reason === 'wrong_day'
+                      ? '🌙 Hôm nay không mở Thách đấu'
+                      : '⏰ Ngoài khung giờ 14h–21h';
+                  } else if (tdExhausted) {
+                    lineColor = 'text-slate-500';
+                    lineText = 'Hết lượt Thách đấu buổi hôm nay';
+                  } else {
+                    if (tdRemaining <= 1) lineColor = 'text-amber-300';
+                    lineText = `Còn ${tdRemaining}/${THACH_DAU_DAILY_MATCH_CAP} lượt hôm nay`;
+                  }
+                  return (
+                    <button
+                      onClick={handleEnterThachDauLobby}
+                      className={`flex items-center gap-4 bg-slate-900 border border-slate-800 p-4 rounded-2xl transition-all text-left group ${
+                        isClosed || tdExhausted ? 'opacity-70' : 'hover:border-blue-500/50'
+                      }`}
+                    >
+                      <div className="w-12 h-12 rounded-xl bg-blue-600/10 border border-blue-600/20 flex items-center justify-center text-2xl flex-shrink-0">👥</div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-base font-black text-white uppercase">Thách đấu</h3>
+                        <p className={`text-[10px] mt-0.5 font-bold ${lineColor}`}>{lineText}</p>
+                      </div>
+                      <span className={`font-bold text-lg group-hover:translate-x-1 transition-transform flex-shrink-0 ${
+                        isClosed || tdExhausted ? 'text-slate-500' : 'text-blue-500'
+                      }`}>›</span>
+                    </button>
+                  );
+                })()}
              </div>
 
              {/* Quick Actions */}
@@ -2038,41 +2267,16 @@ const App: React.FC = () => {
             user={user}
             allUsers={leaderboardData}
             onBack={() => setView('home')}
-            onRecalculate={async (fixedHistory, xpDiff) => {
-              setGameHistory(fixedHistory);
-              localStorage.setItem('arena_x_history', JSON.stringify(fixedHistory));
+            onRecalculate={async () => {
+              // Client KHÔNG tự tính lại rồi ghi đè xp lên server (vi phạm quy tắc
+              // "điểm chỉ được cộng qua RPC, không ghi đè"). Việc tính lại/sửa điểm
+              // do server đảm nhiệm; ở đây chỉ ĐỌC LẠI giá trị đúng từ server về
+              // cập nhật hiển thị. (Fix dữ liệu hàng loạt dùng recalculateAllUsersXp.)
               if (user) {
-                const currentWeek = getCurrentProgramWeek();
-                // weeklyXp tuần hiện tại = trận đấu trong tuần + XP thưởng vòng quay trong tuần.
-                // Dùng PROGRAM_START_DATE đã neo +07:00 (tránh lệch 7h như mốc hardcode cũ),
-                // và gọi getWeeklyUserXp để cộng cả spin XP (cùng nguồn với BXH tuần).
-                let recalcWeeklyXp = 0;
-                if (currentWeek) {
-                  const msPerWeek = 7 * 24 * 60 * 60 * 1000;
-                  const weekStart = PROGRAM_START_DATE.getTime() + (currentWeek - 1) * msPerWeek;
-                  const weekEnd = weekStart + msPerWeek;
-                  recalcWeeklyXp = fixedHistory
-                    .filter(g => {
-                      const t = new Date(g.playedAt).getTime();
-                      return t >= weekStart && t < weekEnd;
-                    })
-                    .reduce((sum, g) => sum + g.xpEarned, 0);
-                  try {
-                    const authoritative = await getWeeklyUserXp(user.id);
-                    // Server đếm được cả spin XP — ưu tiên giá trị server nếu lớn hơn
-                    // (không Math.min, để không bỏ sót XP spin user chỉ có server-side).
-                    recalcWeeklyXp = Math.max(recalcWeeklyXp, authoritative);
-                  } catch { /* mạng lỗi — dùng giá trị tính từ history local */ }
-                }
-                const updatedUser = {
-                  ...user,
-                  xp: Math.max(0, Math.round(user.xp + xpDiff)),
-                  weeklyXp: recalcWeeklyXp,
-                  weeklyXpWeek: currentWeek || user.weeklyXpWeek,
-                };
-                setUser(updatedUser);
-                localStorage.setItem('arena_x_user', JSON.stringify(updatedUser));
-                upsertUserProfile(updatedUser).catch(console.error);
+                await reconcileXpWithHistory(user.id);
+                const freshHistory = await getGameHistoryFromSupabase(user.id, 50);
+                setGameHistory(freshHistory);
+                localStorage.setItem('arena_x_history', JSON.stringify(freshHistory));
               }
             }}
             onRecalculateAll={async () => {
@@ -2106,6 +2310,11 @@ const App: React.FC = () => {
             grades={grades}
             onStartGame={handleStartMultiplayerGame}
             onBack={() => setView('home')}
+            // Truyền roomCode cũ + isJoining để khi auto-rejoin lobby
+            // (host/khách reload trang) component vào thẳng lobby thay
+            // vì màn chọn "Tạo / Tham gia".
+            initialRoomCode={roomCode || undefined}
+            isJoining={!isHost}
           />
         )}
 
@@ -2210,8 +2419,9 @@ const App: React.FC = () => {
                  : (userHasXp ? [...rawData, userInject] : rawData);
 
                combinedData = combinedData.sort((a, b) => getDisplayXp(b) - getDisplayXp(a));
-               if (isGradeFilter) combinedData = combinedData.filter(p => getDisplayXp(p) > 0);
-               if (isWeekly) combinedData = combinedData.filter(p => (p.weeklyXp || 0) > 0);
+               // Luôn lọc user có XP > 0 ở mọi tab (all-time, grade, weekly).
+               // Tránh hạng 1-5 hiển thị user 0 XP khi chưa ai đấu nhiều.
+               combinedData = combinedData.filter(p => getDisplayXp(p) > 0);
 
                const top3 = combinedData.slice(0, 3);
                const rest = combinedData.slice(3);

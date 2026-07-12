@@ -21,9 +21,8 @@ import { UserProfile } from '../types';
 import { getCurrentProgramWeek, WEEKLY_FRAMES } from '../constants';
 import { isFrameUsable } from '../utils/frameLogic';
 import {
-  getSpinConfig,
-  getSpinWinCounts,
-  saveSpinResult,
+  spinWheelServer,
+  getSpinsLeft,
   updateSpinContact,
   getMultiplayerWinsThisWeek,
 } from '../services/supabase';
@@ -161,10 +160,23 @@ function drawWheel(
 }
 
 // ─── Props ────────────────────────────────────────────────────────────────────
+/** Kết quả 1 lượt quay do SERVER trả về (đã cộng XP atomic + ghi history). */
+export interface SpinServerResult {
+  prizeId: string;
+  prizeLabel: string;
+  xpBonus: number;
+  spinId: string | null;
+  newXp: number;
+  newWeeklyXp: number;
+  spinsLeft: number;
+  outOfSpins: boolean;
+}
+
 interface LuckySpinProps {
   user: UserProfile;
-  /** Gọi sau khi quay xong để cập nhật state ngoài (spinsUsed + xpBonus) */
-  onSpinResult: (prize: SpinPrize, newSpinsUsed: number) => void;
+  /** Gọi sau khi quay xong. res chứa newXp/newWeeklyXp do server tính atomic —
+   *  App.tsx dùng để đồng bộ XP state, KHÔNG tự cộng ở client. */
+  onSpinResult: (prize: SpinPrize, res: SpinServerResult) => void;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -179,16 +191,9 @@ const LuckySpin: React.FC<LuckySpinProps> = ({ user, onSpinResult }) => {
   const [prize, setPrize] = useState<SpinPrize | null>(null);
   const [showResult, setShowResult] = useState(false);
 
-  // Server config (tỉ lệ + quota admin chỉnh) — fallback default trong code
-  const [serverConfig, setServerConfig] = useState<Record<string, { weight: number; quota: number | null; enabled: boolean }> | null>(null);
-  useEffect(() => {
-    getSpinConfig().then(rows => {
-      if (!rows) return;
-      const map: Record<string, { weight: number; quota: number | null; enabled: boolean }> = {};
-      rows.forEach(r => { map[r.prizeId] = { weight: r.weight, quota: r.quota, enabled: r.enabled }; });
-      setServerConfig(map);
-    }).catch(() => { /* dùng default */ });
-  }, []);
+  // Tỉ lệ % + quota hiển thị trong "Danh sách phần thưởng" vẫn dùng default
+  // trong code (SPIN_PRIZES) — trọng số/quota THẬT SỰ dùng khi quay được
+  // RPC edux_spin_wheel đọc trực tiếp từ edux_spin_config ở server.
 
   // ── Form nhận thưởng thẻ điện thoại ────────────────────────────────────────
   const [cardWin, setCardWin] = useState<{ prize: SpinPrize; recordId: string | null } | null>(null);
@@ -210,20 +215,26 @@ const LuckySpin: React.FC<LuckySpinProps> = ({ user, onSpinResult }) => {
   const FREE_SPINS_PER_WEEK = 1;
   const MULTIPLAYER_WIN_THRESHOLD = 150;
 
-  // Đếm trận thắng multiplayer (>150đ) trong tuần từ Supabase. Cache theo userId+week.
+  // ── Quota lượt quay: LẤY TỪ SERVER (nguồn duy nhất) ─────────────────────────
+  // Trước đây spinsLeft tính từ user.spinsUsed (localStorage) → mỗi lần reload
+  // spinsUsed reset về 0 nên quota lại đầy, cho quay vượt hạn mức (thực tế 1 HS
+  // quay 89 lượt dù chỉ được 7). Nay allowed/used/left đều do RPC
+  // edux_spin_quota_left tính từ edux_game_history + edux_spin_history trên
+  // server; client chỉ hiển thị. Chốt chặn thật nằm trong RPC edux_spin_wheel.
+  const [quota, setQuota] = useState<{ allowed: number; used: number; left: number }>({ allowed: 1, used: 0, left: 1 });
+  // matchEarnedSpins/frameBonusSpin chỉ để HIỂN THỊ chi tiết cách cộng lượt.
   const [matchEarnedSpins, setMatchEarnedSpins] = useState<number>(0);
-  useEffect(() => {
+  const refreshQuota = useCallback(async () => {
     if (!user.id) return;
-    let cancelled = false;
-    getMultiplayerWinsThisWeek(user.id, MULTIPLAYER_WIN_THRESHOLD).then(n => {
-      if (!cancelled) setMatchEarnedSpins(n);
-    });
-    return () => { cancelled = true; };
+    const [q, mp] = await Promise.all([
+      getSpinsLeft(user.id, currentWeek),
+      getMultiplayerWinsThisWeek(user.id, MULTIPLAYER_WIN_THRESHOLD),
+    ]);
+    if (q) setQuota(q);
+    setMatchEarnedSpins(mp);
   }, [user.id, currentWeek]);
+  useEffect(() => { refreshQuota(); }, [refreshQuota]);
 
-  // Frame bonus: nếu user đã mở đủ 3 item của khung TUẦN HIỆN TẠI → +1 lượt.
-  // (Hết tuần, frame tuần khác không cộng tiếp — đảm bảo đúng tinh thần "1 lượt
-  // quay của tuần đó" trong kế hoạch.)
   const frameBonusSpin = React.useMemo<number>(() => {
     if (!currentWeek) return 0;
     const weekFrame = WEEKLY_FRAMES.find(f => f.week === currentWeek);
@@ -231,14 +242,9 @@ const LuckySpin: React.FC<LuckySpinProps> = ({ user, onSpinResult }) => {
     return isFrameUsable(weekFrame.id, user.unlockedFrames || []) ? 1 : 0;
   }, [currentWeek, user.unlockedFrames]);
 
-  const totalSpins = FREE_SPINS_PER_WEEK + matchEarnedSpins + frameBonusSpin;
-
-  const spinsUsedThisWeek =
-    (user.lastSpinWeek ?? 0) === (currentWeek ?? 0)
-      ? (user.spinsUsed ?? 0)
-      : 0;
-
-  const spinsLeft = Math.max(0, totalSpins - spinsUsedThisWeek);
+  const totalSpins = quota.allowed;
+  const spinsUsedThisWeek = quota.used;
+  const spinsLeft = quota.left;
 
   // ── Draw loop ───────────────────────────────────────────────────────────────
   // Nhịp nhấp nháy bóng đèn trên vành (đổi pha mỗi 400ms)
@@ -269,38 +275,8 @@ const LuckySpin: React.FC<LuckySpinProps> = ({ user, onSpinResult }) => {
     drawWheel(ctx, cx, cx, r, displayRotation, bulbPhase);
   }, [displayRotation, bulbPhase]);
 
-  // ── Chọn giải theo trọng số + quota ─────────────────────────────────────────
-  const pickPrize = useCallback(async (): Promise<number> => {
-    // Đếm số người đã trúng từng giải (cho quota thẻ).
-    // Lỗi mạng/chưa có bảng → counts = null → KHÔNG cho ra thẻ (an toàn quota).
-    const counts = await getSpinWinCounts().catch(() => null);
-
-    const effectiveWeights = SPIN_PRIZES.map(p => {
-      const cfg = serverConfig?.[p.id];
-      const enabled = cfg ? cfg.enabled : true;
-      const weight = cfg ? cfg.weight : p.weight;
-      const quota = cfg !== undefined && cfg !== null ? cfg.quota : p.quota;
-      if (!enabled || weight <= 0) return 0;
-      if (p.type === 'card') {
-        if (!counts) return 0; // không xác minh được quota → bỏ thẻ lượt này
-        if (quota !== null && (counts[p.id] || 0) >= quota) return 0; // hết quota
-      }
-      return weight;
-    });
-
-    const total = effectiveWeights.reduce((s, w) => s + w, 0);
-    if (total <= 0) {
-      // Tất cả giải bị tắt — fallback ô "hẹn gặp lần sau"
-      return SPIN_PRIZES.findIndex(p => p.type === 'miss');
-    }
-
-    let roll = Math.random() * total;
-    for (let i = 0; i < SPIN_PRIZES.length; i++) {
-      roll -= effectiveWeights[i];
-      if (roll < 0) return i;
-    }
-    return SPIN_PRIZES.length - 1;
-  }, [serverConfig]);
+  // Random giải + kiểm tra quota giờ chạy ATOMIC ở server (RPC edux_spin_wheel,
+  // xem spin() bên dưới) — client không tự pick nữa để tránh race condition.
 
   // ── Spin logic ──────────────────────────────────────────────────────────────
   const spin = useCallback(async () => {
@@ -310,7 +286,27 @@ const LuckySpin: React.FC<LuckySpinProps> = ({ user, onSpinResult }) => {
     setShowResult(false);
     setIsSpinning(true);
 
-    const winIndex = await pickPrize();
+    // Random giải + kiểm tra quota + insert ATOMIC ở server (RPC edux_spin_wheel),
+    // TRƯỚC khi quay animation. Tránh race condition: nếu tự pick ở client dựa
+    // trên quota đọc trước đó, nhiều lượt quay đồng thời có thể cùng đọc thấy
+    // quota còn trống rồi cùng ghi, khiến tổng vượt quota thật trong DB (thấy
+    // thực tế: card20 quota=10 nhưng có 14 người trúng, 2026-07-02).
+    const res = await spinWheelServer({ userId: user.id, userName: user.name, week: currentWeek });
+    if (!res) {
+      setIsSpinning(false);
+      return;
+    }
+    // Server từ chối vì hết lượt (quota enforce server-side) — không quay, đồng bộ
+    // lại quota để UI khóa nút và báo cho user.
+    if (res.outOfSpins) {
+      setIsSpinning(false);
+      setQuota(q => ({ ...q, used: q.allowed, left: 0 }));
+      refreshQuota();
+      return;
+    }
+    const recordId = res.spinId;
+    let winIndex = SPIN_PRIZES.findIndex(p => p.id === res.prizeId);
+    if (winIndex < 0) winIndex = SPIN_PRIZES.findIndex(p => p.type === 'miss');
     const winPrize = SPIN_PRIZES[winIndex];
 
     const sliceCenter = winIndex * FULL_ANGLE + FULL_ANGLE / 2;
@@ -330,21 +326,6 @@ const LuckySpin: React.FC<LuckySpinProps> = ({ user, onSpinResult }) => {
     const finishSpin = async () => {
       setIsSpinning(false);
 
-      // Ghi lượt quay lên server (mọi giải — để đếm quota + audit + XP reconcile)
-      let recordId: string | null = null;
-      try {
-        recordId = await saveSpinResult({
-          userId: user.id,
-          userName: user.name,
-          prizeId: winPrize.id,
-          prizeLabel: winPrize.label,
-          xpBonus: winPrize.xpBonus,
-          week: currentWeek,
-        });
-      } catch (e) {
-        console.error('Error saving spin result:', e);
-      }
-
       if (winPrize.type === 'card') {
         // Mở form nhận thưởng
         setFormPhone('');
@@ -360,9 +341,9 @@ const LuckySpin: React.FC<LuckySpinProps> = ({ user, onSpinResult }) => {
         setShowResult(true);
       }
 
-      // 'extra' = thêm 1 lượt → lượt này không bị trừ
-      const consumed = winPrize.type === 'extra' ? 0 : 1;
-      onSpinResult(winPrize, spinsUsedThisWeek + consumed);
+      // Cập nhật quota từ SERVER (res.spinsLeft) — không tự tính ở client nữa.
+      setQuota(q => ({ ...q, used: Math.max(0, q.allowed - res.spinsLeft), left: res.spinsLeft }));
+      onSpinResult(winPrize, res);
     };
 
     function animate(now: number) {
@@ -384,7 +365,7 @@ const LuckySpin: React.FC<LuckySpinProps> = ({ user, onSpinResult }) => {
     }
 
     animFrameRef.current = requestAnimationFrame(animate);
-  }, [isSpinning, spinsLeft, spinsUsedThisWeek, onSpinResult, pickPrize, user, currentWeek]);
+  }, [isSpinning, spinsLeft, onSpinResult, user, currentWeek, refreshQuota]);
 
   useEffect(() => {
     return () => cancelAnimationFrame(animFrameRef.current);
@@ -404,6 +385,14 @@ const LuckySpin: React.FC<LuckySpinProps> = ({ user, onSpinResult }) => {
     }
     if (!formName.trim()) {
       setFormError('Vui lòng điền họ và tên');
+      return;
+    }
+    if (!formClass.trim()) {
+      setFormError('Vui lòng điền lớp');
+      return;
+    }
+    if (!formSchool.trim()) {
+      setFormError('Vui lòng điền trường');
       return;
     }
     setFormError('');
@@ -598,7 +587,9 @@ const LuckySpin: React.FC<LuckySpinProps> = ({ user, onSpinResult }) => {
 
                 <div className="space-y-3">
                   <div>
-                    <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Họ và tên</label>
+                    <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">
+                      Họ và tên <span className="text-red-400">*</span>
+                    </label>
                     <input
                       value={formName}
                       onChange={e => setFormName(e.target.value)}
@@ -608,7 +599,9 @@ const LuckySpin: React.FC<LuckySpinProps> = ({ user, onSpinResult }) => {
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Lớp</label>
+                      <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">
+                        Lớp <span className="text-red-400">*</span>
+                      </label>
                       <input
                         value={formClass}
                         onChange={e => setFormClass(e.target.value)}
@@ -617,7 +610,9 @@ const LuckySpin: React.FC<LuckySpinProps> = ({ user, onSpinResult }) => {
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Trường</label>
+                      <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">
+                        Trường <span className="text-red-400">*</span>
+                      </label>
                       <input
                         value={formSchool}
                         onChange={e => setFormSchool(e.target.value)}

@@ -72,10 +72,30 @@ export function getProgramWeekRange(programStart: Date, at: Date = new Date()): 
   return { startMs, endMs: startMs + msPerWeek, week };
 }
 
-/** Đếm số trận SOLO trong tuần hiện tại từ list history (đã include cả local+server). */
-export function countSoloThisWeek(history: GameHistory[], programStart: Date, at: Date = new Date()): number {
-  const range = getProgramWeekRange(programStart, at);
-  if (!range) return 0;
+/**
+ * Lấy [start, end) của TUẦN LỊCH (Mon 00:00 → Sun 23:59:59 theo VN).
+ * Không phụ thuộc chương trình → cap solo 7/tuần hoạt động cả trước/trong/sau chương trình.
+ * (Decision Viet 2026-06-17 + 2026-06-19: siết cap mọi lúc theo tuần lịch.)
+ */
+export function getCalendarWeekRangeVn(at: Date = new Date()): { startMs: number; endMs: number } {
+  const parts = getVnParts(at);
+  // VN getUTCDay: 0=Sun..6=Sat. Days since Monday (Mon=0): (day+6) % 7.
+  const daysSinceMon = (parts.day + 6) % 7;
+  // Lấy Date của Mon 00:00 VN
+  // = (current time shifted to VN) - daysSinceMon*MS_PER_DAY - hours/mins/sec component
+  // Cách tính: shifted = at + VN_OFFSET_MIN. Mon00 shifted = floor(shifted to day) - daysSinceMon*MS_PER_DAY.
+  const shifted = at.getTime() + VN_OFFSET_MIN * 60_000;
+  const shiftedDayStart = Math.floor(shifted / MS_PER_DAY) * MS_PER_DAY;
+  const monShifted = shiftedDayStart - daysSinceMon * MS_PER_DAY;
+  // Convert back to real epoch ms (UTC)
+  const startMs = monShifted - VN_OFFSET_MIN * 60_000;
+  return { startMs, endMs: startMs + 7 * MS_PER_DAY };
+}
+
+/** Đếm số trận SOLO trong tuần lịch hiện tại (Mon-Sun VN), bất kể trong/ngoài chương trình. */
+export function countSoloThisWeek(history: GameHistory[], _programStart?: Date, at: Date = new Date()): number {
+  // _programStart param giữ để tương thích call site cũ, không còn dùng.
+  const range = getCalendarWeekRangeVn(at);
   let n = 0;
   for (const g of history) {
     if (!g || !g.playedAt) continue;

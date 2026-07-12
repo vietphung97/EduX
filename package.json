@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && cmd /c \"robocopy dist E:\\Work\\Website\\Eduso\\EnglishPlatform\\wwwroot\\edux /E /NFL /NDL /NJH /NJS & exit 0\"",
     "preview": "vite preview"
   },
   "dependencies": {

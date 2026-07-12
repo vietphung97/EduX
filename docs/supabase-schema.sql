@@ -147,16 +147,18 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- ============ VIEWS ============
--- Leaderboard view
-CREATE OR REPLACE VIEW edux_leaderboard AS
+-- Leaderboard view (SECURITY INVOKER: enforces RLS of the querying user, not view creator)
+CREATE OR REPLACE VIEW edux_leaderboard
+WITH (security_invoker = true) AS
 SELECT
   id, name, avatar, grade, xp, level, total_games, best_streak, weekly_xp,
   RANK() OVER (ORDER BY xp DESC) as rank
 FROM edux_profiles
 ORDER BY xp DESC;
 
--- Weekly leaderboard view
-CREATE OR REPLACE VIEW edux_weekly_leaderboard AS
+-- Weekly leaderboard view (SECURITY INVOKER)
+CREATE OR REPLACE VIEW edux_weekly_leaderboard
+WITH (security_invoker = true) AS
 SELECT
   id, name, avatar, grade, xp, level, total_games, best_streak, weekly_xp,
   RANK() OVER (ORDER BY weekly_xp DESC) as rank

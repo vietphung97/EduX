@@ -91,17 +91,54 @@ export const WEEKLY_FRAMES: WeeklyFrame[] = [
   },
 ];
 
+const MS_PER_DAY_CONST = 24 * 60 * 60 * 1000;
+const MS_PER_WEEK_CONST = 7 * MS_PER_DAY_CONST;
+
+/**
+ * Mốc kết thúc Tuần 1 (= đầu Tuần 2, Thứ Hai 00:00 giờ VN ngay sau
+ * PROGRAM_START_DATE). Vì 01/07/2026 là Thứ Tư nên Tuần 1 chỉ có 5 ngày:
+ * Thứ Tư 01/07 → hết Chủ Nhật 05/07. Từ Tuần 2 trở đi mỗi tuần đủ 7 ngày
+ * Thứ Hai → Chủ Nhật.
+ */
+function getWeek1EndMs(): number {
+  const VN_OFFSET_MS = 7 * 60 * 60 * 1000;
+  const startShifted = PROGRAM_START_DATE.getTime() + VN_OFFSET_MS;
+  const startDow = new Date(startShifted).getUTCDay(); // Sun=0..Sat=6 (giờ VN vì đã shift)
+  const daysUntilNextMonday = startDow === 1 ? 7 : (8 - startDow) % 7 || 7;
+  return PROGRAM_START_DATE.getTime() + daysUntilNextMonday * MS_PER_DAY_CONST;
+}
+
 /**
  * Tính tuần hiện tại của chương trình (1-8).
  * Trả về null nếu chưa bắt đầu hoặc đã kết thúc.
+ *
+ * QUAN TRỌNG: tuần chương trình LUÔN bắt đầu vào Thứ Hai (giống tuần lịch),
+ * KHÔNG phải cứ +7 ngày kể từ PROGRAM_START_DATE.
  */
 export function getCurrentProgramWeek(): number | null {
   const now = new Date();
-  const msPerWeek = 7 * 24 * 60 * 60 * 1000;
   const diff = now.getTime() - PROGRAM_START_DATE.getTime();
   if (diff < 0) return null; // Chưa bắt đầu
-  const week = Math.floor(diff / msPerWeek) + 1;
+
+  const week1EndMs = getWeek1EndMs();
+  if (now.getTime() < week1EndMs) return 1;
+  const week = 2 + Math.floor((now.getTime() - week1EndMs) / MS_PER_WEEK_CONST);
   return week >= 1 && week <= 8 ? week : null;
+}
+
+/**
+ * [startMs, endMs) của một tuần chương trình cụ thể (1-8), theo cùng quy tắc
+ * Tuần 1 ngắn + Tuần 2+ Thứ Hai→Chủ Nhật như getCurrentProgramWeek().
+ * Dùng để tính lại range XP tuần (BXH, recalc) — KHÔNG dùng công thức
+ * `programStart + (week-1)*7ngày` vì Tuần 1 không đủ 7 ngày.
+ */
+export function getProgramWeekRangeMs(week: number): { startMs: number; endMs: number } {
+  const week1EndMs = getWeek1EndMs();
+  if (week <= 1) {
+    return { startMs: PROGRAM_START_DATE.getTime(), endMs: week1EndMs };
+  }
+  const startMs = week1EndMs + (week - 2) * MS_PER_WEEK_CONST;
+  return { startMs, endMs: startMs + MS_PER_WEEK_CONST };
 }
 
 export const LEVEL_CONFIG = [
@@ -117,9 +154,9 @@ export const DEFAULT_TOPICS_BY_GRADE: Record<number, string[]> = {
   3: ["My Friends", "My Body", "My House", "Our Toys"],
   4: ["My Birthday", "My Favourite Food", "Jobs", "Animals"],
   5: ["What's Your Address?", "My Town", "The Weather", "Seasons and Weather"],
-  6: ["My New School", "MY HOUSE"],
-  7: ["Hobbies", "HEALTHY LIVING"],
-  8: ["LEISURE TIME", "LIFE IN THE COUNTRYSIDE"],
+  6: ["Tuần 1"],
+  7: ["Tuần 1"],
+  8: ["Tuần 1"],
   9: ["Local Community", "City Life", "Teen Stress"],
   10: ["Family Life", "Environment", "Gender Equality"],
   11: ["Generation Gap", "Cities of the Future", "Global Warming"],

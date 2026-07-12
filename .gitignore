@@ -33,3 +33,4 @@ nul
 
 # Temp files
 response.json
+.env.production

@@ -18,6 +18,7 @@ interface K7RawQuestion {
   difficulty: string;
   subType?: string;
   instruction?: string;
+  imageUrl?: string;
 }
 
 function mapDifficulty(diff: string): Difficulty {
@@ -44,6 +45,7 @@ async function loadAll(): Promise<Question[]> {
     correctAnswer: q.correctAnswer,
     funExplanation: q.funExplanation,
     seriousExplanation: q.seriousExplanation,
+    imageUrl: q.imageUrl,
     category: q.category,
     grade: q.grade,
     difficulty: mapDifficulty(q.difficulty),

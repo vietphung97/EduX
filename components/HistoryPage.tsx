@@ -9,7 +9,7 @@ interface HistoryPageProps {
   user: UserProfile;
   allUsers: UserProfile[];
   onBack: () => void;
-  onRecalculate?: (fixedHistory: GameHistory[], xpDiff: number) => void;
+  onRecalculate?: () => void | Promise<void>;
   onRecalculateAll?: () => Promise<{ total: number; fixed: number }>;
 }
 
@@ -31,32 +31,13 @@ const HistoryPage: React.FC<HistoryPageProps> = ({ history, user, allUsers, onBa
     return map;
   }, [allUsers, user]);
 
-  const handleRecalculate = () => {
+  const handleRecalculate = async () => {
     if (!onRecalculate) return;
-    let fixedCount = 0;
-    let totalXpDiff = 0;
-
-    const fixedHistory = history.map(game => {
-      const safeCorrect = Math.round(game.correctCount);
-      const xpPerQ = XP_PER_QUESTION[game.difficulty] || 10;
-      const correctXp = safeCorrect * xpPerQ;
-      const streakBonus = game.maxStreak * 5;
-      const recalcXp = correctXp + streakBonus;
-
-      const oldRankBonus = Math.max(0, Math.round(game.xpEarned) - recalcXp);
-      const newXpEarned = recalcXp + oldRankBonus;
-
-      if (game.correctCount !== safeCorrect || game.xpEarned !== newXpEarned) {
-        fixedCount++;
-        totalXpDiff += newXpEarned - game.xpEarned;
-        return { ...game, correctCount: safeCorrect, xpEarned: newXpEarned, score: safeCorrect * xpPerQ + game.maxStreak * 5 };
-      }
-      return game;
-    });
-
-    onRecalculate(fixedHistory, totalXpDiff);
-    setShowRecalcResult(`Sửa ${fixedCount} ván · XP ${Math.round(totalXpDiff) >= 0 ? '+' : ''}${Math.round(totalXpDiff)} (tài khoản này)`);
-    setTimeout(() => setShowRecalcResult(null), 5000);
+    // Chỉ yêu cầu tải lại điểm ĐÚNG từ server (server là nguồn duy nhất; client
+    // không tự tính lại rồi ghi đè — quy tắc "điểm chỉ được cộng qua RPC").
+    await onRecalculate();
+    setShowRecalcResult('Đã đồng bộ điểm từ máy chủ');
+    setTimeout(() => setShowRecalcResult(null), 4000);
   };
 
   const handleRecalculateAll = async () => {
@@ -233,11 +214,16 @@ const HistoryPage: React.FC<HistoryPageProps> = ({ history, user, allUsers, onBa
               const correctXp = safeCorrectCount * xpPerQ;
               const streakBonus = game.maxStreak * 5;
               const recalculatedXp = correctXp + streakBonus;
+              // Quy định 3.1 ESEA: trận solo thứ 8+ trong tuần bị cap → xpEarned=0
+              // dù có câu đúng/streak. Phải tôn trọng xpEarned đã lưu (không recompute lại).
+              const isCappedSolo = (game.mode !== 'multiplayer')
+                && Math.round(game.xpEarned) === 0
+                && safeCorrectCount > 0;
               // Rank bonus: multiplayer hạng 1 = +100, còn lại = 0; solo = tính từ chênh lệch xpEarned
               const rankBonus = game.mode === 'multiplayer'
                 ? (game.myRank === 1 ? 100 : 0)
                 : Math.max(0, Math.round(game.xpEarned) - recalculatedXp);
-              const safeXpEarned = recalculatedXp + rankBonus;
+              const safeXpEarned = isCappedSolo ? 0 : recalculatedXp + rankBonus;
 
               return (
               <div key={game.id} className="hover:bg-slate-800/30 transition-colors">

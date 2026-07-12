@@ -160,7 +160,11 @@ const ResultAnalytics: React.FC<ResultAnalyticsProps> = ({ result, analysis, onC
                 <Pie data={pieData} innerRadius="35%" outerRadius="55%" paddingAngle={4} dataKey="value" stroke="none">
                   {pieData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
                 </Pie>
-                <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: 'none', borderRadius: '12px' }} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '12px', color: '#f1f5f9' }}
+                  itemStyle={{ color: '#f1f5f9', fontWeight: 700 }}
+                  labelStyle={{ color: '#cbd5e1', fontWeight: 700 }}
+                />
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
@@ -177,7 +181,12 @@ const ResultAnalytics: React.FC<ResultAnalyticsProps> = ({ result, analysis, onC
               <BarChart data={catData} layout="vertical" margin={{ left: 0, right: 10 }}>
                 <XAxis type="number" hide domain={[0, 100]} />
                 <YAxis dataKey="name" type="category" tick={{ fill: '#cbd5e1', fontSize: 13, fontWeight: 700 }} axisLine={false} tickLine={false} width={120} />
-                <Tooltip cursor={{ fill: '#1e293b' }} contentStyle={{ backgroundColor: '#0f172a', border: 'none', borderRadius: '12px' }} />
+                <Tooltip
+                  cursor={{ fill: '#1e293b' }}
+                  contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '12px', color: '#f1f5f9' }}
+                  itemStyle={{ color: '#f1f5f9', fontWeight: 700 }}
+                  labelStyle={{ color: '#cbd5e1', fontWeight: 700 }}
+                />
                 <Bar dataKey="Tỉlệ" fill="#ef4444" radius={[0, 6, 6, 0]} barSize={18} />
               </BarChart>
             </ResponsiveContainer>

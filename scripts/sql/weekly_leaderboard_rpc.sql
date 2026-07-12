@@ -4,11 +4,14 @@
 -- Client (services/supabase.ts) tự động dùng RPC này nếu tồn tại,
 -- chưa chạy SQL thì client fallback về cách cũ (vẫn đúng, chỉ chậm hơn).
 --
--- Quy định 3.1 (Đấu hạng / solo): mỗi tuần chỉ tính XP cho TỐI ĐA 7 lượt
--- đầu tiên (theo thứ tự thời gian). Các lượt sau vẫn lưu vào history để
--- thống kê & cộng vào XP tổng, NHƯNG không cộng vào XP tuần.
--- Quy định 3.2 (Thách đấu / multiplayer): không cap số trận cho XP tuần
--- ở RPC này — số lượt được chơi đã bị giới hạn 5 trận/buổi ở client lobby.
+-- Quy định 3.1 ESEA 2026 — cap chặt mỗi tuần lịch (Mon-Sun VN):
+--   • SOLO chỉ tính 7 trận đầu tiên TRONG MỖI TUẦN LỊCH. Trận thứ 8+ vẫn
+--     lưu vào history NHƯNG xp_earned = 0 (client + reconcile đã zero hoá).
+--   • Cap hoạt động bất kể trong/ngoài chương trình, theo tuần lịch (Mon-Sun VN).
+--   • MULTIPLAYER không cap số trận cho XP — số lượt đã bị giới hạn 5 trận/buổi ở client.
+-- Vì client + reconcile đã zero hoá xp_earned cho trận solo 8+, RPC chỉ cần
+-- SUM(xp_earned) trong range tuần là đủ. Vẫn giữ thêm cap row_number để
+-- "phòng thủ tầng 2" trong trường hợp 1 row chưa kịp reconcile.
 -- =====================================================================
 
 -- 1) Index theo played_at để lọc theo tuần nhanh (quan trọng nhất)
@@ -16,8 +19,6 @@ create index if not exists idx_edux_game_history_played_at
   on edux_game_history (played_at);
 
 -- 2) Function tính tổng XP tuần theo quy định:
---    - Trận solo: chỉ tính 7 trận có played_at sớm nhất trong khoảng tuần.
---    - Trận multiplayer: tính tất cả.
 create or replace function edux_weekly_xp_totals(
   p_start timestamptz,
   p_end   timestamptz

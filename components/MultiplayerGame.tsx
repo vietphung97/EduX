@@ -269,15 +269,6 @@ const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
   // Main game view
   return (
     <div className="mx-auto space-y-6 relative">
-      {/* Floating XP + Streak animation (combined) */}
-      {floatingXp && (
-        <div key={floatingXp.id} className="absolute right-4 top-16 z-50 pointer-events-none float-up flex flex-col items-end gap-0.5">
-          <span className="text-2xl font-black text-yellow-400 drop-shadow-lg">+XP</span>
-          {floatingStreak && floatingStreak.streak >= 2 && (
-            <span className="text-sm font-black text-orange-400 drop-shadow-lg">{ICON.fire} STREAK x{floatingStreak.streak}!</span>
-          )}
-        </div>
-      )}
       {/* Game Header */}
       <div className="flex items-center gap-4 bg-slate-900/50 p-4 rounded-[30px] border border-slate-800 backdrop-blur-md relative z-10">
         {/* Timer & Progress */}
@@ -302,16 +293,36 @@ const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
         </div>
 
         {/* My Score */}
-        <div className="text-center px-4 border-l border-slate-800">
+        <div className="text-center px-4 border-l border-slate-800 relative">
           <p className="text-[10px] font-black uppercase text-slate-500">XP</p>
-          <p className="text-2xl font-black text-white">{(myPlayer?.score || 0).toLocaleString()}</p>
+          <p className="text-2xl font-black text-white relative">
+            {(myPlayer?.score || 0).toLocaleString()}
+            {/* Floating +XP — bay lên từ số XP */}
+            {floatingXp && (
+              <span
+                key={floatingXp.id}
+                className="absolute left-1/2 -translate-x-1/2 bottom-full z-50 pointer-events-none float-up"
+              >
+                <span className="text-2xl font-black text-yellow-400 drop-shadow-lg whitespace-nowrap">+XP</span>
+              </span>
+            )}
+          </p>
         </div>
 
         {/* Streak */}
         <div className="text-center px-4 border-l border-slate-800 relative group cursor-help">
           <p className="text-[10px] font-black uppercase text-slate-500">Streak</p>
-          <p key={streakPopKey} className={`text-2xl font-black text-yellow-500${streakPopKey > 0 ? ' streak-pop' : ''}`}>
+          <p key={streakPopKey} className={`text-2xl font-black text-yellow-500 relative${streakPopKey > 0 ? ' streak-pop' : ''}`}>
             {myPlayer?.streak || 0}{ICON.fire}
+            {/* Floating STREAK xN — bay lên từ số streak */}
+            {floatingXp && floatingStreak && floatingStreak.streak >= 2 && (
+              <span
+                key={`streak-${floatingXp.id}`}
+                className="absolute left-1/2 -translate-x-1/2 bottom-full z-50 pointer-events-none float-up"
+              >
+                <span className="text-sm font-black text-orange-400 drop-shadow-lg whitespace-nowrap">{ICON.fire} STREAK x{floatingStreak.streak}!</span>
+              </span>
+            )}
           </p>
           <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 bg-slate-800 border border-slate-700 rounded-xl p-3 text-left opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-[60] shadow-xl">
             <p className="text-white font-bold text-xs">Tr{'ả'} l{'ờ'}i {'đ'}{'ú'}ng li{'ê'}n ti{'ế'}p {'đ'}{'ể'} nh{'ậ'}n XP th{'ưởng'}.</p>
